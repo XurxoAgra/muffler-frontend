@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Sidebar } from '../components/ui/Sidebar'
 import { GlassPanel } from '../components/ui/GlassPanel'
-import { UnderlineInput } from '../components/ui/UnderlineInput'
-import { ButtonGlass } from '../components/ui/ButtonGlass'
-import { LabelMono } from '../components/ui/LabelMono'
-import { SignalMark } from '../components/SignalMark'
+import { ExhaustAvatar } from '../components/ui/ExhaustAvatar'
+import { RoleBadge } from '../components/ui/RoleBadge'
+import { ProfileField } from '../components/ui/ProfileField'
 import { useAuth } from '../auth/AuthContext'
 import { apiFetch, ApiError } from '../lib/apiClient'
 import type { UserProfile } from '../lib/types'
@@ -26,7 +26,7 @@ export function ProfilePage() {
         if (!cancelled) setProfile(data)
       })
       .catch((err) => {
-        if (!cancelled) setError(err instanceof ApiError ? err.message : 'No se pudo cargar el perfil.')
+        if (!cancelled) setError(err instanceof ApiError ? err.message : 'Could not load your profile.')
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -43,50 +43,85 @@ export function ProfilePage() {
     navigate('/login')
   }
 
+  const fullName = profile ? `${profile.first_name} ${profile.last_name}` : 'Loading…'
+  const initials = profile ? `${profile.first_name.charAt(0)}${profile.last_name.charAt(0)}`.toUpperCase() : '··'
+  const primaryRole = profile?.roles[0] ?? 'Member'
+  const memberSince = profile
+    ? new Date(profile.created_at).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })
+    : ''
+
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center bg-bg px-4 py-12">
-      <GlassPanel className="w-full max-w-md p-8">
-        <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-lime">
-            <SignalMark />
-            <span className="font-display text-lg font-semibold text-white">muffler</span>
+    <div className="flex min-h-svh flex-col bg-bg md:flex-row">
+      <Sidebar initials={initials} name={fullName} role={primaryRole} onLogout={handleLogout} loggingOut={loggingOut} />
+
+      <main className="flex-1 px-4 py-7 sm:px-8 sm:py-9 md:px-[52px] md:pb-[52px] md:pt-[44px]">
+        <div className="mb-6 md:mb-7">
+          <div className="mb-1.5 font-mono text-[10px] uppercase tracking-[0.24em] text-muted">
+            Account <span className="text-subtle">·</span> Profile
           </div>
-          <LabelMono>V0.1</LabelMono>
+          <h1 className="font-display text-2xl font-medium leading-tight tracking-tight text-white sm:text-[30px]">
+            Your profile.
+          </h1>
+          <p className="mt-1.5 text-sm text-muted">Personal information and account settings.</p>
         </div>
 
-        <h1 className="font-display text-3xl font-semibold text-white">Your profile.</h1>
-        <p className="mt-2 text-sm text-white/70">Signal details for your account.</p>
-
-        {loading && <p className="mt-8 text-sm text-white/70">Loading…</p>}
-
-        {error && <p className="mt-8 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400">{error}</p>}
+        {loading && <p className="text-sm text-muted">Loading…</p>}
+        {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
 
         {profile && (
-          <div className="mt-8 flex flex-col gap-6">
-            <div className="grid grid-cols-2 gap-4">
-              <UnderlineInput label="First name" value={profile.first_name} readOnly disabled />
-              <UnderlineInput label="Last name" value={profile.last_name} readOnly disabled />
+          <GlassPanel rounded="rounded-2xl" className="overflow-hidden">
+            <div
+              className="flex flex-wrap items-center gap-5 border-b border-white/10 px-5 py-6 sm:gap-6 sm:px-8 sm:py-7"
+              style={{
+                backgroundImage:
+                  'repeating-linear-gradient(135deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 8px), repeating-linear-gradient(45deg, rgba(255,255,255,0.010) 0px, rgba(255,255,255,0.010) 1px, transparent 1px, transparent 8px)',
+              }}
+            >
+              <ExhaustAvatar size={72} />
+
+              <div className="min-w-[180px] flex-1">
+                <h2 className="font-display text-lg font-semibold leading-tight tracking-tight text-white sm:text-[22px]">
+                  {fullName}
+                </h2>
+                <div className="mt-1.5 flex flex-wrap items-center gap-2.5">
+                  <RoleBadge role={primaryRole} />
+                  <span className="break-all font-mono text-[11px] text-muted">{profile.email}</span>
+                </div>
+                <div className="mt-2.5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] py-1 pl-1 pr-3">
+                  <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-lime-20">
+                    <ClockIcon />
+                  </span>
+                  <span className="font-mono text-[10px] text-muted">
+                    Member since <span className="text-white">{memberSince}</span>
+                  </span>
+                </div>
+              </div>
             </div>
-            <UnderlineInput label="Email" value={profile.email} readOnly disabled />
-            <UnderlineInput label="Role" value={profile.roles.join(', ')} readOnly disabled />
-            <UnderlineInput
-              label="Member since"
-              value={new Date(profile.created_at).toLocaleDateString()}
-              readOnly
-              disabled
-            />
-          </div>
+
+            <div className="px-5 sm:px-8">
+              <ProfileField label="First name" value={profile.first_name} editable />
+              <ProfileField label="Last name" value={profile.last_name} editable />
+              <ProfileField label="Email" value={profile.email} editable mono />
+              <ProfileField label="Role" badge={<RoleBadge role={primaryRole} />} />
+              <ProfileField label="Member since" value={memberSince} mono />
+            </div>
+          </GlassPanel>
         )}
 
-        <ButtonGlass type="button" className="mt-8 w-full" onClick={handleLogout} disabled={loggingOut}>
-          {loggingOut ? 'Signing out…' : 'Sign out'}
-        </ButtonGlass>
-      </GlassPanel>
-
-      <div className="mt-6 flex w-full max-w-md items-center justify-between">
-        <LabelMono>Signal · Damped · 38dB</LabelMono>
-        <LabelMono>muffler.app/profile</LabelMono>
-      </div>
+        <div className="mt-6 flex flex-col gap-1 font-mono text-[9px] tracking-[0.16em] text-subtle sm:mt-7 sm:flex-row sm:justify-between">
+          <span>MUFFLER · v0.1 · BETA</span>
+          <span>EXHAUST SYS · MUFFLER AUTH</span>
+        </div>
+      </main>
     </div>
+  )
+}
+
+function ClockIcon() {
+  return (
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-lime" strokeWidth="2" strokeLinecap="round">
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
   )
 }

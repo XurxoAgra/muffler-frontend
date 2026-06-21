@@ -1,8 +1,14 @@
 import type { ReactNode } from 'react'
 
-export function GlassPanel({ children, className = '' }: { children: ReactNode; className?: string }) {
+interface GlassPanelProps {
+  children: ReactNode
+  className?: string
+  rounded?: string
+}
+
+export function GlassPanel({ children, className = '', rounded = 'rounded-3xl' }: GlassPanelProps) {
   return (
-    <div className={`rounded-3xl border border-white/10 bg-glass backdrop-blur-xl shadow-2xl ${className}`}>
+    <div className={`${rounded} border border-white/10 bg-glass backdrop-blur-xl shadow-2xl ${className}`}>
       {children}
     </div>
   )

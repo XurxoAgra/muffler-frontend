@@ -14,6 +14,7 @@ interface StoredAuth {
 
 interface AuthContextValue {
   isAuthenticated: boolean
+  isInitializing: boolean
   login: (data: LoginRequest, rememberMe: boolean) => Promise<void>
   register: (data: RegisterRequest, rememberMe: boolean) => Promise<void>
   logout: () => Promise<void>
@@ -34,6 +35,7 @@ function readStoredAuth(): StoredAuth | null {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [accessTokenState, setAccessTokenState] = useState<string | null>(null)
   const [refreshTokenState, setRefreshTokenState] = useState<string | null>(null)
+  const [isInitializing, setIsInitializing] = useState(true)
 
   useEffect(() => {
     const stored = readStoredAuth()
@@ -42,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setRefreshTokenState(stored.refreshToken)
       setAccessToken(stored.accessToken)
     }
+    setIsInitializing(false)
   }, [])
 
   useEffect(() => {
@@ -94,11 +97,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value = useMemo<AuthContextValue>(
     () => ({
       isAuthenticated: accessTokenState !== null,
+      isInitializing,
       login,
       register,
       logout,
     }),
-    [accessTokenState, refreshTokenState],
+    [accessTokenState, refreshTokenState, isInitializing],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

@@ -4,7 +4,6 @@ import { GlassPanel } from '../components/ui/GlassPanel'
 import { PillTabs } from '../components/ui/PillTabs'
 import { UnderlineInput } from '../components/ui/UnderlineInput'
 import { ButtonPrimary } from '../components/ui/ButtonPrimary'
-import { ButtonGlass } from '../components/ui/ButtonGlass'
 import { LabelMono } from '../components/ui/LabelMono'
 import { SignalMark } from '../components/SignalMark'
 import { useAuth } from '../auth/AuthContext'
@@ -157,23 +156,12 @@ export function LoginPage() {
             )}
           </div>
 
-          {error && <p className="rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-400">{error}</p>}
+          {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
 
           <ButtonPrimary type="submit" disabled={loading}>
             {loading ? 'Please wait…' : copy.cta}
           </ButtonPrimary>
         </form>
-
-        <div className="my-6 flex items-center gap-3">
-          <div className="h-px flex-1 bg-white/10" />
-          <LabelMono>or</LabelMono>
-          <div className="h-px flex-1 bg-white/10" />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <ButtonGlass type="button">Google</ButtonGlass>
-          <ButtonGlass type="button">Apple</ButtonGlass>
-        </div>
 
         <p className="mt-6 text-center text-sm text-white/70">
           {mode === 'signin' ? (
