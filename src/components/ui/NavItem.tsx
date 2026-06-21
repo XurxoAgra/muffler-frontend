@@ -6,13 +6,15 @@ interface NavItemProps {
   active?: boolean
   disabled?: boolean
   collapsed?: boolean
+  onClick?: () => void
 }
 
-export function NavItem({ icon, label, active = false, disabled = false, collapsed = false }: NavItemProps) {
+export function NavItem({ icon, label, active = false, disabled = false, collapsed = false, onClick }: NavItemProps) {
   return (
     <button
       type="button"
       disabled={disabled}
+      onClick={onClick}
       title={collapsed ? label : undefined}
       className={`relative flex w-full items-center rounded-lg transition-colors ${
         collapsed ? 'justify-center px-0 py-3' : 'justify-start gap-3 px-3.5 py-2.5'
