@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -10,10 +10,12 @@
   --color-lime-16: rgba(200, 255, 61, 0.16);
   --color-lime-20: rgba(200, 255, 61, 0.2);
   --color-muted: rgb(124, 130, 117);
+  --color-danger: #ff4d4d;
+  --color-subtle: #2a2f28;
 
-  --font-display: "Space Grotesk", sans-serif;
-  --font-body: "IBM Plex Sans", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-display: "Roboto", sans-serif;
+  --font-body: "Roboto", sans-serif;
+  --font-mono: "Roboto Mono", monospace;
 }
 
 html,
