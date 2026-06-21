@@ -14,7 +14,9 @@ export function ProfileField({ label, value, mono = false, editable = false, bad
       <span className="font-mono text-[10px] font-medium uppercase tracking-widest text-muted">{label}</span>
 
       <div className="flex items-center justify-between gap-3 sm:contents">
-        {badge ?? <span className={mono ? 'font-mono text-[13px] tracking-wide text-white' : 'text-sm text-white'}>{value}</span>}
+        <div className="sm:w-fit sm:justify-self-start">
+          {badge ?? <span className={mono ? 'font-mono text-[13px] tracking-wide text-white' : 'text-sm text-white'}>{value}</span>}
+        </div>
 
         {editable ? (
           <button
