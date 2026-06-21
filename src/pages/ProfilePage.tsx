@@ -51,15 +51,17 @@ export function ProfilePage() {
     : ''
 
   return (
-    <div className="flex min-h-svh bg-bg">
+    <div className="flex min-h-svh flex-col bg-bg md:flex-row">
       <Sidebar initials={initials} name={fullName} role={primaryRole} onLogout={handleLogout} loggingOut={loggingOut} />
 
-      <main className="flex-1 px-6 py-10 sm:px-[52px] sm:pb-[52px] sm:pt-[44px]">
-        <div className="mb-7">
+      <main className="flex-1 px-4 py-7 sm:px-8 sm:py-9 md:px-[52px] md:pb-[52px] md:pt-[44px]">
+        <div className="mb-6 md:mb-7">
           <div className="mb-1.5 font-mono text-[10px] uppercase tracking-[0.24em] text-muted">
             Account <span className="text-subtle">·</span> Profile
           </div>
-          <h1 className="font-display text-[30px] font-medium leading-tight tracking-tight text-white">Your profile.</h1>
+          <h1 className="font-display text-2xl font-medium leading-tight tracking-tight text-white sm:text-[30px]">
+            Your profile.
+          </h1>
           <p className="mt-1.5 text-sm text-muted">Personal information and account settings.</p>
         </div>
 
@@ -69,19 +71,21 @@ export function ProfilePage() {
         {profile && (
           <GlassPanel rounded="rounded-2xl" className="overflow-hidden">
             <div
-              className="flex flex-wrap items-center gap-6 border-b border-white/10 px-8 py-7"
+              className="flex flex-wrap items-center gap-5 border-b border-white/10 px-5 py-6 sm:gap-6 sm:px-8 sm:py-7"
               style={{
                 backgroundImage:
                   'repeating-linear-gradient(135deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 8px), repeating-linear-gradient(45deg, rgba(255,255,255,0.010) 0px, rgba(255,255,255,0.010) 1px, transparent 1px, transparent 8px)',
               }}
             >
-              <ExhaustAvatar size={84} />
+              <ExhaustAvatar size={72} />
 
               <div className="min-w-[180px] flex-1">
-                <h2 className="font-display text-[22px] font-semibold leading-tight tracking-tight text-white">{fullName}</h2>
+                <h2 className="font-display text-lg font-semibold leading-tight tracking-tight text-white sm:text-[22px]">
+                  {fullName}
+                </h2>
                 <div className="mt-1.5 flex flex-wrap items-center gap-2.5">
                   <RoleBadge role={primaryRole} />
-                  <span className="font-mono text-[11px] text-muted">{profile.email}</span>
+                  <span className="break-all font-mono text-[11px] text-muted">{profile.email}</span>
                 </div>
                 <div className="mt-2.5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] py-1 pl-1 pr-3">
                   <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border border-lime-20">
@@ -94,7 +98,7 @@ export function ProfilePage() {
               </div>
             </div>
 
-            <div className="px-8">
+            <div className="px-5 sm:px-8">
               <ProfileField label="First name" value={profile.first_name} editable />
               <ProfileField label="Last name" value={profile.last_name} editable />
               <ProfileField label="Email" value={profile.email} editable mono />
@@ -104,7 +108,7 @@ export function ProfilePage() {
           </GlassPanel>
         )}
 
-        <div className="mt-7 flex justify-between font-mono text-[9px] tracking-[0.16em] text-subtle">
+        <div className="mt-6 flex flex-col gap-1 font-mono text-[9px] tracking-[0.16em] text-subtle sm:mt-7 sm:flex-row sm:justify-between">
           <span>MUFFLER · v0.1 · BETA</span>
           <span>EXHAUST SYS · MUFFLER AUTH</span>
         </div>

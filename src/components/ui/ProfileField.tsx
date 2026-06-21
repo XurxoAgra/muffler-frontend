@@ -10,22 +10,24 @@ interface ProfileFieldProps {
 
 export function ProfileField({ label, value, mono = false, editable = false, badge }: ProfileFieldProps) {
   return (
-    <div className="grid grid-cols-[120px_1fr_auto] items-center gap-4 border-b border-white/5 py-4 last:border-0 sm:grid-cols-[150px_1fr_auto]">
+    <div className="grid gap-1.5 border-b border-white/5 py-4 last:border-0 sm:grid-cols-[120px_1fr_auto] sm:items-center sm:gap-4 md:grid-cols-[150px_1fr_auto]">
       <span className="font-mono text-[10px] font-medium uppercase tracking-widest text-muted">{label}</span>
 
-      {badge ?? <span className={mono ? 'font-mono text-[13px] tracking-wide text-white' : 'text-sm text-white'}>{value}</span>}
+      <div className="flex items-center justify-between gap-3 sm:contents">
+        {badge ?? <span className={mono ? 'font-mono text-[13px] tracking-wide text-white' : 'text-sm text-white'}>{value}</span>}
 
-      {editable ? (
-        <button
-          type="button"
-          disabled
-          className="inline-flex items-center gap-1.5 rounded-md border border-white/10 px-2.5 py-1 text-[11px] font-medium text-subtle disabled:cursor-not-allowed"
-        >
-          <EditIcon /> Edit
-        </button>
-      ) : (
-        <span />
-      )}
+        {editable ? (
+          <button
+            type="button"
+            disabled
+            className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-md border border-white/10 px-2.5 py-1 text-[11px] font-medium text-subtle disabled:cursor-not-allowed"
+          >
+            <EditIcon /> Edit
+          </button>
+        ) : (
+          <span className="hidden sm:inline" />
+        )}
+      </div>
     </div>
   )
 }

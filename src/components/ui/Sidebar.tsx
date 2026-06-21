@@ -72,83 +72,107 @@ export function Sidebar({ initials, name, role, onLogout, loggingOut }: SidebarP
   const [collapsed, setCollapsed] = useState(false)
 
   return (
-    <aside
-      className={`relative z-20 flex flex-shrink-0 flex-col border-r border-white/10 bg-bg transition-[width] duration-200 ${
-        collapsed ? 'w-16' : 'w-60'
-      }`}
-    >
-      <div
-        className={`pointer-events-none absolute bottom-[120px] top-[88px] w-px bg-gradient-to-b from-transparent via-white/5 to-transparent transition-all duration-200 ${
-          collapsed ? 'left-1/2' : 'left-7'
-        }`}
-      />
-
-      <button
-        type="button"
-        onClick={() => setCollapsed((c) => !c)}
-        title={collapsed ? 'Expand menu' : 'Collapse menu'}
-        className={`absolute right-[-14px] top-7 z-30 flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-bg text-muted shadow-lg transition-transform hover:border-lime hover:text-lime ${
-          collapsed ? 'rotate-180' : ''
-        }`}
-      >
-        <ChevronIcon />
-      </button>
-
-      <div className={`flex items-center gap-2.5 border-b border-white/10 ${collapsed ? 'justify-center px-0 py-5' : 'px-5 py-5'}`}>
+    <>
+      <header className="flex flex-shrink-0 items-center gap-3 border-b border-white/10 bg-bg px-4 py-3 md:hidden">
         <span className="text-lime">
           <SignalMark />
         </span>
-        <span
-          className={`overflow-hidden whitespace-nowrap font-display text-base font-semibold transition-all ${
-            collapsed ? 'max-w-0 opacity-0' : 'max-w-[120px] opacity-100'
-          }`}
-        >
-          muffler
-        </span>
-        {!collapsed && <span className="ml-auto flex-shrink-0 font-mono text-[10px] tracking-widest text-muted">v0.1</span>}
-      </div>
+        <span className="font-display text-base font-semibold">muffler</span>
 
-      <nav className={`flex flex-1 flex-col gap-1 overflow-x-hidden ${collapsed ? 'px-2 py-3.5' : 'px-3 py-3.5'}`}>
-        {!collapsed && (
-          <div className="mb-2 px-3.5 font-mono text-[8px] font-semibold uppercase tracking-[0.24em] text-subtle">Nav</div>
-        )}
-        <NavItem icon={<DashboardIcon />} label="Dashboard" disabled collapsed={collapsed} />
-        <NavItem icon={<ProfileIcon />} label="Profile" active collapsed={collapsed} />
-        <NavItem icon={<SettingsIcon />} label="Settings" disabled collapsed={collapsed} />
-      </nav>
-
-      <div className={`border-t border-white/10 ${collapsed ? 'px-2 py-4' : 'px-3 py-4'}`}>
-        {!collapsed && (
-          <div className="mb-1.5 flex items-center gap-2.5 overflow-hidden rounded-lg bg-white/[0.02] px-3.5 py-2.5">
-            <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-lime-20 bg-lime-10 font-display text-xs font-bold text-lime">
-              {initials}
-            </div>
-            <div className="min-w-0">
-              <div className="truncate text-xs font-semibold text-white">{name}</div>
-              <div className="font-mono text-[10px] tracking-wider text-muted">{role}</div>
-            </div>
+        <div className="ml-auto flex items-center gap-2.5">
+          <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-lime-20 bg-lime-10 font-display text-xs font-bold text-lime">
+            {initials}
           </div>
-        )}
+          <button
+            type="button"
+            onClick={onLogout}
+            disabled={loggingOut}
+            title="Sign out"
+            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-danger transition-colors hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <SignOutIcon />
+          </button>
+        </div>
+      </header>
+
+      <aside
+        className={`relative z-20 hidden flex-shrink-0 flex-col border-r border-white/10 bg-bg transition-[width] duration-200 md:flex ${
+          collapsed ? 'w-16' : 'w-60'
+        }`}
+      >
+        <div
+          className={`pointer-events-none absolute bottom-[120px] top-[88px] w-px bg-gradient-to-b from-transparent via-white/5 to-transparent transition-all duration-200 ${
+            collapsed ? 'left-1/2' : 'left-7'
+          }`}
+        />
 
         <button
           type="button"
-          onClick={onLogout}
-          disabled={loggingOut}
-          title={collapsed ? 'Sign out' : undefined}
-          className={`flex w-full items-center rounded-lg text-danger transition-colors hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-60 ${
-            collapsed ? 'justify-center px-0 py-2.5' : 'justify-start gap-2.5 px-3.5 py-2.5'
+          onClick={() => setCollapsed((c) => !c)}
+          title={collapsed ? 'Expand menu' : 'Collapse menu'}
+          className={`absolute right-[-14px] top-7 z-30 flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-bg text-muted shadow-lg transition-transform hover:border-lime hover:text-lime ${
+            collapsed ? 'rotate-180' : ''
           }`}
         >
-          <SignOutIcon />
+          <ChevronIcon />
+        </button>
+
+        <div className={`flex items-center gap-2.5 border-b border-white/10 ${collapsed ? 'justify-center px-0 py-5' : 'px-5 py-5'}`}>
+          <span className="text-lime">
+            <SignalMark />
+          </span>
           <span
-            className={`overflow-hidden whitespace-nowrap text-sm transition-all ${
-              collapsed ? 'max-w-0 opacity-0' : 'max-w-[200px] opacity-100'
+            className={`overflow-hidden whitespace-nowrap font-display text-base font-semibold transition-all ${
+              collapsed ? 'max-w-0 opacity-0' : 'max-w-[120px] opacity-100'
             }`}
           >
-            {loggingOut ? 'Signing out…' : 'Sign out'}
+            muffler
           </span>
-        </button>
-      </div>
-    </aside>
+          {!collapsed && <span className="ml-auto flex-shrink-0 font-mono text-[10px] tracking-widest text-muted">v0.1</span>}
+        </div>
+
+        <nav className={`flex flex-1 flex-col gap-1 overflow-x-hidden ${collapsed ? 'px-2 py-3.5' : 'px-3 py-3.5'}`}>
+          {!collapsed && (
+            <div className="mb-2 px-3.5 font-mono text-[8px] font-semibold uppercase tracking-[0.24em] text-subtle">Nav</div>
+          )}
+          <NavItem icon={<DashboardIcon />} label="Dashboard" disabled collapsed={collapsed} />
+          <NavItem icon={<ProfileIcon />} label="Profile" active collapsed={collapsed} />
+          <NavItem icon={<SettingsIcon />} label="Settings" disabled collapsed={collapsed} />
+        </nav>
+
+        <div className={`border-t border-white/10 ${collapsed ? 'px-2 py-4' : 'px-3 py-4'}`}>
+          {!collapsed && (
+            <div className="mb-1.5 flex items-center gap-2.5 overflow-hidden rounded-lg bg-white/[0.02] px-3.5 py-2.5">
+              <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-lime-20 bg-lime-10 font-display text-xs font-bold text-lime">
+                {initials}
+              </div>
+              <div className="min-w-0">
+                <div className="truncate text-xs font-semibold text-white">{name}</div>
+                <div className="font-mono text-[10px] tracking-wider text-muted">{role}</div>
+              </div>
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={onLogout}
+            disabled={loggingOut}
+            title={collapsed ? 'Sign out' : undefined}
+            className={`flex w-full items-center rounded-lg text-danger transition-colors hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-60 ${
+              collapsed ? 'justify-center px-0 py-2.5' : 'justify-start gap-2.5 px-3.5 py-2.5'
+            }`}
+          >
+            <SignOutIcon />
+            <span
+              className={`overflow-hidden whitespace-nowrap text-sm transition-all ${
+                collapsed ? 'max-w-0 opacity-0' : 'max-w-[200px] opacity-100'
+              }`}
+            >
+              {loggingOut ? 'Signing out…' : 'Sign out'}
+            </span>
+          </button>
+        </div>
+      </aside>
+    </>
   )
 }
