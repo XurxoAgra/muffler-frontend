@@ -129,10 +129,6 @@ export function VehiclesPage() {
           </div>
         )}
 
-        <div className="mt-6 flex flex-col gap-1 font-mono text-[9px] tracking-[0.16em] text-subtle sm:mt-7 sm:flex-row sm:justify-between">
-          <span>MUFFLER · v0.1 · BETA</span>
-          <span>EXHAUST SYS · MUFFLER VEHICLES</span>
-        </div>
       </main>
 
       {modal?.mode === 'create' && <VehicleFormModal mode="create" onClose={() => setModal(null)} onSaved={handleSaved} />}
