@@ -7,6 +7,7 @@ import { ButtonPrimary } from '../components/ui/ButtonPrimary'
 import { LabelMono } from '../components/ui/LabelMono'
 import { SignalMark } from '../components/SignalMark'
 import { useAuth } from '../auth/AuthContext'
+import { useTheme } from '../theme/ThemeContext'
 import { ApiError } from '../lib/apiClient'
 
 type Mode = 'signin' | 'register'
@@ -19,9 +20,9 @@ const COPY: Record<Mode, { title: string; subtitle: string; cta: string }> = {
 export function LoginPage() {
   const navigate = useNavigate()
   const { login, register } = useAuth()
+  const { theme, setTheme } = useTheme()
 
   const [mode, setMode] = useState<Mode>('signin')
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [firstName, setFirstName] = useState('')

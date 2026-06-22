@@ -12,6 +12,7 @@
   --color-muted: rgb(124, 130, 117);
   --color-danger: #ff4d4d;
   --color-subtle: #2a2f28;
+  --color-fg: #fff;
 
   --font-display: "Roboto", sans-serif;
   --font-body: "Roboto", sans-serif;
@@ -22,10 +23,80 @@ html,
 body {
   margin: 0;
   background: var(--color-bg);
-  color: #fff;
+  color: var(--color-fg);
   font-family: var(--font-body);
 }
 
 #root {
   min-height: 100svh;
+}
+
+.theme-light {
+  --color-bg: #f4f5f0;
+  --color-glass: rgba(255, 255, 255, 0.72);
+  --color-lime: #2d7a00;
+  --color-lime-6: rgba(45, 122, 0, 0.06);
+  --color-lime-10: rgba(45, 122, 0, 0.1);
+  --color-lime-16: rgba(45, 122, 0, 0.16);
+  --color-lime-20: rgba(45, 122, 0, 0.2);
+  --color-muted: #6b7266;
+  --color-danger: #c53030;
+  --color-subtle: #c4cab8;
+  --color-fg: #141a0f;
+}
+
+.theme-light .border-white\/5 {
+  border-color: rgba(20, 26, 15, 0.05);
+}
+
+.theme-light .border-white\/10 {
+  border-color: rgba(20, 26, 15, 0.1);
+}
+
+.theme-light .border-white\/12 {
+  border-color: rgba(20, 26, 15, 0.12);
+}
+
+.theme-light .border-white\/20 {
+  border-color: rgba(20, 26, 15, 0.2);
+}
+
+.theme-light .bg-white\/5 {
+  background-color: rgba(20, 26, 15, 0.05);
+}
+
+.theme-light .bg-white\/\[0\.02\] {
+  background-color: rgba(20, 26, 15, 0.02);
+}
+
+.theme-light .bg-white\/\[0\.04\] {
+  background-color: rgba(20, 26, 15, 0.04);
+}
+
+.theme-light .text-white {
+  color: #141a0f;
+}
+
+.theme-light .text-white\/50 {
+  color: rgba(20, 26, 15, 0.5);
+}
+
+.theme-light .text-white\/70 {
+  color: rgba(20, 26, 15, 0.7);
+}
+
+.theme-light .hover\:bg-white\/5:hover {
+  background-color: rgba(20, 26, 15, 0.05);
+}
+
+.theme-light .hover\:bg-white\/10:hover {
+  background-color: rgba(20, 26, 15, 0.1);
+}
+
+.theme-light .hover\:text-white:hover {
+  color: #141a0f;
+}
+
+.theme-light .bg-lime.text-black {
+  color: #fff;
 }

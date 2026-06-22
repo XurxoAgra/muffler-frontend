@@ -39,3 +39,32 @@ export interface ApiErrorResponse {
     details?: Record<string, unknown>
   }
 }
+
+export interface VehicleCatalogRef {
+  id: string
+  name: string
+}
+
+export interface Vehicle {
+  id: string
+  plate: string
+  year: number
+  type: string
+  vin: string | null
+  make: VehicleCatalogRef | null
+  model: VehicleCatalogRef | null
+  custom_make: string | null
+  custom_model: string | null
+  role: 'owner' | 'shared'
+}
+
+export interface VehicleInput {
+  plate: string
+  year: number
+  type: string
+  vin?: string | null
+  makeId?: string | null
+  modelId?: string | null
+  customMake?: string | null
+  customModel?: string | null
+}

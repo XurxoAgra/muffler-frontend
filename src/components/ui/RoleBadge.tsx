@@ -7,6 +7,7 @@ interface RoleStyle {
 
 const ROLE_STYLES: Record<string, RoleStyle> = {
   admin: { bg: 'bg-lime-10', text: 'text-lime', border: 'border-lime-20', dot: 'bg-lime' },
+  owner: { bg: 'bg-lime-10', text: 'text-lime', border: 'border-lime-20', dot: 'bg-lime' },
   editor: { bg: 'bg-[#78a0ff1a]', text: 'text-[#8aabff]', border: 'border-[#78a0ff38]', dot: 'bg-[#8aabff]' },
 }
 

@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Muffler · Mis vehículos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body, #root { width: 100%; height: 100%; overflow: hidden; }
+  body { font-family: 'Space Grotesk', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(200,255,61,0.18); border-radius: 2px; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="env,react">
+const { useState, useMemo } = React;
+
+// ── Tokens ────────────────────────────────────────────────────────────────────
+function mkTokens(dark) {
+  return dark ? {
+    bg: "#070A08", sidebar: "#0A0D0A", surf: "rgba(15,20,15,0.88)", surfInner: "#0C100C",
+    accent: "#C8FF3D", accentBg: "rgba(200,255,61,0.07)", accentStr: "rgba(200,255,61,0.22)",
+    heat: "#FF7A28", heatBg: "rgba(255,122,40,0.10)", heatStr: "rgba(255,122,40,0.30)",
+    ink: "#EDEFE7", muted: "#6E7569", subtle: "#2A2F28",
+    strokeAlt: "rgba(255,255,255,0.06)", stroke: "rgba(200,255,61,0.12)",
+    danger: "#FF4D4D", dangerBg: "rgba(255,77,77,0.09)",
+    ok: "#C8FF3D", okBg: "rgba(200,255,61,0.07)", okStr: "rgba(200,255,61,0.22)",
+  } : {
+    bg: "#F4F5F0", sidebar: "#FFFFFF", surf: "#FFFFFF", surfInner: "#F9FAF6",
+    accent: "#2D7A00", accentBg: "rgba(45,122,0,0.07)", accentStr: "rgba(45,122,0,0.22)",
+    heat: "#C45A00", heatBg: "rgba(196,90,0,0.08)", heatStr: "rgba(196,90,0,0.25)",
+    ink: "#141A0F", muted: "#6B7266", subtle: "#C4CAB8",
+    strokeAlt: "rgba(20,26,15,0.08)", stroke: "rgba(45,122,0,0.14)",
+    danger: "#C53030", dangerBg: "rgba(197,48,48,0.07)",
+    ok: "#2D7A00", okBg: "rgba(45,122,0,0.07)", okStr: "rgba(45,122,0,0.22)",
+  };
+}
+
+const MONO = "'JetBrains Mono', ui-monospace, monospace";
+const SANS = "'Space Grotesk', system-ui, sans-serif";
+
+// ── Vehicle data ──────────────────────────────────────────────────────────────
+const VEHICLES = [
+  {
+    id: 1, plate: "1234 ABC", make: "Volkswagen", model: "Golf GTI",
+    year: 2019, fuel: "Gasolina", km: 87420, kmMax: 200000,
+    itv:    { status: "vigente",  date: "Jun 2025" },
+    seguro: { status: "vigente",  company: "Mapfre", date: "Dic 2025" },
+  },
+  {
+    id: 2, plate: "5678 XYZ", make: "BMW", model: "M3 Competition",
+    year: 2021, fuel: "Gasolina", km: 34100, kmMax: 200000,
+    itv:    { status: "proxima",  date: "Sep 2024" },
+    seguro: { status: "vigente",  company: "AXA", date: "Ago 2025" },
+  },
+  {
+    id: 3, plate: "9012 DEF", make: "Seat", model: "Ibiza FR",
+    year: 2017, fuel: "Diésel", km: 132500, kmMax: 200000,
+    itv:    { status: "caducada", date: "Ene 2024" },
+    seguro: { status: "proxima",  company: "Generali", date: "Jul 2024" },
+  },
+];
+
+// ── Icons ─────────────────────────────────────────────────────────────────────
+const Ico = {
+  dashboard: (c) => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>,
+  profile:   (c) => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>,
+  car:       (c) => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M19 17H5a2 2 0 0 1-2-2V9l2-5h14l2 5v6a2 2 0 0 1-2 2z"/><circle cx="7.5" cy="17" r="2.5"/><circle cx="16.5" cy="17" r="2.5"/></svg>,
+  settings:  (c) => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M2 12h2m16 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>,
+  signout:   (c) => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>,
+  chevronL:  (c) => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>,
+  edit:      (c) => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
+  eye:       (c) => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>,
+  plus:      (c) => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2.4" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>,
+  sun:       (c) => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>,
+  moon:      (c) => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>,
+};
+
+// ── Wordmark ──────────────────────────────────────────────────────────────────
+function MufflerMark({ size = 20, color }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ display: "block", flexShrink: 0 }}>
+      <rect x="2"    y="4"   width="3" height="16" rx="1" fill={color}>
+        <animate attributeName="height" values="16;7;16" dur="2.6s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="7.5"  y="7"   width="3" height="10" rx="1" fill={color} opacity="0.72">
+        <animate attributeName="height" values="10;15;10" dur="2.6s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="13"   y="9.5" width="3" height="5"  rx="1" fill={color} opacity="0.46">
+        <animate attributeName="height" values="5;11;5" dur="2.6s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="18.5" y="11"  width="3" height="2"  rx="1" fill={color} opacity="0.22"/>
+    </svg>
+  );
+}
+
+// ── Status badge ──────────────────────────────────────────────────────────────
+function StatusBadge({ type, status, date, C }) {
+  const cfg = {
+    vigente:  { bg: C.okBg,     color: C.ok,     border: C.okStr,   label: "OK"      },
+    proxima:  { bg: C.heatBg,   color: C.heat,   border: C.heatStr, label: "Pronto"  },
+    caducada: { bg: C.dangerBg, color: C.danger, border: `rgba(255,77,77,0.28)`, label: "Vencido" },
+  }[status] || {};
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <span style={{
+        display: "inline-flex", alignItems: "center", gap: 5,
+        padding: "3px 8px 3px 6px", borderRadius: 999, width: "fit-content",
+        background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}`,
+        fontFamily: MONO, fontSize: 9, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase",
+      }}>
+        <span style={{ width: 5, height: 5, borderRadius: "50%", background: cfg.color, flexShrink: 0 }}/>
+        {type} · {cfg.label}
+      </span>
+      <span style={{ fontFamily: MONO, fontSize: 9, color: C.muted, letterSpacing: "0.08em", paddingLeft: 2 }}>
+        {date}
+      </span>
+    </div>
+  );
+}
+
+// ── Km gauge ──────────────────────────────────────────────────────────────────
+function KmGauge({ km, kmMax, C }) {
+  const pct = Math.min(km / kmMax, 1);
+  const color = pct > 0.75 ? C.heat : C.accent;
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+        <span style={{ fontFamily: MONO, fontSize: 19, fontWeight: 600, color: C.ink, letterSpacing: "-0.04em" }}>
+          {km.toLocaleString("es-ES")}
+        </span>
+        <span style={{ fontFamily: MONO, fontSize: 9, color: C.muted, letterSpacing: "0.16em" }}>KM</span>
+      </div>
+      <div style={{ height: 3, background: C.strokeAlt, borderRadius: 999, overflow: "hidden" }}>
+        <div style={{
+          height: "100%", width: `${pct * 100}%`,
+          background: `linear-gradient(90deg, ${C.accent}, ${color})`,
+          borderRadius: 999,
+        }}/>
+      </div>
+    </div>
+  );
+}
+
+// ── Car silhouette (side profile) ─────────────────────────────────────────────
+function CarSilhouette({ C }) {
+  const a = C.accent, ab = C.accentBg;
+  const spokes = (cx, cy) => [0,60,120,180,240,300].map(d => {
+    const r = d * Math.PI / 180;
+    return <line key={d}
+      x1={cx + 3.5*Math.cos(r)} y1={cy + 3.5*Math.sin(r)}
+      x2={cx + 8.5*Math.cos(r)} y2={cy + 8.5*Math.sin(r)}
+      stroke={a} strokeWidth="0.9" opacity="0.5"/>;
+  });
+  return (
+    <svg width="150" height="78" viewBox="0 0 150 78" fill="none">
+      {/* shadow */}
+      <ellipse cx="78" cy="76" rx="56" ry="3.5" fill={a} opacity="0.06"/>
+      {/* body */}
+      <path d="M10 54 L14 54 L20 34 Q30 16 52 13 Q72 10 92 14 Q110 18 120 32 Q126 40 130 50 L134 54 L134 62 L10 62 Z"
+        fill={ab} stroke={a} strokeWidth="1.4" strokeLinejoin="round"/>
+      {/* cabin glass */}
+      <path d="M22 32 Q34 14 56 13 Q74 12 90 16 Q104 20 112 30 L86 38 L24 38 Z"
+        fill={a} opacity="0.07" stroke={a} strokeWidth="1" strokeOpacity="0.45"/>
+      {/* A-pillar */}
+      <line x1="24" y1="38" x2="30" y2="14" stroke={a} strokeWidth="1" opacity="0.4"/>
+      {/* B-pillar */}
+      <line x1="74" y1="38" x2="74" y2="13" stroke={a} strokeWidth="0.9" opacity="0.25"/>
+      {/* C-pillar */}
+      <line x1="86" y1="38" x2="90" y2="17" stroke={a} strokeWidth="1" opacity="0.35"/>
+      {/* bonnet line */}
+      <path d="M112 30 Q124 38 132 52" stroke={a} strokeWidth="0.8" opacity="0.25" fill="none"/>
+      {/* front grill */}
+      <rect x="126" y="48" width="8" height="10" rx="1.5" fill={ab} stroke={a} strokeWidth="1" opacity="0.55"/>
+      <line x1="128" y1="50" x2="128" y2="56" stroke={a} strokeWidth="0.7" opacity="0.4"/>
+      <line x1="131" y1="50" x2="131" y2="56" stroke={a} strokeWidth="0.7" opacity="0.4"/>
+      {/* headlight */}
+      <path d="M130 46 Q134 44 136 48" stroke={a} strokeWidth="1" opacity="0.5" fill="none"/>
+      {/* door lines */}
+      <line x1="75" y1="38" x2="75" y2="60" stroke={a} strokeWidth="0.7" opacity="0.2"/>
+      {/* sill */}
+      <rect x="12" y="60" width="122" height="2" rx="1" fill={a} opacity="0.12"/>
+      {/* exhaust */}
+      <rect x="5"  y="57" width="9" height="4" rx="2" fill={a} opacity="0.5"/>
+      <rect x="3"  y="58" width="5" height="2" rx="1" fill={a} opacity="0.3"/>
+      {/* wheels */}
+      <circle cx="36" cy="64" r="13" fill={ab} stroke={a} strokeWidth="1.5"/>
+      <circle cx="36" cy="64" r="7.5" fill="none" stroke={a} strokeWidth="0.8" opacity="0.3"/>
+      <circle cx="36" cy="64" r="3.5" fill={a} opacity="0.18"/>
+      {spokes(36, 64)}
+      <circle cx="110" cy="64" r="13" fill={ab} stroke={a} strokeWidth="1.5"/>
+      <circle cx="110" cy="64" r="7.5" fill="none" stroke={a} strokeWidth="0.8" opacity="0.3"/>
+      <circle cx="110" cy="64" r="3.5" fill={a} opacity="0.18"/>
+      {spokes(110, 64)}
+    </svg>
+  );
+}
+
+// ── Vehicle card ──────────────────────────────────────────────────────────────
+function VehicleCard({ v, C, dark }) {
+  const [hE, setHE] = useState(false);
+  const [hV, setHV] = useState(false);
+  const btnStyle = (hov) => ({
+    flex: 1, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
+    padding: "9px 0", borderRadius: 8,
+    border: `1px solid ${hov ? C.accent : C.strokeAlt}`,
+    background: hov ? C.accentBg : "transparent",
+    color: hov ? C.accent : C.muted,
+    fontSize: 12, fontWeight: 500, transition: "all 140ms",
+  });
+  return (
+    <div style={{
+      background: C.surf, border: `1px solid ${C.strokeAlt}`, borderRadius: 16, overflow: "hidden",
+      backdropFilter: dark ? "blur(20px)" : "none",
+      WebkitBackdropFilter: dark ? "blur(20px)" : "none",
+      boxShadow: dark
+        ? "0 16px 48px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.03)"
+        : "0 4px 24px rgba(20,26,15,0.07), 0 1px 3px rgba(20,26,15,0.04)",
+      display: "flex", flexDirection: "column",
+    }}>
+      {/* ── header: plate + visual ── */}
+      <div style={{
+        padding: "20px 20px 16px",
+        background: dark
+          ? "linear-gradient(145deg, rgba(200,255,61,0.04), transparent 70%)"
+          : "linear-gradient(145deg, rgba(45,122,0,0.04), #FAFBF7 70%)",
+        borderBottom: `1px solid ${C.strokeAlt}`,
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <span style={{
+            fontFamily: MONO, fontSize: 13, fontWeight: 700, letterSpacing: "0.14em",
+            color: C.accent, background: C.accentBg, border: `1px solid ${C.accentStr}`,
+            padding: "4px 10px", borderRadius: 6,
+          }}>{v.plate}</span>
+          <span style={{ fontFamily: MONO, fontSize: 9, color: C.muted, letterSpacing: "0.18em" }}>{v.year}</span>
+        </div>
+        <div style={{ textAlign: "center", marginTop: 4 }}>
+          <div style={{ fontSize: 15, fontWeight: 600, color: C.ink, letterSpacing: "-0.02em", lineHeight: 1.2 }}>
+            {v.make} <span style={{ fontWeight: 400 }}>{v.model}</span>
+          </div>
+          <div style={{ fontFamily: MONO, fontSize: 8, color: C.muted, letterSpacing: "0.20em", marginTop: 3, textTransform: "uppercase" }}>
+            {v.fuel}
+          </div>
+        </div>
+      </div>
+
+      {/* ── body: statuses + km + actions ── */}
+      <div style={{ padding: "16px 20px 18px", display: "flex", flexDirection: "column", gap: 14, flex: 1 }}>
+        {/* statuses */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+          <StatusBadge type="ITV"    status={v.itv.status}    date={v.itv.date}    C={C}/>
+          <StatusBadge type="Seguro" status={v.seguro.status} date={v.seguro.date} C={C}/>
+        </div>
+
+        {/* km */}
+        <div style={{ paddingTop: 12, borderTop: `1px solid ${C.strokeAlt}` }}>
+          <div style={{ fontFamily: MONO, fontSize: 8, color: C.muted, letterSpacing: "0.22em", textTransform: "uppercase", marginBottom: 8 }}>
+            Kilometraje
+          </div>
+          <KmGauge km={v.km} kmMax={v.kmMax} C={C}/>
+        </div>
+
+        {/* actions */}
+        <div style={{ display: "flex", gap: 8, marginTop: "auto", paddingTop: 4 }}>
+          <button onMouseEnter={() => setHE(true)} onMouseLeave={() => setHE(false)} style={btnStyle(hE)}>
+            {Ico.edit(hE ? C.accent : C.muted)} Editar
+          </button>
+          <button onMouseEnter={() => setHV(true)} onMouseLeave={() => setHV(false)} style={btnStyle(hV)}>
+            {Ico.eye(hV ? C.accent : C.muted)} Ver más
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+function EmptyState({ C, dark }) {
+  const [hov, setHov] = useState(false);
+  const a = C.accent;
+  const bolts = [0,60,120,180,240,300].map(d => {
+    const r = d * Math.PI / 180, cx = 60 + 50*Math.cos(r), cy = 60 + 50*Math.sin(r);
+    return <circle key={d} cx={cx} cy={cy} r="4.5" fill={C.accentBg} stroke={a} strokeWidth="1" opacity="0.5"/>;
+  });
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "72px 40px", gap: 22, textAlign: "center" }}>
+      <svg width="130" height="130" viewBox="0 0 120 120" fill="none">
+        <circle cx="60" cy="60" r="56" stroke={a} strokeWidth="1" opacity="0.14"/>
+        <circle cx="60" cy="60" r="44" stroke={a} strokeWidth="1" opacity="0.20"/>
+        <circle cx="60" cy="60" r="32" stroke={a} strokeWidth="1.4" opacity="0.30"/>
+        <circle cx="60" cy="60" r="20" fill={C.accentBg} stroke={a} strokeWidth="1.5" opacity="0.55"/>
+        <circle cx="60" cy="60" r="5"  fill={a} opacity="0.35"/>
+        {bolts}
+        <path d="M44 66 L48 54 Q53 45 60 44 Q67 45 72 54 L76 66 Z"
+          fill={C.accentBg} stroke={a} strokeWidth="1.2" opacity="0.65" strokeLinejoin="round"/>
+        <circle cx="49" cy="66" r="5" fill={C.accentBg} stroke={a} strokeWidth="1.2" opacity="0.65"/>
+        <circle cx="71" cy="66" r="5" fill={C.accentBg} stroke={a} strokeWidth="1.2" opacity="0.65"/>
+        <line x1="40" y1="67" x2="44" y2="67" stroke={a} strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
+      </svg>
+      <div>
+        <h3 style={{ fontSize: 20, fontWeight: 500, color: C.ink, letterSpacing: "-0.025em", marginBottom: 8 }}>
+          Sin vehículos registrados
+        </h3>
+        <p style={{ fontSize: 13, color: C.muted, lineHeight: 1.65, maxWidth: 300 }}>
+          Añade tu primer vehículo para controlar ITV, seguro y kilometraje en un solo lugar.
+        </p>
+      </div>
+      <button
+        onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+        style={{
+          display: "inline-flex", alignItems: "center", gap: 8,
+          padding: "12px 26px", borderRadius: 999,
+          background: C.accent, color: dark ? "#070A08" : "#141A0F",
+          fontFamily: SANS, fontSize: 13, fontWeight: 600, letterSpacing: "-0.01em",
+          boxShadow: hov ? (dark ? "0 8px 28px rgba(200,255,61,0.28)" : "0 6px 20px rgba(45,122,0,0.22)") : "none",
+          transform: hov ? "translateY(-1px)" : "translateY(0)",
+          transition: "box-shadow 160ms, transform 160ms",
+        }}
+      >
+        {Ico.plus(dark ? "#070A08" : "#141A0F")} Añadir vehículo
+      </button>
+    </div>
+  );
+}
+
+// ── Sidebar nav item ──────────────────────────────────────────────────────────
+function SideNavItem({ icon, label, active, disabled, collapsed, C, dark }) {
+  const [hov, setHov] = useState(false);
+  const col = active ? C.accent : disabled ? C.subtle : hov && !disabled ? C.ink : C.muted;
+  return (
+    <button
+      disabled={disabled}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      title={collapsed ? label : undefined}
+      style={{
+        width: "100%", display: "flex", alignItems: "center",
+        gap: collapsed ? 0 : 12, justifyContent: collapsed ? "center" : "flex-start",
+        padding: collapsed ? "11px 0" : "10px 14px", borderRadius: 8,
+        background: active ? C.accentBg : hov && !disabled ? (dark ? "rgba(255,255,255,0.03)" : "rgba(20,26,15,0.04)") : "transparent",
+        color: col, fontSize: 13, fontWeight: active ? 600 : 500, letterSpacing: "-0.01em",
+        transition: "background 130ms", cursor: disabled ? "default" : "pointer",
+        position: "relative",
+      }}
+    >
+      {active && <span style={{ position: "absolute", left: 0, top: "25%", bottom: "25%", width: 2, background: C.accent, borderRadius: 1, boxShadow: dark ? `0 0 8px ${C.accent}44` : "none" }}/>}
+      {icon(col)}
+      <span style={{ overflow: "hidden", whiteSpace: "nowrap", maxWidth: collapsed ? 0 : 200, opacity: collapsed ? 0 : 1, transition: "max-width 220ms cubic-bezier(.4,0,.2,1), opacity 180ms" }}>
+        {label}
+      </span>
+      {active && !collapsed && <span style={{ marginLeft: "auto", width: 5, height: 5, borderRadius: "50%", background: C.accent, flexShrink: 0 }}/>}
+    </button>
+  );
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────────────────
+function Sidebar({ collapsed, onToggle, C, dark }) {
+  const [soHov, setSoHov] = useState(false);
+  const navItems = [
+    { icon: Ico.dashboard, label: "Dashboard",    active: false, disabled: true },
+    { icon: Ico.profile,   label: "Perfil",       active: false, disabled: false },
+    { icon: Ico.car,       label: "Mis vehículos",active: true,  disabled: false },
+    { icon: Ico.settings,  label: "Settings",     active: false, disabled: true },
+  ];
+  return (
+    <aside style={{
+      position: "relative", zIndex: 20, flexShrink: 0,
+      width: collapsed ? 64 : 232, transition: "width 240ms cubic-bezier(.4,0,.2,1)",
+      display: "flex", flexDirection: "column",
+      background: C.sidebar, borderRight: `1px solid ${C.strokeAlt}`,
+      boxShadow: dark ? "none" : "2px 0 16px rgba(20,26,15,0.06)",
+    }}>
+      {/* decorative pipe line */}
+      <div style={{
+        position: "absolute", left: collapsed ? "50%" : 28, top: 90, bottom: 128, width: 1,
+        background: `linear-gradient(to bottom, transparent, ${C.strokeAlt} 15%, ${C.strokeAlt} 85%, transparent)`,
+        transition: "left 240ms cubic-bezier(.4,0,.2,1)", pointerEvents: "none",
+      }}/>
+      {/* collapse toggle */}
+      <button onClick={onToggle} style={{
+        position: "absolute", top: 26, right: -14, zIndex: 30,
+        width: 28, height: 28, borderRadius: "50%",
+        background: C.sidebar, border: `1px solid ${C.strokeAlt}`,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        transform: collapsed ? "rotate(180deg)" : "rotate(0deg)",
+        transition: "transform 240ms cubic-bezier(.4,0,.2,1)",
+        boxShadow: "0 2px 8px rgba(20,26,15,0.08)",
+      }}>
+        {Ico.chevronL(C.muted)}
+      </button>
+      {/* brand */}
+      <div style={{
+        display: "flex", alignItems: "center",
+        gap: collapsed ? 0 : 10, justifyContent: collapsed ? "center" : "flex-start",
+        padding: collapsed ? "22px 0" : "22px 20px",
+        borderBottom: `1px solid ${C.strokeAlt}`, overflow: "hidden",
+      }}>
+        <MufflerMark size={18} color={C.accent}/>
+        <span style={{ fontWeight: 600, fontSize: 15, letterSpacing: "-0.025em", color: C.ink, whiteSpace: "nowrap", maxWidth: collapsed ? 0 : 120, opacity: collapsed ? 0 : 1, overflow: "hidden", transition: "max-width 220ms cubic-bezier(.4,0,.2,1), opacity 160ms" }}>
+          muffler
+        </span>
+        {!collapsed && <span style={{ marginLeft: "auto", fontFamily: MONO, fontSize: 9, color: C.muted, letterSpacing: "0.18em", flexShrink: 0 }}>v0.1</span>}
+      </div>
+      {/* nav */}
+      <nav style={{ flex: 1, padding: collapsed ? "14px 8px" : "14px 12px", display: "flex", flexDirection: "column", gap: 2, transition: "padding 240ms", overflowX: "hidden" }}>
+        {!collapsed && <div style={{ fontFamily: MONO, fontSize: 8, color: C.subtle, letterSpacing: "0.24em", textTransform: "uppercase", padding: "0 14px", marginBottom: 8, fontWeight: 600 }}>Nav</div>}
+        {navItems.map(item => <SideNavItem key={item.label} {...item} collapsed={collapsed} C={C} dark={dark}/>)}
+      </nav>
+      {/* user + signout */}
+      <div style={{ padding: collapsed ? "10px 8px 16px" : "10px 12px 16px", borderTop: `1px solid ${C.strokeAlt}` }}>
+        {!collapsed && (
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 14px", borderRadius: 8, marginBottom: 6, background: dark ? "rgba(255,255,255,0.02)" : "rgba(20,26,15,0.03)", border: `1px solid ${C.strokeAlt}` }}>
+            <div style={{ width: 28, height: 28, borderRadius: "50%", flexShrink: 0, background: C.accentBg, border: `1px solid ${C.accentStr}`, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: SANS, fontSize: 11, fontWeight: 700, color: C.accent }}>AL</div>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: C.ink, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Ada Lovelace</div>
+              <div style={{ fontFamily: MONO, fontSize: 9, color: C.muted, letterSpacing: "0.08em" }}>Admin</div>
+            </div>
+          </div>
+        )}
+        <button onMouseEnter={() => setSoHov(true)} onMouseLeave={() => setSoHov(false)} title={collapsed ? "Sign Out" : undefined}
+          style={{ width: "100%", display: "flex", alignItems: "center", gap: collapsed ? 0 : 10, justifyContent: collapsed ? "center" : "flex-start", padding: collapsed ? "10px 0" : "10px 14px", borderRadius: 8, background: soHov ? C.dangerBg : "transparent", color: C.danger, fontSize: 13, fontWeight: 500, transition: "background 130ms" }}>
+          {Ico.signout(C.danger)}
+          <span style={{ overflow: "hidden", whiteSpace: "nowrap", maxWidth: collapsed ? 0 : 200, opacity: collapsed ? 0 : 1, transition: "max-width 220ms cubic-bezier(.4,0,.2,1), opacity 180ms" }}>Sign Out</span>
+        </button>
+      </div>
+    </aside>
+  );
+}
+
+// ── App ───────────────────────────────────────────────────────────────────────
+function App() {
+  const [dark, setDark]       = useState(true);
+  const [collapsed, setCol]   = useState(false);
+  const [showEmpty]           = useState(false); // flip to true to preview empty state
+  const [addHov, setAddHov]   = useState(false);
+  const [togHov, setTogHov]   = useState(false);
+  const C = useMemo(() => mkTokens(dark), [dark]);
+  const vehicles = showEmpty ? [] : VEHICLES;
+
+  return (
+    <div style={{ display: "flex", width: "100%", height: "100%", overflow: "hidden", background: C.bg, color: C.ink, position: "relative" }}>
+      {/* carbon fiber texture — dark only */}
+      {dark && (
+        <div aria-hidden style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
+          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="cf" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+                <rect x="0" y="0" width="4" height="4" fill="rgba(255,255,255,0.016)"/>
+                <rect x="4" y="4" width="4" height="4" fill="rgba(255,255,255,0.016)"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#cf)"/>
+          </svg>
+        </div>
+      )}
+      {/* radial glows */}
+      <div aria-hidden style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none",
+        backgroundImage: dark
+          ? "radial-gradient(700px 450px at -5% 110%, rgba(200,255,61,0.08), transparent 55%), radial-gradient(500px 350px at 106% -5%, rgba(255,122,40,0.06), transparent 55%)"
+          : "radial-gradient(700px 450px at -5% 110%, rgba(45,122,0,0.06), transparent 55%)",
+      }}/>
+
+      <Sidebar collapsed={collapsed} onToggle={() => setCol(c => !c)} C={C} dark={dark}/>
+
+      <main style={{ position: "relative", zIndex: 1, flex: 1, overflowY: "auto", padding: "44px 52px 52px", display: "flex", flexDirection: "column", gap: 28 }}>
+        {/* ── page header ── */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, flexWrap: "wrap" }}>
+          <div>
+            <div style={{ fontFamily: MONO, fontSize: 9, color: C.muted, letterSpacing: "0.24em", textTransform: "uppercase", marginBottom: 6 }}>
+              Cuenta <span style={{ color: C.subtle }}>·</span> Mis vehículos
+            </div>
+            <h1 style={{ fontSize: 30, fontWeight: 500, letterSpacing: "-0.035em", lineHeight: 1.1, color: C.ink }}>
+              Mis vehículos
+            </h1>
+            <p style={{ fontSize: 14, color: C.muted, marginTop: 5 }}>
+              Controla ITV, seguros y kilometraje de tu flota.
+            </p>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0, paddingTop: 6 }}>
+            {/* theme toggle */}
+            <button
+              onMouseEnter={() => setTogHov(true)} onMouseLeave={() => setTogHov(false)}
+              onClick={() => setDark(d => !d)}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 7,
+                padding: "8px 14px", borderRadius: 999,
+                border: `1px solid ${togHov ? C.accent : C.strokeAlt}`,
+                background: togHov ? C.accentBg : (dark ? "rgba(255,255,255,0.04)" : "rgba(20,26,15,0.03)"),
+                color: togHov ? C.accent : C.muted,
+                fontFamily: MONO, fontSize: 9, letterSpacing: "0.16em",
+                transition: "all 140ms",
+              }}
+            >
+              {dark ? Ico.sun(togHov ? C.accent : C.muted) : Ico.moon(togHov ? C.accent : C.muted)}
+              {dark ? "LIGHT" : "DARK"}
+            </button>
+
+            {/* add vehicle */}
+            <button
+              onMouseEnter={() => setAddHov(true)} onMouseLeave={() => setAddHov(false)}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                padding: "10px 22px", borderRadius: 999,
+                background: C.accent, color: dark ? "#070A08" : "#141A0F",
+                fontFamily: SANS, fontSize: 13, fontWeight: 600, letterSpacing: "-0.01em",
+                boxShadow: addHov ? (dark ? "0 8px 28px rgba(200,255,61,0.28)" : "0 6px 20px rgba(45,122,0,0.20)") : "none",
+                transform: addHov ? "translateY(-1px)" : "translateY(0)",
+                transition: "box-shadow 160ms, transform 160ms",
+              }}
+            >
+              {Ico.plus(dark ? "#070A08" : "#141A0F")} Añadir vehículo
+            </button>
+          </div>
+        </div>
+
+        {/* ── vehicle grid or empty ── */}
+        {vehicles.length === 0 ? (
+          <div style={{
+            background: C.surf, border: `1px solid ${C.strokeAlt}`, borderRadius: 16,
+            boxShadow: dark ? "0 12px 40px rgba(0,0,0,0.35)" : "0 4px 20px rgba(20,26,15,0.06)",
+          }}>
+            <EmptyState C={C} dark={dark}/>
+          </div>
+        ) : (
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(290px, 1fr))",
+            gap: 20,
+          }}>
+            {vehicles.map(v => <VehicleCard key={v.id} v={v} C={C} dark={dark}/>)}
+          </div>
+        )}
+
+        {/* ── footer ── */}
+        <div style={{ display: "flex", justifyContent: "space-between", fontFamily: MONO, fontSize: 9, color: C.subtle, letterSpacing: "0.16em", paddingTop: 4 }}>
+          <span>MUFFLER · v0.1 · BETA</span>
+          <span>muffler.app/vehiculos</span>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
