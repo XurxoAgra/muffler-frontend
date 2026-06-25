@@ -68,3 +68,29 @@ export interface VehicleInput {
   customMake?: string | null
   customModel?: string | null
 }
+
+export interface MaintenanceRecord {
+  id: string
+  vehicleId: string
+  invoiceId: string | null
+  createdById: string
+  serviceDate: string
+  type: string
+  mileage: number | null
+  cost: string | null
+  shopName: string | null
+  nextServiceDate: string | null
+  notes: string | null
+  verified: boolean
+  createdAt: string
+}
+
+export interface MaintenanceRecordInput {
+  serviceDate: string
+  type: string
+  mileage?: number | null
+  cost?: string | null
+  shopName?: string | null
+  nextServiceDate?: string | null
+  notes?: string | null
+}

@@ -4,6 +4,7 @@ import { RequireAuth } from './auth/RequireAuth'
 import { LoginPage } from './pages/LoginPage'
 import { ProfilePage } from './pages/ProfilePage'
 import { VehiclesPage } from './pages/VehiclesPage'
+import { MantenimientoPage } from './pages/MantenimientoPage'
 import { ThemeProvider } from './theme/ThemeContext'
 
 function App() {
@@ -26,6 +27,22 @@ function App() {
               element={
                 <RequireAuth>
                   <VehiclesPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/mantenimiento"
+              element={
+                <RequireAuth>
+                  <MantenimientoPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/mantenimiento/:vehicleId"
+              element={
+                <RequireAuth>
+                  <MantenimientoPage />
                 </RequireAuth>
               }
             />

@@ -6,6 +6,7 @@ import { ButtonPrimary } from '../ui/ButtonPrimary'
 import { ButtonGlass } from '../ui/ButtonGlass'
 import { apiFetch, ApiError } from '../../lib/apiClient'
 import type { Vehicle, VehicleCatalogRef, VehicleInput } from '../../lib/types'
+import { VEHICLE_TYPES, type VehicleTypeValue } from '../../constants/vehicleTypes'
 
 type CatalogTab = 'catalog' | 'custom'
 
@@ -21,7 +22,9 @@ const VIN_PATTERN = /^[A-HJ-NPR-Z0-9]{17}$/i
 export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFormModalProps) {
   const [plate, setPlate] = useState(vehicle?.plate ?? '')
   const [year, setYear] = useState(vehicle ? String(vehicle.year) : '')
-  const [type, setType] = useState(vehicle?.type ?? 'car')
+  const [type, setType] = useState<VehicleTypeValue | ''>(
+    (vehicle?.type as VehicleTypeValue | undefined) ?? ''
+  )
   const [vin, setVin] = useState(vehicle?.vin ?? '')
   const [tab, setTab] = useState<CatalogTab>(vehicle?.custom_make != null ? 'custom' : 'catalog')
   const [makeId, setMakeId] = useState(vehicle?.make?.id ?? '')
@@ -64,7 +67,7 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
     const errors: Partial<Record<string, string>> = {}
     if (!plate.trim()) errors.plate = 'Plate is required.'
     if (!year.trim()) errors.year = 'Year is required.'
-    if (!type.trim()) errors.type = 'Type is required.'
+    if (!type) errors.type = 'El tipo es requerido.'
     if (vin.trim() && !VIN_PATTERN.test(vin.trim())) errors.vin = '17 characters, no I, O or Q.'
     if (tab === 'catalog' && !makeId) errors.makeId = 'Select a make.'
     if (tab === 'custom' && !customMake.trim()) errors.customMake = 'Make is required.'
@@ -131,7 +134,21 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
             error={fieldErrors.year}
             required
           />
-          <UnderlineInput label="Type" value={type} onChange={(e) => setType(e.target.value)} error={fieldErrors.type} required />
+          <div className="flex flex-col gap-2">
+              <label className="font-mono text-xs uppercase tracking-widest text-muted">Tipo</label>
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value as VehicleTypeValue)}
+                required
+                className="w-full border-0 border-b border-white/12 bg-transparent py-2 text-white outline-none focus:border-lime"
+              >
+                <option value="" disabled className="bg-bg">Selecciona un tipo</option>
+                {VEHICLE_TYPES.map((t) => (
+                  <option key={t.value} value={t.value} className="bg-bg">{t.label}</option>
+                ))}
+              </select>
+              {fieldErrors.type && <p className="text-xs text-red-400">{fieldErrors.type}</p>}
+            </div>
         </div>
 
         <UnderlineInput
