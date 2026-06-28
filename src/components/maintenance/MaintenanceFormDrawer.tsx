@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Modal } from '../ui/Modal'
 import { UnderlineInput } from '../ui/UnderlineInput'
 import { ButtonPrimary } from '../ui/ButtonPrimary'
@@ -23,6 +24,8 @@ export function MaintenanceFormDrawer({
   onClose,
   onSaved,
 }: MaintenanceFormDrawerProps) {
+  const { t } = useTranslation()
+
   const [serviceDate, setServiceDate] = useState(record?.serviceDate ?? '')
   const [type, setType] = useState(record?.type ?? '')
   const [mileage, setMileage] = useState(record?.mileage != null ? String(record.mileage) : '')
@@ -37,16 +40,16 @@ export function MaintenanceFormDrawer({
 
   function validate(): Partial<Record<string, string>> {
     const errors: Partial<Record<string, string>> = {}
-    if (!serviceDate) errors.serviceDate = 'La fecha de servicio es requerida.'
-    if (!type.trim()) errors.type = 'El tipo es requerido.'
+    if (!serviceDate) errors.serviceDate = t('maintenance.validation.serviceDateRequired')
+    if (!type.trim()) errors.type = t('maintenance.validation.typeRequired')
     if (mileage.trim()) {
       const n = Number(mileage)
       if (!Number.isInteger(n) || n < 0) {
-        errors.mileage = 'Debe ser un número entero positivo.'
+        errors.mileage = t('maintenance.validation.mileageFormat')
       }
     }
     if (cost.trim() && !COST_PATTERN.test(cost.trim())) {
-      errors.cost = 'Formato incorrecto (ej: 120.50).'
+      errors.cost = t('maintenance.validation.costFormat')
     }
     return errors
   }
@@ -90,21 +93,21 @@ export function MaintenanceFormDrawer({
         }
         setFieldErrors(mapped)
       } else {
-        setFormError(err instanceof ApiError ? err.message : 'No se pudo guardar el registro.')
+        setFormError(err instanceof ApiError ? err.message : t('maintenance.errors.save'))
       }
     } finally {
       setSubmitting(false)
     }
   }
 
-  const title = mode === 'create' ? 'Añadir registro.' : 'Editar registro.'
-
   return (
     <Modal onClose={onClose} className="max-h-[90svh] overflow-y-auto">
       <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
-        <h2 className="font-display text-xl font-semibold text-white">{title}</h2>
+        <h2 className="font-display text-xl font-semibold text-white">
+          {mode === 'create' ? t('maintenance.addModal') : t('maintenance.editModal')}
+        </h2>
         <UnderlineInput
-          label="Fecha de servicio"
+          label={t('maintenance.fields.serviceDate')}
           type="date"
           value={serviceDate}
           onChange={(e) => setServiceDate(e.target.value)}
@@ -112,54 +115,56 @@ export function MaintenanceFormDrawer({
           required
         />
         <UnderlineInput
-          label="Tipo"
+          label={t('maintenance.fields.type')}
           value={type}
           onChange={(e) => setType(e.target.value)}
-          placeholder="Ej: Cambio de aceite, Revisión ITV…"
+          placeholder={t('maintenance.placeholders.type')}
           error={fieldErrors.type}
           required
         />
         <div className="grid grid-cols-2 gap-4">
           <UnderlineInput
-            label="Km"
+            label={t('maintenance.fields.km')}
             type="number"
             min={0}
             step={1}
             value={mileage}
             onChange={(e) => setMileage(e.target.value)}
-            placeholder="Ej: 45000"
+            placeholder={t('maintenance.placeholders.km')}
             error={fieldErrors.mileage}
           />
           <UnderlineInput
-            label="Coste"
+            label={t('maintenance.fields.cost')}
             value={cost}
             onChange={(e) => setCost(e.target.value)}
-            placeholder="Ej: 120.50"
+            placeholder={t('maintenance.placeholders.cost')}
             error={fieldErrors.cost}
           />
         </div>
         <UnderlineInput
-          label="Taller"
+          label={t('maintenance.fields.shop')}
           value={shopName}
           onChange={(e) => setShopName(e.target.value)}
-          placeholder="Ej: Taller Pepe"
+          placeholder={t('maintenance.placeholders.shop')}
           maxLength={255}
           error={fieldErrors.shopName}
         />
         <UnderlineInput
-          label="Próxima revisión"
+          label={t('maintenance.fields.nextService')}
           type="date"
           value={nextServiceDate}
           onChange={(e) => setNextServiceDate(e.target.value)}
           error={fieldErrors.nextServiceDate}
         />
         <div className="flex flex-col gap-2">
-          <label className="font-mono text-xs uppercase tracking-widest text-muted">Notas</label>
+          <label className="font-mono text-xs uppercase tracking-widest text-muted">
+            {t('maintenance.fields.notes')}
+          </label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
-            placeholder="Observaciones adicionales…"
+            placeholder={t('maintenance.placeholders.notes')}
             className="w-full resize-none border-0 border-b border-white/12 bg-transparent py-2 text-white outline-none transition-colors placeholder:text-muted focus:border-lime"
           />
           {fieldErrors.notes && <p className="text-xs text-red-400">{fieldErrors.notes}</p>}
@@ -171,10 +176,14 @@ export function MaintenanceFormDrawer({
 
         <div className="mt-2 flex gap-3">
           <ButtonGlass type="button" className="flex-1" onClick={onClose}>
-            Cancelar
+            {t('common.cancel')}
           </ButtonGlass>
           <ButtonPrimary type="submit" className="flex-1" disabled={submitting}>
-            {submitting ? 'Guardando…' : mode === 'create' ? 'Añadir registro' : 'Guardar cambios'}
+            {submitting
+              ? t('maintenance.saving')
+              : mode === 'create'
+                ? t('maintenance.add')
+                : t('maintenance.saveChanges')}
           </ButtonPrimary>
         </div>
       </form>

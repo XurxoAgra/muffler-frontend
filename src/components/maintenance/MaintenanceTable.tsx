@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { GlassPanel } from '../ui/GlassPanel'
 import { VerifiedBadge } from './VerifiedBadge'
 import { formatDate, formatMileage, formatCost } from './formatters'
@@ -15,17 +16,6 @@ interface MaintenanceTableProps {
 }
 
 type Column = { key: SortKey | null; label: string }
-
-const COLUMNS: Column[] = [
-  { key: 'serviceDate', label: 'Fecha' },
-  { key: 'type', label: 'Tipo' },
-  { key: null, label: 'Taller' },
-  { key: 'mileage', label: 'Km' },
-  { key: 'cost', label: 'Coste' },
-  { key: 'nextServiceDate', label: 'Próxima revisión' },
-  { key: null, label: 'Verificado' },
-  { key: null, label: 'Acciones' },
-]
 
 function SortIcon({ active, dir }: { active: boolean; dir: 'asc' | 'desc' }) {
   const isUp = active && dir === 'asc'
@@ -96,6 +86,19 @@ export function MaintenanceTable({
   onEdit,
   onDelete,
 }: MaintenanceTableProps) {
+  const { t } = useTranslation()
+
+  const COLUMNS: Column[] = [
+    { key: 'serviceDate', label: t('maintenance.table.date') },
+    { key: 'type', label: t('maintenance.table.type') },
+    { key: null, label: t('maintenance.table.shop') },
+    { key: 'mileage', label: t('maintenance.table.km') },
+    { key: 'cost', label: t('maintenance.table.cost') },
+    { key: 'nextServiceDate', label: t('maintenance.table.nextService') },
+    { key: null, label: t('maintenance.table.verified') },
+    { key: null, label: t('maintenance.table.actions') },
+  ]
+
   return (
     <GlassPanel rounded="rounded-2xl" className="overflow-hidden">
       <table className="w-full">
@@ -142,7 +145,7 @@ export function MaintenanceTable({
                   <button
                     type="button"
                     onClick={() => onEdit(r)}
-                    title="Editar"
+                    title={t('maintenance.editTitle')}
                     className="flex h-7 w-7 items-center justify-center rounded-lg text-muted transition-colors hover:bg-white/5 hover:text-white"
                   >
                     <EditIcon />
@@ -150,7 +153,7 @@ export function MaintenanceTable({
                   <button
                     type="button"
                     onClick={() => onDelete(r)}
-                    title="Eliminar"
+                    title={t('maintenance.deleteTitle')}
                     className="flex h-7 w-7 items-center justify-center rounded-lg text-muted transition-colors hover:bg-danger/10 hover:text-danger"
                   >
                     <TrashIcon />

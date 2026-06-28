@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Sidebar } from '../components/ui/Sidebar'
 import { GlassPanel } from '../components/ui/GlassPanel'
 import { Modal } from '../components/ui/Modal'
@@ -20,6 +21,7 @@ export function MantenimientoPage() {
   const { vehicleId } = useParams<{ vehicleId: string }>()
   const navigate = useNavigate()
   const { logout } = useAuth()
+  const { t, i18n } = useTranslation()
 
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loggingOut, setLoggingOut] = useState(false)
@@ -72,18 +74,16 @@ export function MantenimientoPage() {
       setRecords(data)
     } catch (err) {
       if (err instanceof ApiError && err.status === 403) {
-        setRecordsError('No tienes acceso a este vehículo.')
+        setRecordsError(t('maintenance.errors.forbidden'))
       } else if (err instanceof ApiError && err.status === 404) {
-        setRecordsError('Vehículo no encontrado.')
+        setRecordsError(t('maintenance.errors.notFound'))
       } else {
-        setRecordsError(
-          err instanceof ApiError ? err.message : 'No se pudo cargar el historial.',
-        )
+        setRecordsError(err instanceof ApiError ? err.message : t('maintenance.errors.load'))
       }
     } finally {
       setLoadingRecords(false)
     }
-  }, [])
+  }, [t])
 
   useEffect(() => {
     if (!vehicleId) return
@@ -137,18 +137,20 @@ export function MantenimientoPage() {
       setDeleteConfirm(null)
     } catch (err) {
       setDeleteError(
-        err instanceof ApiError ? err.message : 'No se pudo eliminar el registro.',
+        err instanceof ApiError ? err.message : t('maintenance.errors.delete'),
       )
     } finally {
       setDeleting(false)
     }
   }
 
-  const fullName = profile ? `${profile.first_name} ${profile.last_name}` : 'Cargando…'
+  const fullName = profile ? `${profile.first_name} ${profile.last_name}` : t('common.loading')
   const initials = profile
     ? `${profile.first_name.charAt(0)}${profile.last_name.charAt(0)}`.toUpperCase()
     : '··'
-  const primaryRole = profile?.roles[0] ?? 'Member'
+  const primaryRole = profile?.roles[0] ?? t('profile.defaultRole')
+
+  const dateLang = i18n.language === 'en' ? 'en-GB' : 'es-ES'
 
   return (
     <div className="flex min-h-svh flex-col bg-bg md:flex-row">
@@ -163,13 +165,13 @@ export function MantenimientoPage() {
       <main className="flex-1 px-4 py-7 sm:px-8 sm:py-9 md:px-[52px] md:pb-[52px] md:pt-[44px]">
         <div className="mb-6 md:mb-7">
           <div className="mb-1.5 font-mono text-[10px] uppercase tracking-[0.24em] text-muted">
-            Account <span className="text-subtle">·</span> Mantenimiento
+            {t('profile.account')} <span className="text-subtle">·</span> {t('maintenance.page.breadcrumb')}
           </div>
           <h1 className="font-display text-2xl font-medium leading-tight tracking-tight text-white sm:text-[30px]">
-            Mantenimiento.
+            {t('maintenance.page.title')}
           </h1>
           <p className="mt-1.5 text-sm text-muted">
-            Historial de mantenimiento de tu vehículo.
+            {t('maintenance.page.subtitle')}
           </p>
         </div>
 
@@ -177,17 +179,17 @@ export function MantenimientoPage() {
           <GlassPanel rounded="rounded-2xl">
             <div className="flex flex-col items-center gap-5 px-10 py-16 text-center">
               <h3 className="font-display text-lg font-medium text-white">
-                Sin vehículos registrados.
+                {t('maintenance.noVehicles.title')}
               </h3>
               <p className="max-w-[280px] text-sm leading-relaxed text-muted">
-                Añade un vehículo primero para ver su historial de mantenimiento.
+                {t('maintenance.noVehicles.description')}
               </p>
               <button
                 type="button"
                 onClick={() => navigate('/vehicles')}
                 className="inline-flex items-center gap-2 rounded-full bg-lime px-6 py-3 font-display text-sm font-semibold text-black transition-opacity hover:opacity-90"
               >
-                Ir a Mis vehículos
+                {t('maintenance.noVehicles.cta')}
               </button>
             </div>
           </GlassPanel>
@@ -220,13 +222,13 @@ export function MantenimientoPage() {
                 onClick={() => setDrawerState({ mode: 'create' })}
                 className="inline-flex items-center gap-2 rounded-full bg-lime px-5 py-2.5 font-display text-sm font-semibold text-black transition-opacity hover:opacity-90"
               >
-                <PlusIcon /> Añadir registro
+                <PlusIcon /> {t('maintenance.add')}
               </button>
             </div>
 
             {vehicleId && (
               <>
-                {loadingRecords && <p className="text-sm text-muted">Cargando…</p>}
+                {loadingRecords && <p className="text-sm text-muted">{t('common.loading')}</p>}
                 {recordsError && (
                   <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
                     {recordsError}
@@ -293,9 +295,10 @@ export function MantenimientoPage() {
           }}
         >
           <p className="text-sm text-white">
-            ¿Eliminar el registro &ldquo;{deleteConfirm.type}&rdquo; del{' '}
-            {new Date(deleteConfirm.serviceDate).toLocaleDateString('es-ES')}? Esta acción no
-            se puede deshacer.
+            {t('maintenance.deleteConfirm', {
+              type: deleteConfirm.type,
+              date: new Date(deleteConfirm.serviceDate).toLocaleDateString(dateLang),
+            })}
           </p>
           {deleteError && (
             <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
@@ -311,7 +314,7 @@ export function MantenimientoPage() {
                 setDeleteError(null)
               }}
             >
-              Cancelar
+              {t('common.cancel')}
             </ButtonGlass>
             <button
               type="button"
@@ -319,7 +322,7 @@ export function MantenimientoPage() {
               onClick={() => handleDelete(deleteConfirm)}
               className="flex-1 rounded-full bg-danger px-6 py-3 font-display font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {deleting ? 'Eliminando…' : 'Eliminar'}
+              {deleting ? t('maintenance.deleting') : t('maintenance.deleteBtn')}
             </button>
           </div>
         </Modal>
@@ -346,6 +349,7 @@ function PlusIcon() {
 }
 
 function EmptyRecordsState({ onAdd }: { onAdd: () => void }) {
+  const { t } = useTranslation()
   return (
     <div className="flex flex-col items-center gap-5 px-10 py-16 text-center">
       <svg width="110" height="110" viewBox="0 0 120 120" fill="none" className="text-lime">
@@ -360,9 +364,9 @@ function EmptyRecordsState({ onAdd }: { onAdd: () => void }) {
         />
       </svg>
       <div>
-        <h3 className="font-display text-lg font-medium text-white">Sin registros aún.</h3>
+        <h3 className="font-display text-lg font-medium text-white">{t('maintenance.empty.title')}</h3>
         <p className="mt-2 max-w-[280px] text-sm leading-relaxed text-muted">
-          Añade el primer registro de mantenimiento para este vehículo.
+          {t('maintenance.empty.description')}
         </p>
       </div>
       <button
@@ -370,7 +374,7 @@ function EmptyRecordsState({ onAdd }: { onAdd: () => void }) {
         onClick={onAdd}
         className="inline-flex items-center gap-2 rounded-full bg-lime px-6 py-3 font-display text-sm font-semibold text-black transition-opacity hover:opacity-90"
       >
-        <PlusIcon /> Añadir el primero
+        <PlusIcon /> {t('maintenance.addFirst')}
       </button>
     </div>
   )

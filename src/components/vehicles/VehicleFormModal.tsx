@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Modal } from '../ui/Modal'
 import { PillTabs } from '../ui/PillTabs'
 import { UnderlineInput } from '../ui/UnderlineInput'
@@ -20,6 +21,8 @@ interface VehicleFormModalProps {
 const VIN_PATTERN = /^[A-HJ-NPR-Z0-9]{17}$/i
 
 export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFormModalProps) {
+  const { t } = useTranslation()
+
   const [plate, setPlate] = useState(vehicle?.plate ?? '')
   const [year, setYear] = useState(vehicle ? String(vehicle.year) : '')
   const [type, setType] = useState<VehicleTypeValue | ''>(
@@ -41,8 +44,8 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
   useEffect(() => {
     apiFetch<VehicleCatalogRef[]>('/api/vehicle-makes', { authenticated: true })
       .then(setMakes)
-      .catch(() => setFormError('Could not load vehicle makes.'))
-  }, [])
+      .catch(() => setFormError(t('vehicle.errors.loadMakes')))
+  }, [t])
 
   const visibleModels = tab === 'catalog' && makeId ? models : []
 
@@ -56,21 +59,21 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
         if (!cancelled) setModels(data)
       })
       .catch(() => {
-        if (!cancelled) setFormError('Could not load vehicle models.')
+        if (!cancelled) setFormError(t('vehicle.errors.loadModels'))
       })
     return () => {
       cancelled = true
     }
-  }, [tab, makeId])
+  }, [tab, makeId, t])
 
   function validate(): Partial<Record<string, string>> {
     const errors: Partial<Record<string, string>> = {}
-    if (!plate.trim()) errors.plate = 'Plate is required.'
-    if (!year.trim()) errors.year = 'Year is required.'
-    if (!type) errors.type = 'El tipo es requerido.'
-    if (vin.trim() && !VIN_PATTERN.test(vin.trim())) errors.vin = '17 characters, no I, O or Q.'
-    if (tab === 'catalog' && !makeId) errors.makeId = 'Select a make.'
-    if (tab === 'custom' && !customMake.trim()) errors.customMake = 'Make is required.'
+    if (!plate.trim()) errors.plate = t('vehicle.validation.plateRequired')
+    if (!year.trim()) errors.year = t('vehicle.validation.yearRequired')
+    if (!type) errors.type = t('vehicle.validation.typeRequired')
+    if (vin.trim() && !VIN_PATTERN.test(vin.trim())) errors.vin = t('vehicle.validation.vinFormat')
+    if (tab === 'catalog' && !makeId) errors.makeId = t('vehicle.validation.makeRequired')
+    if (tab === 'custom' && !customMake.trim()) errors.customMake = t('vehicle.validation.customMakeRequired')
     return errors
   }
 
@@ -109,7 +112,7 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
         }
         setFieldErrors(mapped)
       } else {
-        setFormError(err instanceof ApiError ? err.message : 'Could not save the vehicle.')
+        setFormError(err instanceof ApiError ? err.message : t('vehicle.errors.save'))
       }
     } finally {
       setSubmitting(false)
@@ -119,15 +122,21 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
   return (
     <Modal onClose={onClose}>
       <h2 className="font-display text-xl font-semibold text-white">
-        {mode === 'create' ? 'Add vehicle.' : 'Edit vehicle.'}
+        {mode === 'create' ? t('vehicle.addModal') : t('vehicle.editModal')}
       </h2>
 
       <form className="mt-6 flex flex-col gap-5" onSubmit={handleSubmit}>
-        <UnderlineInput label="Plate" value={plate} onChange={(e) => setPlate(e.target.value)} error={fieldErrors.plate} required />
+        <UnderlineInput
+          label={t('vehicle.fields.plate')}
+          value={plate}
+          onChange={(e) => setPlate(e.target.value)}
+          error={fieldErrors.plate}
+          required
+        />
 
         <div className="grid grid-cols-2 gap-4">
           <UnderlineInput
-            label="Year"
+            label={t('vehicle.fields.year')}
             type="number"
             value={year}
             onChange={(e) => setYear(e.target.value)}
@@ -135,25 +144,29 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
             required
           />
           <div className="flex flex-col gap-2">
-              <label className="font-mono text-xs uppercase tracking-widest text-muted">Tipo</label>
-              <select
-                value={type}
-                onChange={(e) => setType(e.target.value as VehicleTypeValue)}
-                required
-                className="w-full border-0 border-b border-white/12 bg-transparent py-2 text-white outline-none focus:border-lime"
-              >
-                <option value="" disabled className="bg-bg">Selecciona un tipo</option>
-                {VEHICLE_TYPES.map((t) => (
-                  <option key={t.value} value={t.value} className="bg-bg">{t.label}</option>
-                ))}
-              </select>
-              {fieldErrors.type && <p className="text-xs text-red-400">{fieldErrors.type}</p>}
-            </div>
+            <label className="font-mono text-xs uppercase tracking-widest text-muted">
+              {t('vehicle.fields.type')}
+            </label>
+            <select
+              value={type}
+              onChange={(e) => setType(e.target.value as VehicleTypeValue)}
+              required
+              className="w-full border-0 border-b border-white/12 bg-transparent py-2 text-white outline-none focus:border-lime"
+            >
+              <option value="" disabled className="bg-bg">{t('vehicle.selectType')}</option>
+              {VEHICLE_TYPES.map((vehicleType) => (
+                <option key={vehicleType} value={vehicleType} className="bg-bg">
+                  {t(`vehicle.type.${vehicleType}`)}
+                </option>
+              ))}
+            </select>
+            {fieldErrors.type && <p className="text-xs text-red-400">{fieldErrors.type}</p>}
+          </div>
         </div>
 
         <UnderlineInput
-          label="VIN"
-          placeholder="17 characters"
+          label={t('vehicle.fields.vin')}
+          placeholder={t('vehicle.vinPlaceholder')}
           value={vin}
           onChange={(e) => setVin(e.target.value)}
           error={fieldErrors.vin}
@@ -163,15 +176,17 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
           value={tab}
           onChange={setTab}
           options={[
-            { value: 'catalog', label: 'From catalog' },
-            { value: 'custom', label: 'Custom' },
+            { value: 'catalog', label: t('vehicle.tabs.catalog') },
+            { value: 'custom', label: t('vehicle.tabs.custom') },
           ]}
         />
 
         {tab === 'catalog' ? (
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-xs uppercase tracking-widest text-muted">Make</label>
+              <label className="font-mono text-xs uppercase tracking-widest text-muted">
+                {t('vehicle.fields.make')}
+              </label>
               <select
                 value={makeId}
                 onChange={(e) => {
@@ -181,9 +196,7 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
                 }}
                 className="w-full border-0 border-b border-white/12 bg-transparent py-2 text-white outline-none focus:border-lime"
               >
-                <option value="" className="bg-bg">
-                  Select make
-                </option>
+                <option value="" className="bg-bg">{t('vehicle.selectMake')}</option>
                 {makes.map((make) => (
                   <option key={make.id} value={make.id} className="bg-bg">
                     {make.name}
@@ -194,16 +207,16 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-xs uppercase tracking-widest text-muted">Model</label>
+              <label className="font-mono text-xs uppercase tracking-widest text-muted">
+                {t('vehicle.fields.model')}
+              </label>
               <select
                 value={modelId}
                 onChange={(e) => setModelId(e.target.value)}
                 disabled={!makeId}
                 className="w-full border-0 border-b border-white/12 bg-transparent py-2 text-white outline-none focus:border-lime disabled:opacity-50"
               >
-                <option value="" className="bg-bg">
-                  Select model
-                </option>
+                <option value="" className="bg-bg">{t('vehicle.selectModel')}</option>
                 {visibleModels.map((model) => (
                   <option key={model.id} value={model.id} className="bg-bg">
                     {model.name}
@@ -215,13 +228,17 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
         ) : (
           <div className="grid grid-cols-2 gap-4">
             <UnderlineInput
-              label="Make"
+              label={t('vehicle.fields.make')}
               value={customMake}
               onChange={(e) => setCustomMake(e.target.value)}
               error={fieldErrors.customMake}
               required
             />
-            <UnderlineInput label="Model" value={customModel} onChange={(e) => setCustomModel(e.target.value)} />
+            <UnderlineInput
+              label={t('vehicle.fields.model')}
+              value={customModel}
+              onChange={(e) => setCustomModel(e.target.value)}
+            />
           </div>
         )}
 
@@ -229,10 +246,10 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
 
         <div className="mt-2 flex gap-3">
           <ButtonGlass type="button" className="flex-1" onClick={onClose}>
-            Cancel
+            {t('common.cancel')}
           </ButtonGlass>
           <ButtonPrimary type="submit" className="flex-1" disabled={submitting}>
-            {submitting ? 'Saving…' : mode === 'create' ? 'Add vehicle' : 'Save changes'}
+            {submitting ? t('vehicle.saving') : mode === 'create' ? t('vehicle.add') : t('vehicle.saveChanges')}
           </ButtonPrimary>
         </div>
       </form>

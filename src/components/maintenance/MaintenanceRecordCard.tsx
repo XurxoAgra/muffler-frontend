@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { GlassPanel } from '../ui/GlassPanel'
 import { VerifiedBadge } from './VerifiedBadge'
 import { formatDate, formatMileage, formatCost } from './formatters'
@@ -48,6 +49,8 @@ function TrashIcon() {
 }
 
 export function MaintenanceRecordCard({ record, onEdit, onDelete }: MaintenanceRecordCardProps) {
+  const { t } = useTranslation()
+
   return (
     <GlassPanel rounded="rounded-xl" className="p-4">
       <div className="mb-3">
@@ -58,26 +61,32 @@ export function MaintenanceRecordCard({ record, onEdit, onDelete }: MaintenanceR
       <div className="mb-4 grid grid-cols-2 gap-3">
         {record.shopName && (
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-widest text-muted">Taller</div>
+            <div className="font-mono text-[10px] uppercase tracking-widest text-muted">
+              {t('maintenance.fields.shop')}
+            </div>
             <div className="mt-0.5 text-sm text-white">{record.shopName}</div>
           </div>
         )}
         {record.mileage !== null && (
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-widest text-muted">Km</div>
+            <div className="font-mono text-[10px] uppercase tracking-widest text-muted">
+              {t('maintenance.fields.km')}
+            </div>
             <div className="mt-0.5 font-mono text-sm text-white">{formatMileage(record.mileage)}</div>
           </div>
         )}
         {record.cost && (
           <div>
-            <div className="font-mono text-[10px] uppercase tracking-widest text-muted">Coste</div>
+            <div className="font-mono text-[10px] uppercase tracking-widest text-muted">
+              {t('maintenance.fields.cost')}
+            </div>
             <div className="mt-0.5 font-mono text-sm text-white">{formatCost(record.cost)}</div>
           </div>
         )}
         {record.nextServiceDate && (
           <div>
             <div className="font-mono text-[10px] uppercase tracking-widest text-muted">
-              Próxima revisión
+              {t('maintenance.fields.nextService')}
             </div>
             <div className="mt-0.5 text-sm text-white">{formatDate(record.nextServiceDate)}</div>
           </div>
@@ -94,7 +103,7 @@ export function MaintenanceRecordCard({ record, onEdit, onDelete }: MaintenanceR
           <button
             type="button"
             onClick={() => onEdit(record)}
-            title="Editar"
+            title={t('maintenance.editTitle')}
             className="flex h-7 w-7 items-center justify-center rounded-lg text-muted transition-colors hover:bg-white/5 hover:text-white"
           >
             <EditIcon />
@@ -102,7 +111,7 @@ export function MaintenanceRecordCard({ record, onEdit, onDelete }: MaintenanceR
           <button
             type="button"
             onClick={() => onDelete(record)}
-            title="Eliminar"
+            title={t('maintenance.deleteTitle')}
             className="flex h-7 w-7 items-center justify-center rounded-lg text-muted transition-colors hover:bg-danger/10 hover:text-danger"
           >
             <TrashIcon />

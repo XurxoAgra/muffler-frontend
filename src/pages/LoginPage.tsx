@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { GlassPanel } from '../components/ui/GlassPanel'
 import { PillTabs } from '../components/ui/PillTabs'
 import { UnderlineInput } from '../components/ui/UnderlineInput'
@@ -12,15 +13,11 @@ import { ApiError } from '../lib/apiClient'
 
 type Mode = 'signin' | 'register'
 
-const COPY: Record<Mode, { title: string; subtitle: string; cta: string }> = {
-  signin: { title: 'Welcome back.', subtitle: 'Pick up where the silence left off.', cta: 'Sign in →' },
-  register: { title: 'Create your account.', subtitle: 'Set up your signal in seconds.', cta: 'Create account →' },
-}
-
 export function LoginPage() {
   const navigate = useNavigate()
   const { login, register } = useAuth()
   const { theme, setTheme } = useTheme()
+  const { t } = useTranslation()
 
   const [mode, setMode] = useState<Mode>('signin')
   const [email, setEmail] = useState('')
@@ -30,8 +27,6 @@ export function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  const copy = COPY[mode]
 
   function switchMode(next: Mode) {
     setMode(next)
@@ -51,7 +46,7 @@ export function LoginPage() {
       }
       navigate('/profile')
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'No se pudo conectar con el servidor.')
+      setError(err instanceof ApiError ? err.message : t('auth.errors.generic'))
     } finally {
       setLoading(false)
     }
@@ -89,16 +84,18 @@ export function LoginPage() {
           <LabelMono>V0.1</LabelMono>
         </div>
 
-        <h1 className="font-display text-3xl font-semibold text-white">{copy.title}</h1>
-        <p className="mt-2 text-sm text-white/70">{copy.subtitle}</p>
+        <h1 className="font-display text-3xl font-semibold text-white">
+          {t(`auth.${mode}.title`)}
+        </h1>
+        <p className="mt-2 text-sm text-white/70">{t(`auth.${mode}.subtitle`)}</p>
 
         <PillTabs
           className="mt-6"
           value={mode}
           onChange={switchMode}
           options={[
-            { value: 'signin', label: 'Sign in' },
-            { value: 'register', label: 'Register' },
+            { value: 'signin', label: t('auth.tabs.signin') },
+            { value: 'register', label: t('auth.tabs.register') },
           ]}
         />
 
@@ -106,14 +103,14 @@ export function LoginPage() {
           {mode === 'register' && (
             <div className="grid grid-cols-2 gap-4">
               <UnderlineInput
-                label="First name"
+                label={t('auth.fields.firstName')}
                 type="text"
                 required
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
               />
               <UnderlineInput
-                label="Last name"
+                label={t('auth.fields.lastName')}
                 type="text"
                 required
                 value={lastName}
@@ -123,7 +120,7 @@ export function LoginPage() {
           )}
 
           <UnderlineInput
-            label="Email"
+            label={t('auth.fields.email')}
             type="email"
             placeholder="ada@muffler.app"
             required
@@ -132,7 +129,7 @@ export function LoginPage() {
           />
 
           <UnderlineInput
-            label="Password"
+            label={t('auth.fields.password')}
             type="password"
             required
             minLength={8}
@@ -148,11 +145,11 @@ export function LoginPage() {
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="h-4 w-4 rounded border-white/20 bg-transparent accent-lime"
               />
-              Stay signed in
+              {t('auth.staySignedIn')}
             </label>
             {mode === 'signin' && (
               <a href="#" className="text-lime hover:underline">
-                Forgot password?
+                {t('auth.forgotPassword')}
               </a>
             )}
           </div>
@@ -160,23 +157,23 @@ export function LoginPage() {
           {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
 
           <ButtonPrimary type="submit" disabled={loading}>
-            {loading ? 'Please wait…' : copy.cta}
+            {loading ? t('auth.loading') : t(`auth.${mode}.cta`)}
           </ButtonPrimary>
         </form>
 
         <p className="mt-6 text-center text-sm text-white/70">
           {mode === 'signin' ? (
             <>
-              Don't have one?{' '}
+              {t('auth.noAccount')}{' '}
               <button type="button" onClick={() => switchMode('register')} className="text-white underline">
-                Register
+                {t('auth.registerLink')}
               </button>
             </>
           ) : (
             <>
-              Already have one?{' '}
+              {t('auth.alreadyHave')}{' '}
               <button type="button" onClick={() => switchMode('signin')} className="text-white underline">
-                Sign in
+                {t('auth.signinLink')}
               </button>
             </>
           )}

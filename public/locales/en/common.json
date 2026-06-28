@@ -1,0 +1,199 @@
+{
+  "common": {
+    "loading": "Loading…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit"
+  },
+  "auth": {
+    "signin": {
+      "title": "Welcome back.",
+      "subtitle": "Pick up where the silence left off.",
+      "cta": "Sign in →"
+    },
+    "register": {
+      "title": "Create your account.",
+      "subtitle": "Set up your signal in seconds.",
+      "cta": "Create account →"
+    },
+    "tabs": {
+      "signin": "Sign in",
+      "register": "Register"
+    },
+    "fields": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "password": "Password"
+    },
+    "staySignedIn": "Stay signed in",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have one?",
+    "alreadyHave": "Already have one?",
+    "registerLink": "Register",
+    "signinLink": "Sign in",
+    "loading": "Please wait…",
+    "errors": {
+      "generic": "Could not connect to the server."
+    }
+  },
+  "vehicle": {
+    "type": {
+      "car": "Car",
+      "moto": "Motorcycle",
+      "van": "Van",
+      "truck": "Truck"
+    },
+    "fields": {
+      "plate": "Plate",
+      "year": "Year",
+      "type": "Type",
+      "vin": "VIN",
+      "make": "Make",
+      "model": "Model"
+    },
+    "tabs": {
+      "catalog": "From catalog",
+      "custom": "Custom"
+    },
+    "selectType": "Select a type",
+    "selectMake": "Select make",
+    "selectModel": "Select model",
+    "vinPlaceholder": "17 characters",
+    "add": "Add vehicle",
+    "addModal": "Add vehicle.",
+    "editModal": "Edit vehicle.",
+    "saving": "Saving…",
+    "saveChanges": "Save changes",
+    "deleting": "Deleting…",
+    "editBtn": "Edit",
+    "deleteBtn": "Delete",
+    "page": {
+      "breadcrumb": "Vehicles",
+      "title": "My vehicles.",
+      "subtitle": "Manage your registered vehicles."
+    },
+    "empty": {
+      "title": "No vehicles yet.",
+      "description": "Add your first vehicle to keep its details in one place."
+    },
+    "deleteConfirm": "Delete {{plate}}? This can't be undone.",
+    "errors": {
+      "loadMakes": "Could not load vehicle makes.",
+      "loadModels": "Could not load vehicle models.",
+      "save": "Could not save the vehicle.",
+      "delete": "Could not delete the vehicle.",
+      "load": "Could not load your vehicles."
+    },
+    "validation": {
+      "plateRequired": "Plate is required.",
+      "yearRequired": "Year is required.",
+      "typeRequired": "Type is required.",
+      "vinFormat": "17 characters, no I, O or Q.",
+      "makeRequired": "Select a make.",
+      "customMakeRequired": "Make is required."
+    }
+  },
+  "maintenance": {
+    "fields": {
+      "serviceDate": "Service date",
+      "type": "Type",
+      "km": "Km",
+      "cost": "Cost",
+      "shop": "Shop",
+      "nextService": "Next service",
+      "notes": "Notes"
+    },
+    "placeholders": {
+      "type": "e.g. Oil change, MOT…",
+      "km": "e.g. 45000",
+      "cost": "e.g. 120.50",
+      "shop": "e.g. Pete's Garage",
+      "notes": "Additional notes…"
+    },
+    "add": "Add record",
+    "addFirst": "Add the first one",
+    "addModal": "Add record.",
+    "editModal": "Edit record.",
+    "saving": "Saving…",
+    "saveChanges": "Save changes",
+    "cancel": "Cancel",
+    "deleting": "Deleting…",
+    "deleteBtn": "Delete",
+    "editTitle": "Edit",
+    "deleteTitle": "Delete",
+    "verified": "Verified",
+    "pending": "Pending",
+    "page": {
+      "breadcrumb": "Maintenance",
+      "title": "Maintenance.",
+      "subtitle": "Your vehicle's maintenance history."
+    },
+    "empty": {
+      "title": "No records yet.",
+      "description": "Add the first maintenance record for this vehicle."
+    },
+    "noVehicles": {
+      "title": "No vehicles registered.",
+      "description": "Add a vehicle first to see its maintenance history.",
+      "cta": "Go to My vehicles"
+    },
+    "deleteConfirm": "Delete record \"{{type}}\" from {{date}}? This can't be undone.",
+    "table": {
+      "date": "Date",
+      "type": "Type",
+      "shop": "Shop",
+      "km": "Km",
+      "cost": "Cost",
+      "nextService": "Next service",
+      "verified": "Verified",
+      "actions": "Actions"
+    },
+    "errors": {
+      "load": "Could not load maintenance history.",
+      "save": "Could not save the record.",
+      "delete": "Could not delete the record.",
+      "forbidden": "You don't have access to this vehicle.",
+      "notFound": "Vehicle not found."
+    },
+    "validation": {
+      "serviceDateRequired": "Service date is required.",
+      "typeRequired": "Type is required.",
+      "mileageFormat": "Must be a positive integer.",
+      "costFormat": "Incorrect format (e.g. 120.50)."
+    }
+  },
+  "nav": {
+    "profile": "Profile",
+    "vehicles": "Vehicles",
+    "maintenance": "Maintenance",
+    "signOut": "Sign out",
+    "signingOut": "Signing out…",
+    "lightMode": "Light mode",
+    "darkMode": "Dark mode",
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "collapseMenu": "Collapse menu",
+    "expandMenu": "Expand menu"
+  },
+  "profile": {
+    "breadcrumb": "Profile",
+    "account": "Account",
+    "title": "Your profile.",
+    "subtitle": "Personal information and account settings.",
+    "fields": {
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "role": "Role",
+      "memberSince": "Member since"
+    },
+    "defaultRole": "Member",
+    "errors": {
+      "load": "Could not load your profile."
+    }
+  }
+}
