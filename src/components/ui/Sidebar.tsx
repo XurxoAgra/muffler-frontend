@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { NavItem } from './NavItem'
 import { SignalMark } from '../SignalMark'
+import { LanguageSwitcher } from '../LanguageSwitcher'
 import { useTheme } from '../../theme/ThemeContext'
 
 const ICON_PROPS = {
@@ -117,14 +119,15 @@ export function Sidebar({ initials, name, role, onLogout, loggingOut }: SidebarP
   const [collapsed, setCollapsed] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const { theme, toggleTheme } = useTheme()
+  const { t } = useTranslation()
 
   const location = useLocation()
   const navigate = useNavigate()
 
   const navItems = [
-    { path: '/profile', label: 'Profile', icon: <ProfileIcon />, exact: true },
-    { path: '/vehicles', label: 'Vehicles', icon: <CarIcon />, exact: true },
-    { path: '/mantenimiento', label: 'Mantenimiento', icon: <WrenchIcon />, exact: false },
+    { path: '/profile', label: t('nav.profile'), icon: <ProfileIcon />, exact: true },
+    { path: '/vehicles', label: t('nav.vehicles'), icon: <CarIcon />, exact: true },
+    { path: '/mantenimiento', label: t('nav.maintenance'), icon: <WrenchIcon />, exact: false },
   ]
 
   useEffect(() => {
@@ -140,7 +143,7 @@ export function Sidebar({ initials, name, role, onLogout, loggingOut }: SidebarP
         <button
           type="button"
           onClick={() => setDrawerOpen(true)}
-          aria-label="Open menu"
+          aria-label={t('nav.openMenu')}
           className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-muted transition-colors hover:bg-white/5 hover:text-white"
         >
           <MenuIcon />
@@ -158,7 +161,7 @@ export function Sidebar({ initials, name, role, onLogout, loggingOut }: SidebarP
           <button
             type="button"
             onClick={toggleTheme}
-            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={theme === 'dark' ? t('nav.switchToLight') : t('nav.switchToDark')}
             className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-muted transition-colors hover:bg-white/5 hover:text-white"
           >
             {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
@@ -167,7 +170,7 @@ export function Sidebar({ initials, name, role, onLogout, loggingOut }: SidebarP
             type="button"
             onClick={onLogout}
             disabled={loggingOut}
-            title="Sign out"
+            title={t('nav.signOut')}
             className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-danger transition-colors hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <SignOutIcon />
@@ -195,7 +198,7 @@ export function Sidebar({ initials, name, role, onLogout, loggingOut }: SidebarP
             <button
               type="button"
               onClick={() => setDrawerOpen(false)}
-              aria-label="Close menu"
+              aria-label={t('nav.closeMenu')}
               className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-white/10 text-muted transition-colors hover:border-lime hover:text-lime"
             >
               <CloseIcon />
@@ -229,13 +232,15 @@ export function Sidebar({ initials, name, role, onLogout, loggingOut }: SidebarP
               </div>
             </div>
 
+            <LanguageSwitcher />
+
             <button
               type="button"
               onClick={toggleTheme}
               className="flex w-full items-center justify-start gap-2.5 rounded-lg px-3.5 py-2.5 text-muted transition-colors hover:bg-white/5 hover:text-white"
             >
               {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-              <span className="text-sm">{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
+              <span className="text-sm">{theme === 'dark' ? t('nav.lightMode') : t('nav.darkMode')}</span>
             </button>
 
             <button
@@ -245,7 +250,7 @@ export function Sidebar({ initials, name, role, onLogout, loggingOut }: SidebarP
               className="flex w-full items-center justify-start gap-2.5 rounded-lg px-3.5 py-2.5 text-danger transition-colors hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <SignOutIcon />
-              <span className="text-sm">{loggingOut ? 'Signing out…' : 'Sign out'}</span>
+              <span className="text-sm">{loggingOut ? t('nav.signingOut') : t('nav.signOut')}</span>
             </button>
           </div>
         </div>
@@ -265,7 +270,7 @@ export function Sidebar({ initials, name, role, onLogout, loggingOut }: SidebarP
         <button
           type="button"
           onClick={() => setCollapsed((c) => !c)}
-          title={collapsed ? 'Expand menu' : 'Collapse menu'}
+          title={collapsed ? t('nav.expandMenu') : t('nav.collapseMenu')}
           className={`absolute right-[-14px] top-7 z-30 flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-bg text-muted shadow-lg transition-transform hover:border-lime hover:text-lime ${
             collapsed ? 'rotate-180' : ''
           }`}
@@ -316,10 +321,12 @@ export function Sidebar({ initials, name, role, onLogout, loggingOut }: SidebarP
             </div>
           )}
 
+          <LanguageSwitcher collapsed={collapsed} />
+
           <button
             type="button"
             onClick={toggleTheme}
-            title={collapsed ? (theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode') : undefined}
+            title={collapsed ? (theme === 'dark' ? t('nav.switchToLight') : t('nav.switchToDark')) : undefined}
             className={`flex w-full items-center rounded-lg text-muted transition-colors hover:bg-white/5 hover:text-white ${
               collapsed ? 'justify-center px-0 py-2.5' : 'justify-start gap-2.5 px-3.5 py-2.5'
             }`}
@@ -330,7 +337,7 @@ export function Sidebar({ initials, name, role, onLogout, loggingOut }: SidebarP
                 collapsed ? 'max-w-0 opacity-0' : 'max-w-[200px] opacity-100'
               }`}
             >
-              {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+              {theme === 'dark' ? t('nav.lightMode') : t('nav.darkMode')}
             </span>
           </button>
 
@@ -338,7 +345,7 @@ export function Sidebar({ initials, name, role, onLogout, loggingOut }: SidebarP
             type="button"
             onClick={onLogout}
             disabled={loggingOut}
-            title={collapsed ? 'Sign out' : undefined}
+            title={collapsed ? t('nav.signOut') : undefined}
             className={`mt-1 flex w-full items-center rounded-lg text-danger transition-colors hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-60 ${
               collapsed ? 'justify-center px-0 py-2.5' : 'justify-start gap-2.5 px-3.5 py-2.5'
             }`}
@@ -349,7 +356,7 @@ export function Sidebar({ initials, name, role, onLogout, loggingOut }: SidebarP
                 collapsed ? 'max-w-0 opacity-0' : 'max-w-[200px] opacity-100'
               }`}
             >
-              {loggingOut ? 'Signing out…' : 'Sign out'}
+              {loggingOut ? t('nav.signingOut') : t('nav.signOut')}
             </span>
           </button>
         </div>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Sidebar } from '../components/ui/Sidebar'
 import { GlassPanel } from '../components/ui/GlassPanel'
 import { ExhaustAvatar } from '../components/ui/ExhaustAvatar'
@@ -12,6 +13,7 @@ import type { UserProfile } from '../lib/types'
 export function ProfilePage() {
   const navigate = useNavigate()
   const { logout } = useAuth()
+  const { t, i18n } = useTranslation()
 
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -26,7 +28,7 @@ export function ProfilePage() {
         if (!cancelled) setProfile(data)
       })
       .catch((err) => {
-        if (!cancelled) setError(err instanceof ApiError ? err.message : 'Could not load your profile.')
+        if (!cancelled) setError(err instanceof ApiError ? err.message : t('profile.errors.load'))
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -35,7 +37,7 @@ export function ProfilePage() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [t])
 
   async function handleLogout() {
     setLoggingOut(true)
@@ -43,11 +45,12 @@ export function ProfilePage() {
     navigate('/login')
   }
 
-  const fullName = profile ? `${profile.first_name} ${profile.last_name}` : 'Loading…'
+  const fullName = profile ? `${profile.first_name} ${profile.last_name}` : t('common.loading')
   const initials = profile ? `${profile.first_name.charAt(0)}${profile.last_name.charAt(0)}`.toUpperCase() : '··'
-  const primaryRole = profile?.roles[0] ?? 'Member'
+  const primaryRole = profile?.roles[0] ?? t('profile.defaultRole')
+  const memberSinceLang = i18n.language === 'en' ? 'en-GB' : 'es-ES'
   const memberSince = profile
-    ? new Date(profile.created_at).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })
+    ? new Date(profile.created_at).toLocaleDateString(memberSinceLang, { day: '2-digit', month: 'short', year: 'numeric' })
     : ''
 
   return (
@@ -57,15 +60,15 @@ export function ProfilePage() {
       <main className="flex-1 px-4 py-7 sm:px-8 sm:py-9 md:px-[52px] md:pb-[52px] md:pt-[44px]">
         <div className="mb-6 md:mb-7">
           <div className="mb-1.5 font-mono text-[10px] uppercase tracking-[0.24em] text-muted">
-            Account <span className="text-subtle">·</span> Profile
+            {t('profile.account')} <span className="text-subtle">·</span> {t('profile.breadcrumb')}
           </div>
           <h1 className="font-display text-2xl font-medium leading-tight tracking-tight text-white sm:text-[30px]">
-            Your profile.
+            {t('profile.title')}
           </h1>
-          <p className="mt-1.5 text-sm text-muted">Personal information and account settings.</p>
+          <p className="mt-1.5 text-sm text-muted">{t('profile.subtitle')}</p>
         </div>
 
-        {loading && <p className="text-sm text-muted">Loading…</p>}
+        {loading && <p className="text-sm text-muted">{t('common.loading')}</p>}
         {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
 
         {profile && (
@@ -92,18 +95,18 @@ export function ProfilePage() {
                     <ClockIcon />
                   </span>
                   <span className="font-mono text-[10px] text-muted">
-                    Member since <span className="text-white">{memberSince}</span>
+                    {t('profile.fields.memberSince')} <span className="text-white">{memberSince}</span>
                   </span>
                 </div>
               </div>
             </div>
 
             <div className="px-5 sm:px-8">
-              <ProfileField label="First name" value={profile.first_name} editable />
-              <ProfileField label="Last name" value={profile.last_name} editable />
-              <ProfileField label="Email" value={profile.email} editable mono />
-              <ProfileField label="Role" badge={<RoleBadge role={primaryRole} />} />
-              <ProfileField label="Member since" value={memberSince} mono />
+              <ProfileField label={t('profile.fields.firstName')} value={profile.first_name} editable />
+              <ProfileField label={t('profile.fields.lastName')} value={profile.last_name} editable />
+              <ProfileField label={t('profile.fields.email')} value={profile.email} editable mono />
+              <ProfileField label={t('profile.fields.role')} badge={<RoleBadge role={primaryRole} />} />
+              <ProfileField label={t('profile.fields.memberSince')} value={memberSince} mono />
             </div>
           </GlassPanel>
         )}

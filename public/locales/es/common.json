@@ -1,0 +1,199 @@
+{
+  "common": {
+    "loading": "Cargando…",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar"
+  },
+  "auth": {
+    "signin": {
+      "title": "Bienvenido de nuevo.",
+      "subtitle": "Continúa donde lo dejaste.",
+      "cta": "Iniciar sesión →"
+    },
+    "register": {
+      "title": "Crea tu cuenta.",
+      "subtitle": "Configura tu señal en segundos.",
+      "cta": "Crear cuenta →"
+    },
+    "tabs": {
+      "signin": "Iniciar sesión",
+      "register": "Registrarse"
+    },
+    "fields": {
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Email",
+      "password": "Contraseña"
+    },
+    "staySignedIn": "Mantener sesión iniciada",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes una?",
+    "alreadyHave": "¿Ya tienes una?",
+    "registerLink": "Registrarse",
+    "signinLink": "Iniciar sesión",
+    "loading": "Por favor espera…",
+    "errors": {
+      "generic": "No se pudo conectar con el servidor."
+    }
+  },
+  "vehicle": {
+    "type": {
+      "car": "Coche",
+      "moto": "Moto",
+      "van": "Furgoneta",
+      "truck": "Camión"
+    },
+    "fields": {
+      "plate": "Matrícula",
+      "year": "Año",
+      "type": "Tipo",
+      "vin": "VIN",
+      "make": "Marca",
+      "model": "Modelo"
+    },
+    "tabs": {
+      "catalog": "Del catálogo",
+      "custom": "Personalizado"
+    },
+    "selectType": "Selecciona un tipo",
+    "selectMake": "Seleccionar marca",
+    "selectModel": "Seleccionar modelo",
+    "vinPlaceholder": "17 caracteres",
+    "add": "Añadir vehículo",
+    "addModal": "Añadir vehículo.",
+    "editModal": "Editar vehículo.",
+    "saving": "Guardando…",
+    "saveChanges": "Guardar cambios",
+    "deleting": "Eliminando…",
+    "editBtn": "Editar",
+    "deleteBtn": "Eliminar",
+    "page": {
+      "breadcrumb": "Vehículos",
+      "title": "Mis vehículos.",
+      "subtitle": "Gestiona tus vehículos registrados."
+    },
+    "empty": {
+      "title": "Sin vehículos aún.",
+      "description": "Añade tu primer vehículo para tener todos sus datos en un lugar."
+    },
+    "deleteConfirm": "¿Eliminar {{plate}}? Esta acción no se puede deshacer.",
+    "errors": {
+      "loadMakes": "No se pudieron cargar las marcas.",
+      "loadModels": "No se pudieron cargar los modelos.",
+      "save": "No se pudo guardar el vehículo.",
+      "delete": "No se pudo eliminar el vehículo.",
+      "load": "No se pudieron cargar tus vehículos."
+    },
+    "validation": {
+      "plateRequired": "La matrícula es requerida.",
+      "yearRequired": "El año es requerido.",
+      "typeRequired": "El tipo es requerido.",
+      "vinFormat": "17 caracteres, sin I, O o Q.",
+      "makeRequired": "Selecciona una marca.",
+      "customMakeRequired": "La marca es requerida."
+    }
+  },
+  "maintenance": {
+    "fields": {
+      "serviceDate": "Fecha de servicio",
+      "type": "Tipo",
+      "km": "Km",
+      "cost": "Coste",
+      "shop": "Taller",
+      "nextService": "Próxima revisión",
+      "notes": "Notas"
+    },
+    "placeholders": {
+      "type": "Ej: Cambio de aceite, Revisión ITV…",
+      "km": "Ej: 45000",
+      "cost": "Ej: 120.50",
+      "shop": "Ej: Taller Pepe",
+      "notes": "Observaciones adicionales…"
+    },
+    "add": "Añadir registro",
+    "addFirst": "Añadir el primero",
+    "addModal": "Añadir registro.",
+    "editModal": "Editar registro.",
+    "saving": "Guardando…",
+    "saveChanges": "Guardar cambios",
+    "cancel": "Cancelar",
+    "deleting": "Eliminando…",
+    "deleteBtn": "Eliminar",
+    "editTitle": "Editar",
+    "deleteTitle": "Eliminar",
+    "verified": "Verificado",
+    "pending": "Pendiente",
+    "page": {
+      "breadcrumb": "Mantenimiento",
+      "title": "Mantenimiento.",
+      "subtitle": "Historial de mantenimiento de tu vehículo."
+    },
+    "empty": {
+      "title": "Sin registros aún.",
+      "description": "Añade el primer registro de mantenimiento para este vehículo."
+    },
+    "noVehicles": {
+      "title": "Sin vehículos registrados.",
+      "description": "Añade un vehículo primero para ver su historial de mantenimiento.",
+      "cta": "Ir a Mis vehículos"
+    },
+    "deleteConfirm": "¿Eliminar el registro \"{{type}}\" del {{date}}? Esta acción no se puede deshacer.",
+    "table": {
+      "date": "Fecha",
+      "type": "Tipo",
+      "shop": "Taller",
+      "km": "Km",
+      "cost": "Coste",
+      "nextService": "Próxima revisión",
+      "verified": "Verificado",
+      "actions": "Acciones"
+    },
+    "errors": {
+      "load": "No se pudo cargar el historial.",
+      "save": "No se pudo guardar el registro.",
+      "delete": "No se pudo eliminar el registro.",
+      "forbidden": "No tienes acceso a este vehículo.",
+      "notFound": "Vehículo no encontrado."
+    },
+    "validation": {
+      "serviceDateRequired": "La fecha de servicio es requerida.",
+      "typeRequired": "El tipo es requerido.",
+      "mileageFormat": "Debe ser un número entero positivo.",
+      "costFormat": "Formato incorrecto (ej: 120.50)."
+    }
+  },
+  "nav": {
+    "profile": "Perfil",
+    "vehicles": "Vehículos",
+    "maintenance": "Mantenimiento",
+    "signOut": "Cerrar sesión",
+    "signingOut": "Cerrando sesión…",
+    "lightMode": "Modo claro",
+    "darkMode": "Modo oscuro",
+    "switchToLight": "Cambiar a modo claro",
+    "switchToDark": "Cambiar a modo oscuro",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "collapseMenu": "Contraer menú",
+    "expandMenu": "Expandir menú"
+  },
+  "profile": {
+    "breadcrumb": "Perfil",
+    "account": "Cuenta",
+    "title": "Tu perfil.",
+    "subtitle": "Información personal y ajustes de la cuenta.",
+    "fields": {
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Email",
+      "role": "Rol",
+      "memberSince": "Miembro desde"
+    },
+    "defaultRole": "Miembro",
+    "errors": {
+      "load": "No se pudo cargar tu perfil."
+    }
+  }
+}

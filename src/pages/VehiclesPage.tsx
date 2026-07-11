@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Sidebar } from '../components/ui/Sidebar'
 import { GlassPanel } from '../components/ui/GlassPanel'
 import { Modal } from '../components/ui/Modal'
@@ -15,6 +16,7 @@ type ModalState = { mode: 'create' } | { mode: 'edit'; vehicle: Vehicle } | { mo
 export function VehiclesPage() {
   const navigate = useNavigate()
   const { logout } = useAuth()
+  const { t } = useTranslation()
 
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loggingOut, setLoggingOut] = useState(false)
@@ -43,11 +45,11 @@ export function VehiclesPage() {
       const data = await apiFetch<Vehicle[]>('/api/vehicles', { authenticated: true })
       setVehicles(data)
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Could not load your vehicles.')
+      setError(err instanceof ApiError ? err.message : t('vehicle.errors.load'))
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [t])
 
   useEffect(() => {
     void Promise.resolve().then(fetchVehicles)
@@ -72,15 +74,15 @@ export function VehiclesPage() {
       setVehicles((prev) => prev?.filter((v) => v.id !== vehicle.id) ?? prev)
       setModal(null)
     } catch (err) {
-      setDeleteError(err instanceof ApiError ? err.message : 'Could not delete the vehicle.')
+      setDeleteError(err instanceof ApiError ? err.message : t('vehicle.errors.delete'))
     } finally {
       setDeleting(false)
     }
   }
 
-  const fullName = profile ? `${profile.first_name} ${profile.last_name}` : 'Loading…'
+  const fullName = profile ? `${profile.first_name} ${profile.last_name}` : t('common.loading')
   const initials = profile ? `${profile.first_name.charAt(0)}${profile.last_name.charAt(0)}`.toUpperCase() : '··'
-  const primaryRole = profile?.roles[0] ?? 'Member'
+  const primaryRole = profile?.roles[0] ?? t('profile.defaultRole')
 
   return (
     <div className="flex min-h-svh flex-col bg-bg md:flex-row">
@@ -90,12 +92,12 @@ export function VehiclesPage() {
         <div className="mb-6 flex flex-wrap items-start justify-between gap-4 md:mb-7">
           <div>
             <div className="mb-1.5 font-mono text-[10px] uppercase tracking-[0.24em] text-muted">
-              Account <span className="text-subtle">·</span> Vehicles
+              {t('profile.account')} <span className="text-subtle">·</span> {t('vehicle.page.breadcrumb')}
             </div>
             <h1 className="font-display text-2xl font-medium leading-tight tracking-tight text-white sm:text-[30px]">
-              My vehicles.
+              {t('vehicle.page.title')}
             </h1>
-            <p className="mt-1.5 text-sm text-muted">Manage your registered vehicles.</p>
+            <p className="mt-1.5 text-sm text-muted">{t('vehicle.page.subtitle')}</p>
           </div>
 
           <button
@@ -103,11 +105,11 @@ export function VehiclesPage() {
             onClick={() => setModal({ mode: 'create' })}
             className="inline-flex items-center gap-2 rounded-full bg-lime px-5 py-2.5 font-display text-sm font-semibold text-black transition-opacity hover:opacity-90"
           >
-            <PlusIcon /> Add vehicle
+            <PlusIcon /> {t('vehicle.add')}
           </button>
         </div>
 
-        {loading && <p className="text-sm text-muted">Loading…</p>}
+        {loading && <p className="text-sm text-muted">{t('common.loading')}</p>}
         {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
 
         {!loading && !error && vehicles && vehicles.length === 0 && (
@@ -139,11 +141,13 @@ export function VehiclesPage() {
 
       {modal?.mode === 'delete' && (
         <Modal onClose={() => setModal(null)}>
-          <p className="text-sm text-white">Delete {modal.vehicle.plate}? This can't be undone.</p>
+          <p className="text-sm text-white">
+            {t('vehicle.deleteConfirm', { plate: modal.vehicle.plate })}
+          </p>
           {deleteError && <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{deleteError}</p>}
           <div className="mt-6 flex gap-3">
             <ButtonGlass type="button" className="flex-1" onClick={() => setModal(null)}>
-              Cancel
+              {t('common.cancel')}
             </ButtonGlass>
             <button
               type="button"
@@ -151,7 +155,7 @@ export function VehiclesPage() {
               onClick={() => handleDelete(modal.vehicle)}
               className="flex-1 rounded-full bg-danger px-6 py-3 font-display font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {deleting ? 'Deleting…' : 'Delete'}
+              {deleting ? t('vehicle.deleting') : t('common.delete')}
             </button>
           </div>
         </Modal>
@@ -170,6 +174,7 @@ function PlusIcon() {
 }
 
 function EmptyState({ onAdd }: { onAdd: () => void }) {
+  const { t } = useTranslation()
   return (
     <div className="flex flex-col items-center gap-5 px-10 py-16 text-center">
       <svg width="110" height="110" viewBox="0 0 120 120" fill="none" className="text-lime">
@@ -191,9 +196,9 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
       </svg>
 
       <div>
-        <h3 className="font-display text-lg font-medium text-white">No vehicles yet.</h3>
+        <h3 className="font-display text-lg font-medium text-white">{t('vehicle.empty.title')}</h3>
         <p className="mt-2 max-w-[280px] text-sm leading-relaxed text-muted">
-          Add your first vehicle to keep its details in one place.
+          {t('vehicle.empty.description')}
         </p>
       </div>
 
@@ -202,7 +207,7 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
         onClick={onAdd}
         className="inline-flex items-center gap-2 rounded-full bg-lime px-6 py-3 font-display text-sm font-semibold text-black transition-opacity hover:opacity-90"
       >
-        <PlusIcon /> Add vehicle
+        <PlusIcon /> {t('vehicle.add')}
       </button>
     </div>
   )

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { RoleBadge } from '../ui/RoleBadge'
 import type { Vehicle } from '../../lib/types'
 
@@ -8,6 +9,8 @@ interface VehicleCardProps {
 }
 
 export function VehicleCard({ vehicle, onEdit, onDelete }: VehicleCardProps) {
+  const { t } = useTranslation()
+
   const makeModel =
     vehicle.make && vehicle.model
       ? `${vehicle.make.name} ${vehicle.model.name}`
@@ -33,7 +36,7 @@ export function VehicleCard({ vehicle, onEdit, onDelete }: VehicleCardProps) {
           onClick={() => onEdit(vehicle)}
           className="flex-1 rounded-lg border border-white/12 py-2 text-xs font-medium text-muted transition-colors hover:border-lime hover:text-lime"
         >
-          Edit
+          {t('vehicle.editBtn')}
         </button>
         {vehicle.role === 'owner' && (
           <button
@@ -41,7 +44,7 @@ export function VehicleCard({ vehicle, onEdit, onDelete }: VehicleCardProps) {
             onClick={() => onDelete(vehicle)}
             className="flex-1 rounded-lg border border-white/12 py-2 text-xs text-white font-medium transition-colors bg-danger hover:border-danger hover:text-danger"
           >
-            Delete
+            {t('vehicle.deleteBtn')}
           </button>
         )}
       </div>
