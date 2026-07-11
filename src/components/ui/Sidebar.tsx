@@ -1,18 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { NavItem } from './NavItem'
 import { SignalMark } from '../SignalMark'
-import { LanguageSwitcher } from '../LanguageSwitcher'
-import { useTheme } from '../../theme/ThemeContext'
 
 const ICON_PROPS = {
-  width: 16,
-  height: 16,
+  width: 18,
+  height: 18,
   viewBox: '0 0 24 24',
   fill: 'none',
   stroke: 'currentColor',
-  strokeWidth: 1.8,
+  strokeWidth: 1.9,
   strokeLinecap: 'round' as const,
   strokeLinejoin: 'round' as const,
 }
@@ -20,8 +18,8 @@ const ICON_PROPS = {
 function ProfileIcon() {
   return (
     <svg {...ICON_PROPS}>
-      <circle cx="12" cy="8" r="4" />
-      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+      <circle cx="12" cy="8" r="3.5" />
+      <path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6" />
     </svg>
   )
 }
@@ -29,50 +27,25 @@ function ProfileIcon() {
 function CarIcon() {
   return (
     <svg {...ICON_PROPS}>
-      <path d="M19 17H5a2 2 0 0 1-2-2V9l2-5h14l2 5v6a2 2 0 0 1-2 2z" />
-      <circle cx="7.5" cy="17" r="2.5" />
-      <circle cx="16.5" cy="17" r="2.5" />
+      <path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13" />
+      <rect x="2" y="13" width="20" height="6" rx="2" />
+      <circle cx="7" cy="19" r="1.6" />
+      <circle cx="17" cy="19" r="1.6" />
     </svg>
   )
 }
 
 function WrenchIcon() {
   return (
-    <svg
-      width={16}
-      height={16}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-    </svg>
-  )
-}
-
-function SunIcon() {
-  return (
     <svg {...ICON_PROPS}>
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-    </svg>
-  )
-}
-
-function MoonIcon() {
-  return (
-    <svg {...ICON_PROPS}>
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+      <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6z" />
     </svg>
   )
 }
 
 function SignOutIcon() {
   return (
-    <svg {...ICON_PROPS}>
+    <svg {...ICON_PROPS} width={17} height={17}>
       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
       <polyline points="16 17 21 12 16 7" />
       <line x1="21" y1="12" x2="9" y2="12" />
@@ -88,37 +61,15 @@ function ChevronIcon() {
   )
 }
 
-function MenuIcon() {
-  return (
-    <svg {...ICON_PROPS} width={18} height={18}>
-      <line x1="3" y1="6" x2="21" y2="6" />
-      <line x1="3" y1="12" x2="21" y2="12" />
-      <line x1="3" y1="18" x2="21" y2="18" />
-    </svg>
-  )
-}
-
-function CloseIcon() {
-  return (
-    <svg {...ICON_PROPS} width={14} height={14}>
-      <line x1="18" y1="6" x2="6" y2="18" />
-      <line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-  )
-}
-
 interface SidebarProps {
-  initials: string
-  name: string
-  role: string
+  vehicleCount?: number
+  overdueCount?: number
   onLogout: () => void
   loggingOut: boolean
 }
 
-export function Sidebar({ initials, name, role, onLogout, loggingOut }: SidebarProps) {
+export function Sidebar({ vehicleCount, overdueCount, onLogout, loggingOut }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false)
-  const [drawerOpen, setDrawerOpen] = useState(false)
-  const { theme, toggleTheme } = useTheme()
   const { t } = useTranslation()
 
   const location = useLocation()
@@ -126,241 +77,86 @@ export function Sidebar({ initials, name, role, onLogout, loggingOut }: SidebarP
 
   const navItems = [
     { path: '/profile', label: t('nav.profile'), icon: <ProfileIcon />, exact: true },
-    { path: '/vehicles', label: t('nav.vehicles'), icon: <CarIcon />, exact: true },
-    { path: '/mantenimiento', label: t('nav.maintenance'), icon: <WrenchIcon />, exact: false },
+    {
+      path: '/vehicles',
+      label: t('nav.vehicles'),
+      icon: <CarIcon />,
+      exact: true,
+      badge: vehicleCount !== undefined && vehicleCount > 0 ? vehicleCount : undefined,
+    },
+    {
+      path: '/mantenimiento',
+      label: t('nav.maintenance'),
+      icon: <WrenchIcon />,
+      exact: false,
+      badge: overdueCount !== undefined && overdueCount > 0 ? overdueCount : undefined,
+      badgeTone: 'danger' as const,
+    },
   ]
 
-  useEffect(() => {
-    document.body.style.overflow = drawerOpen ? 'hidden' : ''
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [drawerOpen])
-
   return (
-    <>
-      <header className="flex flex-shrink-0 items-center gap-3 border-b border-white/10 bg-bg px-4 py-3 md:hidden">
-        <button
-          type="button"
-          onClick={() => setDrawerOpen(true)}
-          aria-label={t('nav.openMenu')}
-          className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-muted transition-colors hover:bg-white/5 hover:text-white"
-        >
-          <MenuIcon />
-        </button>
-
-        <span className="text-lime">
-          <SignalMark />
-        </span>
-        <span className="font-display text-base font-semibold">muffler</span>
-
-        <div className="ml-auto flex items-center gap-2.5">
-          <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-lime-20 bg-lime-10 font-display text-xs font-bold text-lime">
-            {initials}
-          </div>
-          <button
-            type="button"
-            onClick={toggleTheme}
-            title={theme === 'dark' ? t('nav.switchToLight') : t('nav.switchToDark')}
-            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-muted transition-colors hover:bg-white/5 hover:text-white"
-          >
-            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-          </button>
-          <button
-            type="button"
-            onClick={onLogout}
-            disabled={loggingOut}
-            title={t('nav.signOut')}
-            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-danger transition-colors hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <SignOutIcon />
-          </button>
-        </div>
-      </header>
-
-      <div className={`fixed inset-0 z-40 md:hidden ${drawerOpen ? '' : 'pointer-events-none'}`}>
-        <div
-          className={`absolute inset-0 bg-black/60 transition-opacity duration-200 ${drawerOpen ? 'opacity-100' : 'opacity-0'}`}
-          onClick={() => setDrawerOpen(false)}
-        />
-
-        <div
-          className={`absolute inset-y-0 left-0 flex w-72 max-w-[80%] flex-col border-r border-white/10 bg-bg shadow-2xl transition-transform duration-200 ${
-            drawerOpen ? 'translate-x-0' : '-translate-x-full'
-          }`}
-        >
-          <div className="flex items-center gap-2.5 border-b border-white/10 px-5 py-5">
-            <span className="text-lime">
-              <SignalMark />
-            </span>
-            <span className="font-display text-base font-semibold">muffler</span>
-            <span className="ml-auto font-mono text-[10px] tracking-widest text-muted">v0.1</span>
-            <button
-              type="button"
-              onClick={() => setDrawerOpen(false)}
-              aria-label={t('nav.closeMenu')}
-              className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-white/10 text-muted transition-colors hover:border-lime hover:text-lime"
-            >
-              <CloseIcon />
-            </button>
-          </div>
-
-          <nav className="flex flex-1 flex-col gap-1 px-3 py-3.5">
-            <div className="mb-2 px-3.5 font-mono text-[8px] font-semibold uppercase tracking-[0.24em] text-subtle">Nav</div>
-            {navItems.map((item) => (
-              <NavItem
-                key={item.path}
-                icon={item.icon}
-                label={item.label}
-                active={item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path)}
-                onClick={() => {
-                  navigate(item.path)
-                  setDrawerOpen(false)
-                }}
-              />
-            ))}
-          </nav>
-
-          <div className="border-t border-white/10 px-3 py-4">
-            <div className="mb-1.5 flex items-center gap-2.5 overflow-hidden rounded-lg bg-white/[0.02] px-3.5 py-2.5">
-              <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-lime-20 bg-lime-10 font-display text-xs font-bold text-lime">
-                {initials}
-              </div>
-              <div className="min-w-0">
-                <div className="truncate text-xs font-semibold text-white">{name}</div>
-                <div className="font-mono text-[10px] tracking-wider text-muted">{role}</div>
-              </div>
-            </div>
-
-            <LanguageSwitcher />
-
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="flex w-full items-center justify-start gap-2.5 rounded-lg px-3.5 py-2.5 text-muted transition-colors hover:bg-white/5 hover:text-white"
-            >
-              {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-              <span className="text-sm">{theme === 'dark' ? t('nav.lightMode') : t('nav.darkMode')}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={onLogout}
-              disabled={loggingOut}
-              className="flex w-full items-center justify-start gap-2.5 rounded-lg px-3.5 py-2.5 text-danger transition-colors hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <SignOutIcon />
-              <span className="text-sm">{loggingOut ? t('nav.signingOut') : t('nav.signOut')}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <aside
-        className={`relative z-20 hidden flex-shrink-0 flex-col border-r border-white/10 bg-bg transition-[width] duration-200 md:flex ${
-          collapsed ? 'w-16' : 'w-60'
+    <aside
+      className={`flex flex-shrink-0 flex-row items-center gap-2 rounded-2xl bg-shell px-2 py-2 text-shell-fg md:relative md:flex-col md:items-stretch md:gap-6 md:rounded-none md:bg-transparent md:px-2 md:py-3 ${
+        collapsed ? 'md:w-16' : 'md:w-52'
+      }`}
+    >
+      <button
+        type="button"
+        onClick={() => setCollapsed((c) => !c)}
+        title={collapsed ? t('nav.expandMenu') : t('nav.collapseMenu')}
+        className={`absolute right-[-14px] top-4 z-30 hidden h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-shell text-muted shadow-lg transition-transform hover:border-lime hover:text-lime md:flex ${
+          collapsed ? 'rotate-180' : ''
         }`}
       >
-        <div
-          className={`pointer-events-none absolute bottom-[120px] top-[88px] w-px bg-gradient-to-b from-transparent via-white/5 to-transparent transition-all duration-200 ${
-            collapsed ? 'left-1/2' : 'left-7'
-          }`}
-        />
+        <ChevronIcon />
+      </button>
 
-        <button
-          type="button"
-          onClick={() => setCollapsed((c) => !c)}
-          title={collapsed ? t('nav.expandMenu') : t('nav.collapseMenu')}
-          className={`absolute right-[-14px] top-7 z-30 flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-bg text-muted shadow-lg transition-transform hover:border-lime hover:text-lime ${
-            collapsed ? 'rotate-180' : ''
+      <div className={`flex flex-shrink-0 items-center gap-2.5 md:mb-1 ${collapsed ? 'md:justify-center md:px-0' : 'md:px-1'}`}>
+        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[10px] bg-lime text-black">
+          <SignalMark />
+        </div>
+        <span
+          className={`hidden overflow-hidden whitespace-nowrap font-display text-base font-bold text-shell-fg transition-all md:inline-block ${
+            collapsed ? 'md:max-w-0 md:opacity-0' : 'md:max-w-[120px] md:opacity-100'
           }`}
         >
-          <ChevronIcon />
-        </button>
+          muffler
+        </span>
+      </div>
 
-        <div className={`flex items-center gap-2.5 border-b border-white/10 ${collapsed ? 'justify-center px-0 py-5' : 'px-5 py-5'}`}>
-          <span className="text-lime">
-            <SignalMark />
-          </span>
-          <span
-            className={`overflow-hidden whitespace-nowrap font-display text-base font-semibold transition-all ${
-              collapsed ? 'max-w-0 opacity-0' : 'max-w-[120px] opacity-100'
-            }`}
-          >
-            muffler
-          </span>
-          {!collapsed && <span className="ml-auto flex-shrink-0 font-mono text-[10px] tracking-widest text-muted">v0.1</span>}
-        </div>
+      <nav className="flex flex-1 flex-row items-center gap-1 overflow-x-auto md:flex-col md:items-stretch md:gap-1 md:overflow-visible">
+        {navItems.map((item) => (
+          <NavItem
+            key={item.path}
+            icon={item.icon}
+            label={item.label}
+            badge={item.badge}
+            badgeTone={item.badgeTone}
+            active={item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path)}
+            collapsed={collapsed}
+            onClick={() => navigate(item.path)}
+          />
+        ))}
+      </nav>
 
-        <nav className={`flex flex-1 flex-col gap-1 overflow-x-hidden ${collapsed ? 'px-2 py-3.5' : 'px-3 py-3.5'}`}>
-          {!collapsed && (
-            <div className="mb-2 px-3.5 font-mono text-[8px] font-semibold uppercase tracking-[0.24em] text-subtle">Nav</div>
-          )}
-          {navItems.map((item) => (
-            <NavItem
-              key={item.path}
-              icon={item.icon}
-              label={item.label}
-              active={item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path)}
-              collapsed={collapsed}
-              onClick={() => navigate(item.path)}
-            />
-          ))}
-        </nav>
-
-        <div className={`border-t border-white/10 ${collapsed ? 'px-2 py-4' : 'px-3 py-4'}`}>
-          {!collapsed && (
-            <div className="mb-1.5 flex items-center gap-2.5 overflow-hidden rounded-lg bg-white/[0.02] px-3.5 py-2.5">
-              <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-lime-20 bg-lime-10 font-display text-xs font-bold text-lime">
-                {initials}
-              </div>
-              <div className="min-w-0">
-                <div className="truncate text-xs font-semibold text-white">{name}</div>
-                <div className="font-mono text-[10px] tracking-wider text-muted">{role}</div>
-              </div>
-            </div>
-          )}
-
-          <LanguageSwitcher collapsed={collapsed} />
-
-          <button
-            type="button"
-            onClick={toggleTheme}
-            title={collapsed ? (theme === 'dark' ? t('nav.switchToLight') : t('nav.switchToDark')) : undefined}
-            className={`flex w-full items-center rounded-lg text-muted transition-colors hover:bg-white/5 hover:text-white ${
-              collapsed ? 'justify-center px-0 py-2.5' : 'justify-start gap-2.5 px-3.5 py-2.5'
-            }`}
-          >
-            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-            <span
-              className={`overflow-hidden whitespace-nowrap text-sm transition-all ${
-                collapsed ? 'max-w-0 opacity-0' : 'max-w-[200px] opacity-100'
-              }`}
-            >
-              {theme === 'dark' ? t('nav.lightMode') : t('nav.darkMode')}
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={onLogout}
-            disabled={loggingOut}
-            title={collapsed ? t('nav.signOut') : undefined}
-            className={`mt-1 flex w-full items-center rounded-lg text-danger transition-colors hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-60 ${
-              collapsed ? 'justify-center px-0 py-2.5' : 'justify-start gap-2.5 px-3.5 py-2.5'
-            }`}
-          >
-            <SignOutIcon />
-            <span
-              className={`overflow-hidden whitespace-nowrap text-sm transition-all ${
-                collapsed ? 'max-w-0 opacity-0' : 'max-w-[200px] opacity-100'
-              }`}
-            >
-              {loggingOut ? t('nav.signingOut') : t('nav.signOut')}
-            </span>
-          </button>
-        </div>
-      </aside>
-    </>
+      <button
+        type="button"
+        onClick={onLogout}
+        disabled={loggingOut}
+        title={t('nav.signOut')}
+        className={`flex flex-shrink-0 items-center rounded-lg text-danger transition-colors hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-60 ${
+          collapsed ? 'justify-center px-2 py-2.5 md:px-0' : 'justify-center gap-2.5 px-2.5 py-2.5 md:justify-start md:px-3.5'
+        }`}
+      >
+        <SignOutIcon />
+        <span
+          className={`hidden overflow-hidden whitespace-nowrap text-sm transition-all md:inline-block ${
+            collapsed ? 'md:max-w-0 md:opacity-0' : 'md:max-w-[200px] md:opacity-100'
+          }`}
+        >
+          {loggingOut ? t('nav.signingOut') : t('nav.signOut')}
+        </span>
+      </button>
+    </aside>
   )
 }

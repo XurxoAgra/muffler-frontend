@@ -6,10 +6,21 @@ interface NavItemProps {
   active?: boolean
   disabled?: boolean
   collapsed?: boolean
+  badge?: ReactNode
+  badgeTone?: 'accent' | 'danger'
   onClick?: () => void
 }
 
-export function NavItem({ icon, label, active = false, disabled = false, collapsed = false, onClick }: NavItemProps) {
+export function NavItem({
+  icon,
+  label,
+  active = false,
+  disabled = false,
+  collapsed = false,
+  badge,
+  badgeTone = 'accent',
+  onClick,
+}: NavItemProps) {
   return (
     <button
       type="button"
@@ -37,7 +48,16 @@ export function NavItem({ icon, label, active = false, disabled = false, collaps
       >
         {label}
       </span>
-      {active && !collapsed && (
+      {badge !== undefined && !collapsed && (
+        <span
+          className={`ml-auto flex-shrink-0 rounded-lg px-1.5 py-0.5 font-mono text-[10px] font-bold ${
+            badgeTone === 'danger' ? 'bg-danger text-white' : 'bg-lime text-black'
+          }`}
+        >
+          {badge}
+        </span>
+      )}
+      {active && !collapsed && badge === undefined && (
         <span className="ml-auto h-1.5 w-1.5 flex-shrink-0 rounded-full bg-lime shadow-[0_0_8px_var(--color-lime)]" />
       )}
     </button>

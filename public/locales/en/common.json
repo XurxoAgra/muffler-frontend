@@ -8,34 +8,54 @@
   },
   "auth": {
     "signin": {
-      "title": "Welcome back.",
-      "subtitle": "Pick up where the silence left off.",
-      "cta": "Sign in →"
+      "title": "Welcome back",
+      "subtitle": "Sign in to manage your vehicles and reviews",
+      "cta": "Sign in"
     },
     "register": {
-      "title": "Create your account.",
-      "subtitle": "Set up your signal in seconds.",
-      "cta": "Create account →"
+      "title": "Create your account",
+      "subtitle": "Start tracking your fleet's maintenance",
+      "cta": "Create account"
     },
-    "tabs": {
-      "signin": "Sign in",
-      "register": "Register"
+    "forgot": {
+      "title": "Reset your password",
+      "subtitle": "We'll send you a link to reset it",
+      "cta": "Send reset link",
+      "back": "Back to sign in"
+    },
+    "resetSent": {
+      "title": "Link sent",
+      "message": "Check your email to reset your password.",
+      "cta": "Back to sign in"
     },
     "fields": {
       "firstName": "First name",
       "lastName": "Last name",
       "email": "Email",
-      "password": "Password"
+      "password": "Password",
+      "passwordPlaceholder": "Minimum 8 characters"
     },
     "staySignedIn": "Stay signed in",
     "forgotPassword": "Forgot password?",
-    "noAccount": "Don't have one?",
-    "alreadyHave": "Already have one?",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "or": "or continue with",
+    "google": "Google",
+    "apple": "Apple",
+    "noAccount": "Don't have an account?",
+    "alreadyHave": "Already have an account?",
     "registerLink": "Register",
     "signinLink": "Sign in",
     "loading": "Please wait…",
     "errors": {
       "generic": "Could not connect to the server."
+    },
+    "brand": {
+      "heading": "Keep your fleet's maintenance under control in one place",
+      "subheading": "Service history, costs, and alerts for your vehicles, always at hand.",
+      "statVehicles": "Active vehicles",
+      "statUpToDate": "Up to date",
+      "footer": "© {{year}} muffler"
     }
   },
   "vehicle": {
@@ -69,10 +89,24 @@
     "deleting": "Deleting…",
     "editBtn": "Edit",
     "deleteBtn": "Delete",
+    "yourVehicles": "Your vehicles",
     "page": {
-      "breadcrumb": "Vehicles",
-      "title": "My vehicles.",
-      "subtitle": "Manage your registered vehicles."
+      "title": "Vehicle overview.",
+      "subtitle": "Keep track of your fleet's status."
+    },
+    "stats": {
+      "mileage": "Mileage per vehicle",
+      "nextReview": "Next review",
+      "avgCost": "Avg cost / review",
+      "reviewCount_one": "{{count}} review",
+      "reviewCount_other": "{{count}} reviews",
+      "maintIndex": "Maintenance up-to-date index",
+      "monthlySpend": "Historical spend by month",
+      "annual": "Annual"
+    },
+    "detail": {
+      "mileage": "Mileage",
+      "reviewHistory": "Review history"
     },
     "empty": {
       "title": "No vehicles yet.",
@@ -88,7 +122,10 @@
     },
     "validation": {
       "plateRequired": "Plate is required.",
+      "plateMinLength": "Minimum 6 characters.",
       "yearRequired": "Year is required.",
+      "yearMin": "Year must be 1900 or later.",
+      "yearMax": "Year cannot be in the future.",
       "typeRequired": "Type is required.",
       "vinFormat": "17 characters, no I, O or Q.",
       "makeRequired": "Select a make.",
@@ -126,9 +163,16 @@
     "verified": "Verified",
     "pending": "Pending",
     "page": {
-      "breadcrumb": "Maintenance",
-      "title": "Maintenance.",
-      "subtitle": "Your vehicle's maintenance history."
+      "title": "Reviews.",
+      "subtitle": "Maintenance history and schedule."
+    },
+    "stats": {
+      "spendByVehicle": "Spend by vehicle",
+      "globalTotal": "Global total",
+      "upcoming": "Upcoming reviews",
+      "overdue": "Overdue",
+      "dueSoon": "Due soon",
+      "total": "Total"
     },
     "empty": {
       "title": "No records yet.",
@@ -167,7 +211,7 @@
   "nav": {
     "profile": "Profile",
     "vehicles": "Vehicles",
-    "maintenance": "Maintenance",
+    "maintenance": "Reviews",
     "signOut": "Sign out",
     "signingOut": "Signing out…",
     "lightMode": "Light mode",
@@ -179,19 +223,19 @@
     "collapseMenu": "Collapse menu",
     "expandMenu": "Expand menu"
   },
+  "dashboard": {
+    "search": "Search vehicle, shop…"
+  },
   "profile": {
-    "breadcrumb": "Profile",
-    "account": "Account",
-    "title": "Your profile.",
-    "subtitle": "Personal information and account settings.",
-    "fields": {
-      "firstName": "First name",
-      "lastName": "Last name",
-      "email": "Email",
-      "role": "Role",
-      "memberSince": "Member since"
+    "title": "Account settings.",
+    "subtitle": "Manage your account and preferences.",
+    "settings": {
+      "notifications": "Notifications",
+      "language": "Language",
+      "changePassword": "Change password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password"
     },
-    "defaultRole": "Member",
     "errors": {
       "load": "Could not load your profile."
     }

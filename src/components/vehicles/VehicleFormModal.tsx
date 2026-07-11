@@ -68,8 +68,27 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
 
   function validate(): Partial<Record<string, string>> {
     const errors: Partial<Record<string, string>> = {}
-    if (!plate.trim()) errors.plate = t('vehicle.validation.plateRequired')
-    if (!year.trim()) errors.year = t('vehicle.validation.yearRequired')
+
+    const trimmedPlate = plate.trim()
+    if (!trimmedPlate) {
+      errors.plate = t('vehicle.validation.plateRequired')
+    } else if (trimmedPlate.length < 6) {
+      errors.plate = t('vehicle.validation.plateMinLength')
+    }
+
+    const trimmedYear = year.trim()
+    if (!trimmedYear) {
+      errors.year = t('vehicle.validation.yearRequired')
+    } else {
+      const yearNum = Number(trimmedYear)
+      const currentYear = new Date().getFullYear()
+      if (yearNum < 1900) {
+        errors.year = t('vehicle.validation.yearMin')
+      } else if (yearNum > currentYear) {
+        errors.year = t('vehicle.validation.yearMax')
+      }
+    }
+
     if (!type) errors.type = t('vehicle.validation.typeRequired')
     if (vin.trim() && !VIN_PATTERN.test(vin.trim())) errors.vin = t('vehicle.validation.vinFormat')
     if (tab === 'catalog' && !makeId) errors.makeId = t('vehicle.validation.makeRequired')
@@ -105,7 +124,7 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
       }
       onSaved()
     } catch (err) {
-      if (err instanceof ApiError && err.code === 'VALIDATION_ERROR' && err.details) {
+      if (err instanceof ApiError && (err.status === 422 || err.code === 'VALIDATION_ERROR') && err.details) {
         const mapped: Partial<Record<string, string>> = {}
         for (const [field, messages] of Object.entries(err.details)) {
           mapped[field] = Array.isArray(messages) ? String(messages[0]) : String(messages)
@@ -129,7 +148,24 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
         <UnderlineInput
           label={t('vehicle.fields.plate')}
           value={plate}
-          onChange={(e) => setPlate(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value
+            setPlate(value)
+            if (fieldErrors.plate !== undefined) {
+              const trimmed = value.trim()
+              const err = !trimmed
+                ? t('vehicle.validation.plateRequired')
+                : trimmed.length < 6
+                  ? t('vehicle.validation.plateMinLength')
+                  : undefined
+              setFieldErrors((prev) => {
+                const next = { ...prev }
+                if (err) next.plate = err
+                else delete next.plate
+                return next
+              })
+            }
+          }}
           error={fieldErrors.plate}
           required
         />
@@ -139,7 +175,28 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
             label={t('vehicle.fields.year')}
             type="number"
             value={year}
-            onChange={(e) => setYear(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value
+              setYear(value)
+              if (fieldErrors.year !== undefined) {
+                const trimmed = value.trim()
+                const yearNum = Number(trimmed)
+                const currentYear = new Date().getFullYear()
+                const err = !trimmed
+                  ? t('vehicle.validation.yearRequired')
+                  : yearNum < 1900
+                    ? t('vehicle.validation.yearMin')
+                    : yearNum > currentYear
+                      ? t('vehicle.validation.yearMax')
+                      : undefined
+                setFieldErrors((prev) => {
+                  const next = { ...prev }
+                  if (err) next.year = err
+                  else delete next.year
+                  return next
+                })
+              }
+            }}
             error={fieldErrors.year}
             required
           />
@@ -248,7 +305,7 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
           <ButtonGlass type="button" className="flex-1" onClick={onClose}>
             {t('common.cancel')}
           </ButtonGlass>
-          <ButtonPrimary type="submit" className="flex-1" disabled={submitting}>
+          <ButtonPrimary type="submit" className="flex-1" disabled={submitting || Object.keys(fieldErrors).length > 0}>
             {submitting ? t('vehicle.saving') : mode === 'create' ? t('vehicle.add') : t('vehicle.saveChanges')}
           </ButtonPrimary>
         </div>

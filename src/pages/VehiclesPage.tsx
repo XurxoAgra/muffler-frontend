@@ -1,68 +1,51 @@
-import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Sidebar } from '../components/ui/Sidebar'
-import { GlassPanel } from '../components/ui/GlassPanel'
 import { Modal } from '../components/ui/Modal'
 import { ButtonGlass } from '../components/ui/ButtonGlass'
 import { VehicleCard } from '../components/vehicles/VehicleCard'
 import { VehicleFormModal } from '../components/vehicles/VehicleFormModal'
-import { useAuth } from '../auth/AuthContext'
+import { VehicleDetailPanel } from '../components/vehicles/VehicleDetailPanel'
+import { StatCard } from '../components/dashboard/StatCard'
+import { MileageBubbles } from '../components/dashboard/MileageBubbles'
+import { MaintenanceIndexDots } from '../components/dashboard/MaintenanceIndexDots'
+import { MonthlySpendChart } from '../components/dashboard/MonthlySpendChart'
+import { useFleetData } from '../vehicles/FleetDataContext'
 import { apiFetch, ApiError } from '../lib/apiClient'
-import type { UserProfile, Vehicle } from '../lib/types'
+import {
+  computeAvgCost,
+  computeMaintenanceIndexPct,
+  computeMileageBubbles,
+  computeMonthlyTotals,
+  deriveUpcoming,
+  getCurrentMileage,
+} from '../lib/fleetInsights'
+import { getVehicleTint } from '../constants/vehicleTints'
+import { formatCost, formatDate } from '../components/maintenance/formatters'
+import type { Vehicle } from '../lib/types'
 
 type ModalState = { mode: 'create' } | { mode: 'edit'; vehicle: Vehicle } | { mode: 'delete'; vehicle: Vehicle } | null
 
 export function VehiclesPage() {
-  const navigate = useNavigate()
-  const { logout } = useAuth()
   const { t } = useTranslation()
+  const { vehicles, recordsByVehicle, loading, error, refetch } = useFleetData()
 
-  const [profile, setProfile] = useState<UserProfile | null>(null)
-  const [loggingOut, setLoggingOut] = useState(false)
-
-  const [vehicles, setVehicles] = useState<Vehicle[] | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const [modal, setModal] = useState<ModalState>(null)
+  const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
 
-  useEffect(() => {
-    let cancelled = false
-    apiFetch<UserProfile>('/api/auth/me', { authenticated: true }).then((data) => {
-      if (!cancelled) setProfile(data)
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [])
+  const upcoming = useMemo(() => (vehicles ? deriveUpcoming(vehicles, recordsByVehicle) : []), [vehicles, recordsByVehicle])
+  const mileageBubbles = useMemo(() => (vehicles ? computeMileageBubbles(vehicles, recordsByVehicle) : []), [vehicles, recordsByVehicle])
+  const monthlyTotals = useMemo(() => computeMonthlyTotals(recordsByVehicle), [recordsByVehicle])
+  const { avg: avgCost, count: reviewCount } = useMemo(() => computeAvgCost(recordsByVehicle), [recordsByVehicle])
+  const maintIndexPct = useMemo(() => (vehicles ? computeMaintenanceIndexPct(vehicles, upcoming) : 100), [vehicles, upcoming])
+  const nextReview = useMemo(() => upcoming.find((u) => u.status !== 'vencida') ?? upcoming[0] ?? null, [upcoming])
 
-  const fetchVehicles = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const data = await apiFetch<Vehicle[]>('/api/vehicles', { authenticated: true })
-      setVehicles(data)
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : t('vehicle.errors.load'))
-    } finally {
-      setLoading(false)
-    }
-  }, [t])
-
-  useEffect(() => {
-    void Promise.resolve().then(fetchVehicles)
-  }, [fetchVehicles])
-
-  async function handleLogout() {
-    setLoggingOut(true)
-    await logout()
-    navigate('/login')
-  }
+  const selectedVehicle = vehicles?.find((v) => v.id === selectedVehicleId) ?? null
+  const selectedIndex = vehicles?.findIndex((v) => v.id === selectedVehicleId) ?? -1
 
   async function handleSaved() {
-    await fetchVehicles()
+    await refetch()
     setModal(null)
   }
 
@@ -71,7 +54,7 @@ export function VehiclesPage() {
     setDeleteError(null)
     try {
       await apiFetch(`/api/vehicles/${vehicle.id}`, { method: 'DELETE', authenticated: true })
-      setVehicles((prev) => prev?.filter((v) => v.id !== vehicle.id) ?? prev)
+      await refetch()
       setModal(null)
     } catch (err) {
       setDeleteError(err instanceof ApiError ? err.message : t('vehicle.errors.delete'))
@@ -80,58 +63,88 @@ export function VehiclesPage() {
     }
   }
 
-  const fullName = profile ? `${profile.first_name} ${profile.last_name}` : t('common.loading')
-  const initials = profile ? `${profile.first_name.charAt(0)}${profile.last_name.charAt(0)}`.toUpperCase() : '··'
-  const primaryRole = profile?.roles[0] ?? t('profile.defaultRole')
-
   return (
-    <div className="flex min-h-svh flex-col bg-bg md:flex-row">
-      <Sidebar initials={initials} name={fullName} role={primaryRole} onLogout={handleLogout} loggingOut={loggingOut} />
-
-      <main className="flex-1 px-4 py-7 sm:px-8 sm:py-9 md:px-[52px] md:pb-[52px] md:pt-[44px]">
-        <div className="mb-6 flex flex-wrap items-start justify-between gap-4 md:mb-7">
-          <div>
-            <div className="mb-1.5 font-mono text-[10px] uppercase tracking-[0.24em] text-muted">
-              {t('profile.account')} <span className="text-subtle">·</span> {t('vehicle.page.breadcrumb')}
-            </div>
-            <h1 className="font-display text-2xl font-medium leading-tight tracking-tight text-white sm:text-[30px]">
-              {t('vehicle.page.title')}
-            </h1>
-            <p className="mt-1.5 text-sm text-muted">{t('vehicle.page.subtitle')}</p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setModal({ mode: 'create' })}
-            className="inline-flex items-center gap-2 rounded-full bg-lime px-5 py-2.5 font-display text-sm font-semibold text-black transition-opacity hover:opacity-90"
-          >
-            <PlusIcon /> {t('vehicle.add')}
-          </button>
+    <div>
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="font-display text-2xl font-extrabold leading-tight tracking-tight text-text-primary sm:text-[26px]">
+            {t('vehicle.page.title')}
+          </h1>
+          <p className="mt-1 text-sm text-text-secondary">{t('vehicle.page.subtitle')}</p>
         </div>
 
-        {loading && <p className="text-sm text-muted">{t('common.loading')}</p>}
-        {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
+        <button
+          type="button"
+          onClick={() => setModal({ mode: 'create' })}
+          className="inline-flex items-center gap-2 rounded-2xl bg-lime px-5 py-2.5 font-display text-sm font-bold text-black transition-opacity hover:opacity-90"
+        >
+          <PlusIcon /> {t('vehicle.add')}
+        </button>
+      </div>
 
-        {!loading && !error && vehicles && vehicles.length === 0 && (
-          <GlassPanel rounded="rounded-2xl">
-            <EmptyState onAdd={() => setModal({ mode: 'create' })} />
-          </GlassPanel>
-        )}
+      {loading && <p className="text-sm text-text-secondary">{t('common.loading')}</p>}
+      {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
 
-        {!loading && !error && vehicles && vehicles.length > 0 && (
-          <div className="grid gap-5" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))' }}>
-            {vehicles.map((vehicle) => (
+      {!loading && !error && vehicles && vehicles.length === 0 && (
+        <div className="rounded-[22px] bg-surface shadow-sm">
+          <EmptyState onAdd={() => setModal({ mode: 'create' })} />
+        </div>
+      )}
+
+      {!loading && !error && vehicles && vehicles.length > 0 && (
+        <>
+          <div className="mb-4 grid gap-4 lg:grid-cols-[1.1fr_1fr]">
+            {mileageBubbles.length > 0 && <MileageBubbles bubbles={mileageBubbles} />}
+            <div className="flex flex-col gap-4">
+              <StatCard
+                icon={<CalendarIcon />}
+                title={t('vehicle.stats.nextReview')}
+                value={nextReview ? formatDate(nextReview.date) : '—'}
+                aside={
+                  nextReview && (
+                    <div className="max-w-[110px] text-right text-[11.5px] text-text-secondary">
+                      {nextReview.type}
+                      <br />
+                      {nextReview.vehicleLabel}
+                    </div>
+                  )
+                }
+              />
+              <StatCard
+                icon={<WrenchIcon />}
+                title={t('vehicle.stats.avgCost')}
+                value={formatCost(String(avgCost))}
+                aside={
+                  <span className="rounded-lg bg-tag-bg px-2.5 py-1 text-[11px] font-extrabold text-tag-fg">
+                    {t('vehicle.stats.reviewCount', { count: reviewCount })}
+                  </span>
+                }
+              />
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <MaintenanceIndexDots pct={maintIndexPct} />
+          </div>
+
+          <MonthlySpendChart totals={monthlyTotals} />
+
+          <div className="mb-3.5 font-display text-[15.5px] font-extrabold text-text-primary">{t('vehicle.yourVehicles')}</div>
+          <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))' }}>
+            {vehicles.map((vehicle, index) => (
               <VehicleCard
                 key={vehicle.id}
                 vehicle={vehicle}
+                tint={getVehicleTint(index)}
+                mileage={getCurrentMileage(recordsByVehicle[vehicle.id] ?? [])}
+                onOpen={(v) => setSelectedVehicleId(v.id)}
                 onEdit={(v) => setModal({ mode: 'edit', vehicle: v })}
                 onDelete={(v) => setModal({ mode: 'delete', vehicle: v })}
               />
             ))}
           </div>
-        )}
-
-      </main>
+        </>
+      )}
 
       {modal?.mode === 'create' && <VehicleFormModal mode="create" onClose={() => setModal(null)} onSaved={handleSaved} />}
 
@@ -141,9 +154,7 @@ export function VehiclesPage() {
 
       {modal?.mode === 'delete' && (
         <Modal onClose={() => setModal(null)}>
-          <p className="text-sm text-white">
-            {t('vehicle.deleteConfirm', { plate: modal.vehicle.plate })}
-          </p>
+          <p className="text-sm text-white">{t('vehicle.deleteConfirm', { plate: modal.vehicle.plate })}</p>
           {deleteError && <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{deleteError}</p>}
           <div className="mt-6 flex gap-3">
             <ButtonGlass type="button" className="flex-1" onClick={() => setModal(null)}>
@@ -160,6 +171,16 @@ export function VehiclesPage() {
           </div>
         </Modal>
       )}
+
+      {selectedVehicle && (
+        <VehicleDetailPanel
+          vehicle={selectedVehicle}
+          records={recordsByVehicle[selectedVehicle.id] ?? []}
+          currentMileage={getCurrentMileage(recordsByVehicle[selectedVehicle.id] ?? [])}
+          tint={getVehicleTint(selectedIndex)}
+          onClose={() => setSelectedVehicleId(null)}
+        />
+      )}
     </div>
   )
 }
@@ -169,6 +190,23 @@ function PlusIcon() {
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
       <line x1="12" y1="5" x2="12" y2="19" />
       <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  )
+}
+
+function CalendarIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary">
+      <rect x="3" y="5" width="18" height="16" rx="2" />
+      <path d="M3 9h18M8 3v4M16 3v4" />
+    </svg>
+  )
+}
+
+function WrenchIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary">
+      <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6z" />
     </svg>
   )
 }
@@ -196,10 +234,8 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
       </svg>
 
       <div>
-        <h3 className="font-display text-lg font-medium text-white">{t('vehicle.empty.title')}</h3>
-        <p className="mt-2 max-w-[280px] text-sm leading-relaxed text-muted">
-          {t('vehicle.empty.description')}
-        </p>
+        <h3 className="font-display text-lg font-bold text-text-primary">{t('vehicle.empty.title')}</h3>
+        <p className="mt-2 max-w-[280px] text-sm leading-relaxed text-text-secondary">{t('vehicle.empty.description')}</p>
       </div>
 
       <button

@@ -40,6 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const stored = readStoredAuth()
     if (stored) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time hydration from localStorage on mount
       setAccessTokenState(stored.accessToken)
       setRefreshTokenState(stored.refreshToken)
       setAccessToken(stored.accessToken)
@@ -108,6 +109,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- context + hook are colocated by convention in this codebase
 export function useAuth() {
   const ctx = useContext(AuthContext)
   if (!ctx) {

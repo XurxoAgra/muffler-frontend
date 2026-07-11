@@ -8,34 +8,54 @@
   },
   "auth": {
     "signin": {
-      "title": "Bienvenido de nuevo.",
-      "subtitle": "Continúa donde lo dejaste.",
-      "cta": "Iniciar sesión →"
+      "title": "Bienvenido de nuevo",
+      "subtitle": "Accede para gestionar tus vehículos y revisiones",
+      "cta": "Iniciar sesión"
     },
     "register": {
-      "title": "Crea tu cuenta.",
-      "subtitle": "Configura tu señal en segundos.",
-      "cta": "Crear cuenta →"
+      "title": "Crea tu cuenta",
+      "subtitle": "Empieza a controlar el mantenimiento de tu flota",
+      "cta": "Crear cuenta"
     },
-    "tabs": {
-      "signin": "Iniciar sesión",
-      "register": "Registrarse"
+    "forgot": {
+      "title": "Recupera tu contraseña",
+      "subtitle": "Te enviaremos un enlace para restablecerla",
+      "cta": "Enviar enlace de recuperación",
+      "back": "Volver a iniciar sesión"
+    },
+    "resetSent": {
+      "title": "Enlace enviado",
+      "message": "Revisa tu correo para restablecer tu contraseña.",
+      "cta": "Volver a iniciar sesión"
     },
     "fields": {
       "firstName": "Nombre",
       "lastName": "Apellido",
       "email": "Email",
-      "password": "Contraseña"
+      "password": "Contraseña",
+      "passwordPlaceholder": "Mínimo 8 caracteres"
     },
     "staySignedIn": "Mantener sesión iniciada",
     "forgotPassword": "¿Olvidaste tu contraseña?",
-    "noAccount": "¿No tienes una?",
-    "alreadyHave": "¿Ya tienes una?",
-    "registerLink": "Registrarse",
-    "signinLink": "Iniciar sesión",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "or": "o continúa con",
+    "google": "Google",
+    "apple": "Apple",
+    "noAccount": "¿No tienes cuenta?",
+    "alreadyHave": "¿Ya tienes cuenta?",
+    "registerLink": "Regístrate",
+    "signinLink": "Inicia sesión",
     "loading": "Por favor espera…",
     "errors": {
       "generic": "No se pudo conectar con el servidor."
+    },
+    "brand": {
+      "heading": "Controla el mantenimiento de tu flota en un solo sitio",
+      "subheading": "Historial de revisiones, gastos y alertas de tus vehículos, siempre a mano.",
+      "statVehicles": "Vehículos activos",
+      "statUpToDate": "Al día",
+      "footer": "© {{year}} muffler"
     }
   },
   "vehicle": {
@@ -69,10 +89,24 @@
     "deleting": "Eliminando…",
     "editBtn": "Editar",
     "deleteBtn": "Eliminar",
+    "yourVehicles": "Tus vehículos",
     "page": {
-      "breadcrumb": "Vehículos",
-      "title": "Mis vehículos.",
-      "subtitle": "Gestiona tus vehículos registrados."
+      "title": "Resumen de vehículos.",
+      "subtitle": "Controla el estado de tu flota."
+    },
+    "stats": {
+      "mileage": "Kilometraje por vehículo",
+      "nextReview": "Próxima revisión",
+      "avgCost": "Coste medio / revisión",
+      "reviewCount_one": "{{count}} revisión",
+      "reviewCount_other": "{{count}} revisiones",
+      "maintIndex": "Índice de mantenimiento al día",
+      "monthlySpend": "Gasto histórico por mes",
+      "annual": "Anual"
+    },
+    "detail": {
+      "mileage": "Kilometraje",
+      "reviewHistory": "Historial de revisiones"
     },
     "empty": {
       "title": "Sin vehículos aún.",
@@ -88,7 +122,10 @@
     },
     "validation": {
       "plateRequired": "La matrícula es requerida.",
+      "plateMinLength": "Mínimo 6 caracteres.",
       "yearRequired": "El año es requerido.",
+      "yearMin": "El año mínimo es 1900.",
+      "yearMax": "El año no puede ser mayor al actual.",
       "typeRequired": "El tipo es requerido.",
       "vinFormat": "17 caracteres, sin I, O o Q.",
       "makeRequired": "Selecciona una marca.",
@@ -126,9 +163,16 @@
     "verified": "Verificado",
     "pending": "Pendiente",
     "page": {
-      "breadcrumb": "Mantenimiento",
-      "title": "Mantenimiento.",
-      "subtitle": "Historial de mantenimiento de tu vehículo."
+      "title": "Revisiones.",
+      "subtitle": "Historial y calendario de mantenimientos."
+    },
+    "stats": {
+      "spendByVehicle": "Gasto por vehículo",
+      "globalTotal": "Total global",
+      "upcoming": "Próximas revisiones",
+      "overdue": "Vencida",
+      "dueSoon": "Próxima",
+      "total": "Total"
     },
     "empty": {
       "title": "Sin registros aún.",
@@ -167,7 +211,7 @@
   "nav": {
     "profile": "Perfil",
     "vehicles": "Vehículos",
-    "maintenance": "Mantenimiento",
+    "maintenance": "Revisiones",
     "signOut": "Cerrar sesión",
     "signingOut": "Cerrando sesión…",
     "lightMode": "Modo claro",
@@ -179,19 +223,19 @@
     "collapseMenu": "Contraer menú",
     "expandMenu": "Expandir menú"
   },
+  "dashboard": {
+    "search": "Buscar vehículo, taller…"
+  },
   "profile": {
-    "breadcrumb": "Perfil",
-    "account": "Cuenta",
-    "title": "Tu perfil.",
-    "subtitle": "Información personal y ajustes de la cuenta.",
-    "fields": {
-      "firstName": "Nombre",
-      "lastName": "Apellido",
-      "email": "Email",
-      "role": "Rol",
-      "memberSince": "Miembro desde"
+    "title": "Ajustes de cuenta.",
+    "subtitle": "Gestiona tu cuenta y preferencias.",
+    "settings": {
+      "notifications": "Notificaciones",
+      "language": "Idioma",
+      "changePassword": "Cambiar contraseña",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirmar contraseña"
     },
-    "defaultRole": "Miembro",
     "errors": {
       "load": "No se pudo cargar tu perfil."
     }

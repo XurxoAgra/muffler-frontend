@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #E4EBDE; font-family: 'Nunito', sans-serif; }
+  * { box-sizing: border-box; }
+  ::selection { background: #C7DCC0; }
+</style>
+</helmet>
+<div style="display:flex; flex-direction:{{ layoutDirection }}; min-height:100vh; width:100%; background:#E4EBDE; color:#3E4A38;">
+
+  <!-- SIDEBAR -->
+  <div style="display:flex; flex-direction:{{ sidebarDirection }}; align-items:{{ sidebarAlign }}; justify-content:{{ sidebarJustify }}; gap:{{ sidebarGap }}; width:{{ sidebarWidth }}; flex-shrink:0; background:#DCE6D4; padding:{{ sidebarPadding }}; box-shadow: inset -6px 0 14px rgba(150,168,134,0.18); position:relative; z-index:2;">
+
+    <div style="display:flex; align-items:center; gap:12px; {{ logoWrapStyle }}">
+      <div style="width:44px; height:44px; border-radius:16px; background:#8FBE82; box-shadow: 5px 5px 10px rgba(140,160,120,0.5), -5px -5px 10px rgba(255,255,255,0.75); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#F4F8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13"/><rect x="2" y="13" width="20" height="6" rx="2"/><circle cx="7" cy="19" r="1.6"/><circle cx="17" cy="19" r="1.6"/></svg>
+      </div>
+      <sc-if value="{{ showSidebarText }}"><div style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:19px; color:#3E4A38;">AutoCuido</div></sc-if>
+    </div>
+
+    <div style="display:flex; flex-direction:{{ navDirection }}; gap:8px; {{ navWrapStyle }}">
+      <div onClick="{{ setProfile }}" style="display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:16px; cursor:pointer; font-family:'Quicksand',sans-serif; font-weight:600; font-size:14.5px; color:{{ profileNav.color }}; background:{{ profileNav.bg }}; box-shadow:{{ profileNav.shadow }}; transition:box-shadow .15s;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
+        <sc-if value="{{ showSidebarText }}"><span>Perfil</span></sc-if>
+      </div>
+      <div onClick="{{ setVehiculos }}" style="display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:16px; cursor:pointer; font-family:'Quicksand',sans-serif; font-weight:600; font-size:14.5px; color:{{ vehiculosNav.color }}; background:{{ vehiculosNav.bg }}; box-shadow:{{ vehiculosNav.shadow }}; transition:box-shadow .15s;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13"/><rect x="2" y="13" width="20" height="6" rx="2"/><circle cx="7" cy="19" r="1.6"/><circle cx="17" cy="19" r="1.6"/></svg>
+        <sc-if value="{{ showSidebarText }}"><span>Vehículos</span></sc-if>
+      </div>
+      <div onClick="{{ setRevisiones }}" style="display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:16px; cursor:pointer; font-family:'Quicksand',sans-serif; font-weight:600; font-size:14.5px; color:{{ revisionesNav.color }}; background:{{ revisionesNav.bg }}; box-shadow:{{ revisionesNav.shadow }}; transition:box-shadow .15s;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6z"/></svg>
+        <sc-if value="{{ showSidebarText }}"><span>Revisiones</span></sc-if>
+      </div>
+    </div>
+
+    <sc-if value="{{ showSidebarText }}" hint-placeholder-val="{{ true }}">
+      <div style="margin-top:auto; display:flex; align-items:center; gap:10px; padding:12px 16px; border-radius:16px; cursor:pointer; font-family:'Quicksand',sans-serif; font-weight:600; font-size:14px; color:#B5695A; box-shadow: 4px 4px 8px rgba(150,168,134,0.35), -4px -4px 8px rgba(255,255,255,0.7);">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#B5695A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>
+        Cerrar sesión
+      </div>
+    </sc-if>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div style="flex:1; min-width:0; padding:{{ mainPadding }};">
+
+    <!-- PERFIL -->
+    <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:640px; margin:0 auto;">
+        <h1 style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:26px; margin:0 0 24px; color:#3E4A38;">Perfil</h1>
+
+        <div style="background:#EDF3E9; border-radius:28px; padding:28px; display:flex; align-items:center; gap:20px; box-shadow: 8px 8px 18px rgba(163,184,150,0.45), -8px -8px 18px rgba(255,255,255,0.85); margin-bottom:20px;">
+          <div style="width:72px; height:72px; border-radius:50%; background:#F0B37E; display:flex; align-items:center; justify-content:center; font-family:'Quicksand',sans-serif; font-weight:700; font-size:24px; color:#fff; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.12), inset -3px -3px 6px rgba(255,255,255,0.3); flex-shrink:0;">MS</div>
+          <div>
+            <div style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:20px; color:#3E4A38;">Marta Sánchez</div>
+            <div style="font-size:14.5px; color:#7C8B73; margin-top:4px;">marta.sanchez@email.com</div>
+          </div>
+        </div>
+
+        <div style="background:#EDF3E9; border-radius:28px; padding:26px; box-shadow: 8px 8px 18px rgba(163,184,150,0.45), -8px -8px 18px rgba(255,255,255,0.85); margin-bottom:20px;">
+          <div style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:15.5px; color:#3E4A38; margin-bottom:18px;">Ajustes de cuenta</div>
+
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid rgba(163,184,150,0.3);">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#7C8B73" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+              <span style="font-size:14.5px; font-weight:600; color:#3E4A38;">Notificaciones</span>
+            </div>
+            <div onClick="{{ toggleNotif }}" style="width:46px; height:26px; border-radius:20px; background:{{ notifTrackColor }}; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.15); cursor:pointer; position:relative; flex-shrink:0;">
+              <div style="width:20px; height:20px; border-radius:50%; background:#fff; box-shadow:1px 1px 3px rgba(0,0,0,0.3); position:absolute; top:3px; left:{{ notifKnobPos }}; transition:left .15s;"></div>
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid rgba(163,184,150,0.3);">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#7C8B73" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"/></svg>
+              <span style="font-size:14.5px; font-weight:600; color:#3E4A38;">Idioma</span>
+            </div>
+            <select style="font-family:'Nunito',sans-serif; font-weight:700; font-size:13.5px; color:#3E4A38; background:#E4EBDE; border:none; border-radius:12px; padding:8px 14px; box-shadow: inset 2px 2px 5px rgba(163,184,150,0.4), inset -2px -2px 5px rgba(255,255,255,0.7);">
+              <option>Español</option>
+              <option>English</option>
+            </select>
+          </div>
+
+          <div style="padding-top:16px;">
+            <div onClick="{{ togglePasswordForm }}" style="display:flex; align-items:center; gap:12px; cursor:pointer;">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#7C8B73" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+              <span style="font-size:14.5px; font-weight:600; color:#3E4A38;">Cambiar contraseña</span>
+            </div>
+            <sc-if value="{{ passwordFormOpen }}">
+              <div style="margin-top:16px; display:flex; flex-direction:column; gap:10px;">
+                <input type="password" placeholder="Nueva contraseña" style="font-family:'Nunito',sans-serif; font-size:13.5px; padding:12px 16px; border:none; border-radius:14px; background:#E4EBDE; box-shadow: inset 3px 3px 6px rgba(163,184,150,0.4), inset -3px -3px 6px rgba(255,255,255,0.7); color:#3E4A38;"/>
+                <input type="password" placeholder="Confirmar contraseña" style="font-family:'Nunito',sans-serif; font-size:13.5px; padding:12px 16px; border:none; border-radius:14px; background:#E4EBDE; box-shadow: inset 3px 3px 6px rgba(163,184,150,0.4), inset -3px -3px 6px rgba(255,255,255,0.7); color:#3E4A38;"/>
+                <div style="align-self:flex-start; margin-top:4px; font-family:'Quicksand',sans-serif; font-weight:700; font-size:13.5px; color:#fff; background:#8FBE82; padding:10px 22px; border-radius:14px; cursor:pointer; box-shadow: 4px 4px 8px rgba(140,160,120,0.5), -4px -4px 8px rgba(255,255,255,0.75);">Guardar</div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:10px; padding:16px 26px; border-radius:20px; cursor:pointer; width:fit-content; font-family:'Quicksand',sans-serif; font-weight:700; font-size:14.5px; color:#B5695A; background:#EDF3E9; box-shadow: 8px 8px 18px rgba(163,184,150,0.45), -8px -8px 18px rgba(255,255,255,0.85);">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#B5695A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>
+          Cerrar sesión
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- VEHICULOS -->
+    <sc-if value="{{ isVehicles }}">
+      <div style="max-width:1000px; margin:0 auto;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:14px;">
+          <h1 style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:26px; margin:0; color:#3E4A38;">Mis vehículos</h1>
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div onClick="{{ toggleEmptyView }}" style="font-family:'Nunito',sans-serif; font-weight:700; font-size:12.5px; color:#7C8B73; cursor:pointer; text-decoration:underline; text-underline-offset:3px;">{{ emptyToggleLabel }}</div>
+            <div style="display:flex; align-items:center; gap:8px; font-family:'Quicksand',sans-serif; font-weight:700; font-size:14px; color:#fff; background:#8FBE82; padding:12px 20px; border-radius:16px; cursor:pointer; box-shadow: 5px 5px 10px rgba(140,160,120,0.5), -5px -5px 10px rgba(255,255,255,0.75);">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Añadir vehículo
+            </div>
+          </div>
+        </div>
+
+        <sc-if value="{{ showEmptyVehicles }}">
+          <div style="background:#EDF3E9; border-radius:28px; padding:60px 40px; text-align:center; box-shadow: 8px 8px 18px rgba(163,184,150,0.45), -8px -8px 18px rgba(255,255,255,0.85);">
+            <div style="width:64px; height:64px; border-radius:20px; background:#E4EBDE; margin:0 auto 18px; display:flex; align-items:center; justify-content:center; box-shadow: inset 4px 4px 8px rgba(163,184,150,0.4), inset -4px -4px 8px rgba(255,255,255,0.7);">
+              <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#A9BB9F" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13"/><rect x="2" y="13" width="20" height="6" rx="2"/><circle cx="7" cy="19" r="1.6"/><circle cx="17" cy="19" r="1.6"/></svg>
+            </div>
+            <div style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:17px; color:#3E4A38; margin-bottom:6px;">Aún no has añadido vehículos</div>
+            <div style="font-size:14px; color:#7C8B73;">Añade tu primer vehículo para empezar a llevar el control de sus mantenimientos.</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ hasVehicles }}">
+          <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:20px;">
+            <sc-for list="{{ vehicles }}" as="v" hint-placeholder-count="2">
+              <div onClick="{{ v.onClick }}" style="background:#EDF3E9; border-radius:26px; padding:22px; cursor:pointer; box-shadow: 8px 8px 18px rgba(163,184,150,0.45), -8px -8px 18px rgba(255,255,255,0.85);">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+                  <div style="width:52px; height:52px; border-radius:18px; background:{{ v.tint }}; display:flex; align-items:center; justify-content:center; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.1), inset -3px -3px 6px rgba(255,255,255,0.35);">
+                    <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13"/><rect x="2" y="13" width="20" height="6" rx="2"/><circle cx="7" cy="19" r="1.6"/><circle cx="17" cy="19" r="1.6"/></svg>
+                  </div>
+                  <div style="font-family:'Nunito',sans-serif; font-weight:800; font-size:12px; letter-spacing:0.5px; color:#7C8B73; background:#E4EBDE; padding:6px 12px; border-radius:10px;">{{ v.plate }}</div>
+                </div>
+                <div style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:17px; color:#3E4A38;">{{ v.brand }} {{ v.model }}</div>
+                <div style="font-size:13px; color:#7C8B73; margin-top:2px;">{{ v.year }}</div>
+                <div style="display:flex; align-items:center; gap:6px; margin-top:14px; font-size:13.5px; color:#7C8B73; font-weight:700;">
+                  <span>{{ v.mileageLabel }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ hasSelectedVehicle }}">
+        <div onClick="{{ closeDetail }}" style="position:fixed; inset:0; background:rgba(62,74,56,0.25); z-index:10;"></div>
+        <div style="position:fixed; top:0; right:0; height:100%; width:min(420px,92vw); background:#E9F0E6; z-index:11; padding:32px; overflow-y:auto; box-shadow: -10px 0 30px rgba(0,0,0,0.15);">
+          <div style="display:flex; justify-content:flex-end; margin-bottom:8px;">
+            <div onClick="{{ closeDetail }}" style="width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; cursor:pointer; background:#EDF3E9; box-shadow: 4px 4px 8px rgba(163,184,150,0.4), -4px -4px 8px rgba(255,255,255,0.7);">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#3E4A38" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </div>
+          </div>
+          <div style="width:64px; height:64px; border-radius:20px; background:{{ selectedVehicle.tint }}; display:flex; align-items:center; justify-content:center; margin-bottom:18px; box-shadow: inset 3px 3px 6px rgba(0,0,0,0.1), inset -3px -3px 6px rgba(255,255,255,0.35);">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13"/><rect x="2" y="13" width="20" height="6" rx="2"/><circle cx="7" cy="19" r="1.6"/><circle cx="17" cy="19" r="1.6"/></svg>
+          </div>
+          <div style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:21px; color:#3E4A38;">{{ selectedVehicle.brand }} {{ selectedVehicle.model }}</div>
+          <div style="font-size:13.5px; color:#7C8B73; margin-top:4px;">{{ selectedVehicle.plate }}</div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:22px 0;">
+            <div style="background:#EDF3E9; border-radius:18px; padding:16px; box-shadow: 6px 6px 14px rgba(163,184,150,0.4), -6px -6px 14px rgba(255,255,255,0.8);">
+              <div style="font-size:11.5px; color:#7C8B73; font-weight:700; text-transform:uppercase; letter-spacing:0.4px;">Año</div>
+              <div style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:17px; color:#3E4A38; margin-top:4px;">{{ selectedVehicle.year }}</div>
+            </div>
+            <div style="background:#EDF3E9; border-radius:18px; padding:16px; box-shadow: 6px 6px 14px rgba(163,184,150,0.4), -6px -6px 14px rgba(255,255,255,0.8);">
+              <div style="font-size:11.5px; color:#7C8B73; font-weight:700; text-transform:uppercase; letter-spacing:0.4px;">Kilometraje</div>
+              <div style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:17px; color:#3E4A38; margin-top:4px;">{{ selectedVehicle.mileageLabel }}</div>
+            </div>
+          </div>
+
+          <div style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:14.5px; color:#3E4A38; margin-bottom:12px;">Historial de revisiones</div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <sc-for list="{{ selectedVehicle.reviews }}" as="r" hint-placeholder-count="2">
+              <div style="background:#EDF3E9; border-radius:16px; padding:14px 16px; box-shadow: 5px 5px 12px rgba(163,184,150,0.4), -5px -5px 12px rgba(255,255,255,0.8);">
+                <div style="display:flex; justify-content:space-between; align-items:baseline;">
+                  <span style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:13.5px; color:#3E4A38;">{{ r.type }}</span>
+                  <span style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:13.5px; color:#5C8F4E;">{{ r.costLabel }}</span>
+                </div>
+                <div style="font-size:12.5px; color:#7C8B73; margin-top:3px;">{{ r.dateLabel }} · {{ r.taller }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <!-- REVISIONES -->
+    <sc-if value="{{ isReviews }}">
+      <div style="max-width:1080px; margin:0 auto;">
+        <h1 style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:26px; margin:0 0 24px; color:#3E4A38;">Revisiones</h1>
+
+        <div style="display:grid; grid-template-columns:1.3fr 1fr; gap:20px; align-items:start; margin-bottom:24px;">
+
+          <div style="background:#EDF3E9; border-radius:26px; padding:24px; box-shadow: 8px 8px 18px rgba(163,184,150,0.45), -8px -8px 18px rgba(255,255,255,0.85);">
+            <div style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:15.5px; color:#3E4A38; margin-bottom:6px;">Gasto por vehículo</div>
+            <div style="font-size:12.5px; color:#7C8B73; margin-bottom:18px;">Total global: <span style="font-weight:800; color:#3E4A38;">{{ globalTotalLabel }}</span></div>
+            <div style="display:flex; flex-direction:column; gap:16px;">
+              <sc-for list="{{ vehicleTotals }}" as="vt" hint-placeholder-count="2">
+                <div>
+                  <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; color:#3E4A38; margin-bottom:6px;">
+                    <span>{{ vt.label }}</span>
+                    <span>{{ vt.totalLabel }}</span>
+                  </div>
+                  <div style="height:16px; border-radius:10px; background:#E4EBDE; box-shadow: inset 2px 2px 5px rgba(163,184,150,0.4); overflow:hidden;">
+                    <div style="height:100%; width:{{ vt.barWidth }}%; border-radius:10px; background:{{ vt.tint }};"></div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background:#EDF3E9; border-radius:26px; padding:24px; box-shadow: 8px 8px 18px rgba(163,184,150,0.45), -8px -8px 18px rgba(255,255,255,0.85);">
+            <div style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:15.5px; color:#3E4A38; margin-bottom:14px;">Próximas revisiones</div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+              <sc-for list="{{ upcoming }}" as="u" hint-placeholder-count="3">
+                <div style="display:flex; flex-direction:column; gap:8px; padding:10px 12px; border-radius:14px; background:{{ u.rowBg }};">
+                  <div style="display:flex; align-items:center; gap:12px; min-width:0;">
+                    <div style="width:38px; height:38px; border-radius:12px; background:{{ u.badgeBg }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
+                    </div>
+                    <div style="flex:1; min-width:0;">
+                      <div style="font-size:13px; font-weight:700; color:#3E4A38; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ u.type }}</div>
+                      <div style="font-size:12px; color:#7C8B73; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ u.vehicleLabel }} · {{ u.dateLabel }}</div>
+                    </div>
+                  </div>
+                  <sc-if value="{{ u.showAlert }}">
+                    <div style="display:flex; align-items:center; gap:4px; font-size:11px; font-weight:800; color:{{ u.alertColor }}; background:#fff; padding:5px 9px; border-radius:20px; width:fit-content; margin-left:50px;">
+                      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="{{ u.alertColor }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"/><path d="M12 9v5M12 17h.01"/></svg>
+                      {{ u.statusLabel }}
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <sc-for list="{{ vehicles }}" as="v" hint-placeholder-count="2">
+            <div style="background:#EDF3E9; border-radius:26px; padding:22px 24px; box-shadow: 8px 8px 18px rgba(163,184,150,0.45), -8px -8px 18px rgba(255,255,255,0.85);">
+              <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+                <div style="width:36px; height:36px; border-radius:12px; background:{{ v.tint }}; display:flex; align-items:center; justify-content:center;">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13"/><rect x="2" y="13" width="20" height="6" rx="2"/><circle cx="7" cy="19" r="1.6"/><circle cx="17" cy="19" r="1.6"/></svg>
+                </div>
+                <div style="font-family:'Quicksand',sans-serif; font-weight:700; font-size:15.5px; color:#3E4A38;">{{ v.brand }} {{ v.model }}</div>
+                <div style="font-size:12px; color:#7C8B73; margin-left:auto;">Total: <span style="font-weight:800; color:#3E4A38;">{{ v.totalLabel }}</span></div>
+              </div>
+              <div style="display:flex; flex-direction:column;">
+                <div style="display:grid; grid-template-columns:110px 1fr 1fr 80px; gap:10px; font-size:11.5px; font-weight:800; color:#7C8B73; text-transform:uppercase; letter-spacing:0.3px; padding:0 12px 8px;">
+                  <span>Fecha</span><span>Tipo</span><span>Taller</span><span style="text-align:right;">Coste</span>
+                </div>
+                <sc-for list="{{ v.reviews }}" as="r" hint-placeholder-count="2">
+                  <div style="display:grid; grid-template-columns:110px 1fr 1fr 80px; gap:10px; padding:12px; border-radius:14px; font-size:13px; color:#3E4A38;" style-hover="background:#E4EBDE;">
+                    <span style="color:#7C8B73; font-weight:600;">{{ r.dateLabel }}</span>
+                    <span style="font-weight:700;">{{ r.type }}</span>
+                    <span style="color:#7C8B73;">{{ r.taller }}</span>
+                    <span style="text-align:right; font-weight:800; color:#5C8F4E;">{{ r.costLabel }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const VEHICLES_DATA = [
+  { id: 'v1', brand: 'Seat', model: 'León', plate: '4521 KRT', year: 2019, mileage: 68450, tint: '#8FBE82',
+    reviews: [
+      { date: '2024-03-12', type: 'Revisión general', taller: 'Ruedas Norte', cost: 180 },
+      { date: '2025-01-20', type: 'Cambio de aceite', taller: 'AutoTaller Pérez', cost: 65 },
+      { date: '2026-06-30', type: 'ITV', taller: 'Estación ITV Sur', cost: 45 },
+    ] },
+  { id: 'v2', brand: 'Toyota', model: 'Corolla', plate: '7810 MXP', year: 2021, mileage: 32120, tint: '#F0B37E',
+    reviews: [
+      { date: '2023-11-05', type: 'Revisión general', taller: 'Toyota Servicio Oficial', cost: 210 },
+      { date: '2025-08-14', type: 'Frenos', taller: 'AutoTaller Pérez', cost: 140 },
+    ] },
+];
+
+const UPCOMING_DATA = [
+  { vehicleId: 'v1', vehicleLabel: 'Seat León', type: 'Cambio de aceite', date: '2026-07-15' },
+  { vehicleId: 'v2', vehicleLabel: 'Toyota Corolla', type: 'ITV', date: '2026-06-20' },
+  { vehicleId: 'v1', vehicleLabel: 'Seat León', type: 'Revisión general', date: '2026-10-02' },
+];
+
+const TODAY = new Date('2026-07-09');
+
+function fmtMoney(n) { return n.toLocaleString('es-ES') + ' €'; }
+function fmtDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+function iconCar(stroke) {
+  return null; // icons are inline in template
+}
+
+class Component extends DCLogic {
+  state = {
+    activeSection: 'vehiculos',
+    selectedVehicleId: null,
+    showEmptyVehicles: false,
+    notifEnabled: true,
+    passwordFormOpen: false,
+    isMobile: false,
+  };
+
+  componentDidMount() {
+    this._onResize = () => this.setState({ isMobile: window.innerWidth < 860 });
+    this._onResize();
+    window.addEventListener('resize', this._onResize);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._onResize);
+  }
+
+  setSection(name) {
+    this.setState({ activeSection: name, selectedVehicleId: null });
+  }
+  openVehicle(id) {
+    this.setState({ selectedVehicleId: id });
+  }
+  closeDetail() {
+    this.setState({ selectedVehicleId: null });
+  }
+  toggleEmptyView() {
+    this.setState(s => ({ showEmptyVehicles: !s.showEmptyVehicles }));
+  }
+  toggleNotif() {
+    this.setState(s => ({ notifEnabled: !s.notifEnabled }));
+  }
+  togglePasswordForm() {
+    this.setState(s => ({ passwordFormOpen: !s.passwordFormOpen }));
+  }
+
+  renderVals() {
+    const { activeSection, selectedVehicleId, showEmptyVehicles, notifEnabled, passwordFormOpen, isMobile } = this.state;
+
+    const withStatus = (u) => {
+      const days = Math.round((new Date(u.date) - TODAY) / 86400000);
+      let status, label, color;
+      if (days < 0) { status = 'vencida'; label = 'Vencida'; color = '#C25B4E'; }
+      else if (days <= 14) { status = 'proxima'; label = 'Próxima'; color = '#D69A3A'; }
+      else { status = 'programada'; label = null; color = null; }
+      return { ...u, status, statusLabel: label, alertColor: color, showAlert: status !== 'programada',
+        dateLabel: fmtDate(u.date), rowBg: status === 'vencida' ? '#F7E4E1' : status === 'proxima' ? '#FBEFDD' : '#E4EBDE',
+        badgeBg: status === 'vencida' ? '#C25B4E' : status === 'proxima' ? '#D69A3A' : '#A9BB9F' };
+    };
+
+    const vehiclesEnriched = VEHICLES_DATA.map(v => {
+      const total = v.reviews.reduce((s, r) => s + r.cost, 0);
+      return {
+        ...v,
+        mileageLabel: v.mileage.toLocaleString('es-ES') + ' km',
+        totalLabel: fmtMoney(total),
+        total,
+        onClick: () => this.openVehicle(v.id),
+        reviews: v.reviews.map(r => ({ ...r, dateLabel: fmtDate(r.date), costLabel: fmtMoney(r.cost) })),
+      };
+    });
+
+    const globalTotal = vehiclesEnriched.reduce((s, v) => s + v.total, 0);
+    const maxTotal = Math.max(...vehiclesEnriched.map(v => v.total));
+
+    const selectedVehicle = vehiclesEnriched.find(v => v.id === selectedVehicleId) || null;
+
+    const navStyle = (key) => {
+      const active = key === activeSection;
+      return {
+        color: active ? '#fff' : '#5A6B52',
+        bg: active ? '#8FBE82' : 'transparent',
+        shadow: active ? 'inset 3px 3px 6px rgba(0,0,0,0.12), inset -3px -3px 6px rgba(255,255,255,0.25)' : 'none',
+      };
+    };
+
+    return {
+      isProfile: activeSection === 'perfil',
+      isVehicles: activeSection === 'vehiculos',
+      isReviews: activeSection === 'revisiones',
+      vehicles: vehiclesEnriched,
+      hasVehicles: vehiclesEnriched.length > 0 && !showEmptyVehicles,
+      showEmptyVehicles,
+      emptyToggleLabel: showEmptyVehicles ? 'Ver con vehículos' : 'Ver estado vacío',
+      hasSelectedVehicle: !!selectedVehicle,
+      selectedVehicle,
+      closeDetail: () => this.closeDetail(),
+      toggleEmptyView: () => this.toggleEmptyView(),
+      globalTotalLabel: fmtMoney(globalTotal),
+      vehicleTotals: vehiclesEnriched.map(v => ({
+        label: v.brand + ' ' + v.model,
+        totalLabel: fmtMoney(v.total),
+        tint: v.tint,
+        barWidth: maxTotal ? Math.round((v.total / maxTotal) * 100) : 0,
+      })),
+      upcoming: UPCOMING_DATA.map(withStatus),
+      notifEnabled,
+      notifTrackColor: notifEnabled ? '#8FBE82' : '#D8E0D2',
+      notifKnobPos: notifEnabled ? '23px' : '3px',
+      toggleNotif: () => this.toggleNotif(),
+      passwordFormOpen,
+      togglePasswordForm: () => this.togglePasswordForm(),
+      setProfile: () => this.setSection('perfil'),
+      setVehiculos: () => this.setSection('vehiculos'),
+      setRevisiones: () => this.setSection('revisiones'),
+      profileNav: navStyle('perfil'),
+      vehiculosNav: navStyle('vehiculos'),
+      revisionesNav: navStyle('revisiones'),
+      layoutDirection: isMobile ? 'column' : 'row',
+      sidebarDirection: isMobile ? 'row' : 'column',
+      sidebarAlign: isMobile ? 'center' : 'stretch',
+      sidebarJustify: isMobile ? 'space-between' : 'flex-start',
+      sidebarGap: isMobile ? '10px' : '28px',
+      sidebarWidth: isMobile ? '100%' : '250px',
+      sidebarPadding: isMobile ? '14px 18px' : '28px 20px',
+      showSidebarText: !isMobile,
+      logoWrapStyle: isMobile ? '' : 'margin-bottom:8px;',
+      navDirection: isMobile ? 'row' : 'column',
+      navWrapStyle: isMobile ? '' : 'flex:1;',
+      mainPadding: isMobile ? '24px 18px 40px' : '40px 48px',
+    };
+  }
+}
+
+</script>
+</body>
+</html>
