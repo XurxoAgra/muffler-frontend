@@ -68,7 +68,7 @@ export function deriveUpcoming(
     const records = recordsByVehicle[vehicle.id] ?? []
     const withNext = records.filter((r) => r.nextServiceDate)
     if (withNext.length === 0) continue
-    const latest = withNext.reduce((a, b) => (new Date(a.serviceDate) > new Date(b.serviceDate) ? a : b))
+    const latest = withNext.reduce((a, b) => (new Date(a.nextServiceDate!) < new Date(b.nextServiceDate!) ? a : b))
     items.push({
       vehicleId: vehicle.id,
       vehicleLabel: getVehicleLabel(vehicle),

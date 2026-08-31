@@ -93,6 +93,21 @@ export function VehiclesPage() {
 
       {!loading && !error && vehicles && vehicles.length > 0 && (
         <>
+          <div className="mb-3.5 font-display text-[15.5px] font-extrabold text-text-primary">{t('vehicle.yourVehicles')}</div>
+          <div className="mb-6 grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))' }}>
+            {vehicles.map((vehicle, index) => (
+              <VehicleCard
+                key={vehicle.id}
+                vehicle={vehicle}
+                tint={getVehicleTint(index)}
+                mileage={getCurrentMileage(recordsByVehicle[vehicle.id] ?? [])}
+                onOpen={(v) => setSelectedVehicleId(v.id)}
+                onEdit={(v) => setModal({ mode: 'edit', vehicle: v })}
+                onDelete={(v) => setModal({ mode: 'delete', vehicle: v })}
+              />
+            ))}
+          </div>
+
           <div className="mb-4 grid gap-4 lg:grid-cols-[1.1fr_1fr]">
             {mileageBubbles.length > 0 && <MileageBubbles bubbles={mileageBubbles} />}
             <div className="flex flex-col gap-4">
@@ -128,21 +143,6 @@ export function VehiclesPage() {
           </div>
 
           <MonthlySpendChart totals={monthlyTotals} />
-
-          <div className="mb-3.5 font-display text-[15.5px] font-extrabold text-text-primary">{t('vehicle.yourVehicles')}</div>
-          <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))' }}>
-            {vehicles.map((vehicle, index) => (
-              <VehicleCard
-                key={vehicle.id}
-                vehicle={vehicle}
-                tint={getVehicleTint(index)}
-                mileage={getCurrentMileage(recordsByVehicle[vehicle.id] ?? [])}
-                onOpen={(v) => setSelectedVehicleId(v.id)}
-                onEdit={(v) => setModal({ mode: 'edit', vehicle: v })}
-                onDelete={(v) => setModal({ mode: 'delete', vehicle: v })}
-              />
-            ))}
-          </div>
         </>
       )}
 

@@ -106,25 +106,6 @@ function ArrowLeftIcon() {
   )
 }
 
-function GoogleIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24">
-      <path
-        fill="#EA4335"
-        d="M12 10.9v3.6h5.1c-.2 1.3-1.6 3.9-5.1 3.9-3.1 0-5.6-2.5-5.6-5.6s2.5-5.6 5.6-5.6c1.8 0 2.9.7 3.6 1.3l2.5-2.4C16.7 4.7 14.6 3.8 12 3.8 7.2 3.8 3.3 7.7 3.3 12.5S7.2 21.2 12 21.2c4.9 0 7.6-3.4 7.6-8.2 0-.5-.1-1-.2-1.5H12z"
-      />
-    </svg>
-  )
-}
-
-function AppleIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M16.365 1.43c0 1.14-.42 2.15-1.13 2.98-.83.94-2.05 1.63-3.13 1.55-.15-1.11.44-2.28 1.15-3.03.79-.85 2.13-1.5 3.11-1.5zM20.5 17.1c-.53 1.2-.78 1.74-1.46 2.79-.95 1.47-2.29 3.3-3.95 3.31-1.48.02-1.86-.97-3.86-.96-2 .01-2.42.98-3.9.96-1.66-.02-2.93-1.67-3.88-3.14-2.67-4.1-2.95-8.91-1.3-11.47 1.17-1.82 3.02-2.89 4.75-2.89 1.77 0 2.88 1.01 4.35 1.01 1.42 0 2.29-1.01 4.35-1.01 1.55 0 3.19.85 4.36 2.31-3.84 2.1-3.22 7.58.54 9.09z" />
-    </svg>
-  )
-}
-
 export function LoginPage() {
   const navigate = useNavigate()
   const { login, register } = useAuth()
@@ -158,7 +139,7 @@ export function LoginPage() {
       } else {
         await register({ email, password, first_name: firstName, last_name: lastName }, rememberMe)
       }
-      navigate('/profile')
+      navigate('/mantenimiento')
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t('auth.errors.generic'))
     } finally {
@@ -282,27 +263,6 @@ export function LoginPage() {
                 >
                   {loading ? t('auth.loading') : t('auth.signin.cta')}
                 </button>
-
-                <div className="my-1.5 flex items-center gap-3">
-                  <div className="h-px flex-1 bg-border-soft" />
-                  <span className="text-[11.5px] text-text-secondary">{t('auth.or')}</span>
-                  <div className="h-px flex-1 bg-border-soft" />
-                </div>
-
-                <div className="flex gap-2.5">
-                  <button
-                    type="button"
-                    className="flex flex-1 items-center justify-center gap-2 rounded-[14px] border border-border-soft bg-surface py-3 font-display text-[13px] font-semibold text-text-primary transition-opacity hover:opacity-80"
-                  >
-                    <GoogleIcon /> {t('auth.google')}
-                  </button>
-                  <button
-                    type="button"
-                    className="flex flex-1 items-center justify-center gap-2 rounded-[14px] border border-border-soft bg-surface py-3 font-display text-[13px] font-semibold text-text-primary transition-opacity hover:opacity-80"
-                  >
-                    <AppleIcon /> {t('auth.apple')}
-                  </button>
-                </div>
 
                 <p className="mt-2 text-center text-[13px] text-text-secondary">
                   {t('auth.noAccount')}{' '}

@@ -39,9 +39,6 @@
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "showPassword": "Mostrar contraseña",
     "hidePassword": "Ocultar contraseña",
-    "or": "o continúa con",
-    "google": "Google",
-    "apple": "Apple",
     "noAccount": "¿No tienes cuenta?",
     "alreadyHave": "¿Ya tienes cuenta?",
     "registerLink": "Regístrate",
@@ -96,7 +93,7 @@
     },
     "stats": {
       "mileage": "Kilometraje por vehículo",
-      "nextReview": "Próxima revisión",
+      "nextReview": "Próximas revisiones",
       "avgCost": "Coste medio / revisión",
       "reviewCount_one": "{{count}} revisión",
       "reviewCount_other": "{{count}} revisiones",
@@ -222,9 +219,6 @@
     "closeMenu": "Cerrar menú",
     "collapseMenu": "Contraer menú",
     "expandMenu": "Expandir menú"
-  },
-  "dashboard": {
-    "search": "Buscar vehículo, taller…"
   },
   "profile": {
     "title": "Ajustes de cuenta.",

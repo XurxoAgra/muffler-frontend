@@ -76,7 +76,6 @@ export function Sidebar({ vehicleCount, overdueCount, onLogout, loggingOut }: Si
   const navigate = useNavigate()
 
   const navItems = [
-    { path: '/profile', label: t('nav.profile'), icon: <ProfileIcon />, exact: true },
     {
       path: '/vehicles',
       label: t('nav.vehicles'),
@@ -92,6 +91,7 @@ export function Sidebar({ vehicleCount, overdueCount, onLogout, loggingOut }: Si
       badge: overdueCount !== undefined && overdueCount > 0 ? overdueCount : undefined,
       badgeTone: 'danger' as const,
     },
+    { path: '/profile', label: t('nav.profile'), icon: <ProfileIcon />, exact: true },
   ]
 
   return (

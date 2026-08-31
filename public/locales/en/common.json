@@ -39,9 +39,6 @@
     "forgotPassword": "Forgot password?",
     "showPassword": "Show password",
     "hidePassword": "Hide password",
-    "or": "or continue with",
-    "google": "Google",
-    "apple": "Apple",
     "noAccount": "Don't have an account?",
     "alreadyHave": "Already have an account?",
     "registerLink": "Register",
@@ -96,7 +93,7 @@
     },
     "stats": {
       "mileage": "Mileage per vehicle",
-      "nextReview": "Next review",
+      "nextReview": "Next reviews",
       "avgCost": "Avg cost / review",
       "reviewCount_one": "{{count}} review",
       "reviewCount_other": "{{count}} reviews",
@@ -222,9 +219,6 @@
     "closeMenu": "Close menu",
     "collapseMenu": "Collapse menu",
     "expandMenu": "Expand menu"
-  },
-  "dashboard": {
-    "search": "Search vehicle, shop…"
   },
   "profile": {
     "title": "Account settings.",
