@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GlassPanel } from '../ui/GlassPanel'
 import { VerifiedBadge } from './VerifiedBadge'
@@ -87,6 +88,28 @@ export function MaintenanceTable({
   onDelete,
 }: MaintenanceTableProps) {
   const { t } = useTranslation()
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [canScrollRight, setCanScrollRight] = useState(false)
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+
+    function updateScrollState() {
+      const { scrollWidth, clientWidth, scrollLeft } = el!
+      setCanScrollRight(scrollWidth - clientWidth - scrollLeft > 4)
+    }
+
+    updateScrollState()
+    el.addEventListener('scroll', updateScrollState, { passive: true })
+    const resizeObserver = new ResizeObserver(updateScrollState)
+    resizeObserver.observe(el)
+
+    return () => {
+      el.removeEventListener('scroll', updateScrollState)
+      resizeObserver.disconnect()
+    }
+  }, [records])
 
   const COLUMNS: Column[] = [
     { key: 'serviceDate', label: t('maintenance.table.date') },
@@ -100,70 +123,81 @@ export function MaintenanceTable({
   ]
 
   return (
-    <GlassPanel rounded="rounded-2xl" className="overflow-hidden">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b border-white/10">
-            {COLUMNS.map((col) => (
-              <th
-                key={col.label}
-                onClick={col.key ? () => onSort(col.key!) : undefined}
-                className={`px-4 py-3 text-left font-mono text-[10px] uppercase tracking-widest text-muted ${
-                  col.key ? 'cursor-pointer select-none hover:text-white' : ''
-                }`}
-              >
-                <span className="inline-flex items-center">
-                  {col.label}
-                  {col.key && (
-                    <SortIcon
-                      active={sortKey === col.key}
-                      dir={sortKey === col.key ? sortDir : 'desc'}
-                    />
-                  )}
-                </span>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {records.map((r) => (
-            <tr
-              key={r.id}
-              className="border-b border-white/5 transition-colors last:border-0 hover:bg-white/[0.02]"
-            >
-              <td className="px-4 py-3 text-sm text-white">{formatDate(r.serviceDate)}</td>
-              <td className="px-4 py-3 text-sm text-white">{r.type}</td>
-              <td className="px-4 py-3 text-sm text-muted">{r.shopName ?? '—'}</td>
-              <td className="px-4 py-3 font-mono text-sm text-white">{formatMileage(r.mileage)}</td>
-              <td className="px-4 py-3 font-mono text-sm text-white">{formatCost(r.cost)}</td>
-              <td className="px-4 py-3 text-sm text-muted">{formatDate(r.nextServiceDate)}</td>
-              <td className="px-4 py-3">
-                <VerifiedBadge verified={r.verified} />
-              </td>
-              <td className="px-4 py-3">
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => onEdit(r)}
-                    title={t('maintenance.editTitle')}
-                    className="flex h-7 w-7 items-center justify-center rounded-lg text-muted transition-colors hover:bg-white/5 hover:text-white"
-                  >
-                    <EditIcon />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onDelete(r)}
-                    title={t('maintenance.deleteTitle')}
-                    className="flex h-7 w-7 items-center justify-center rounded-lg text-muted transition-colors hover:bg-danger/10 hover:text-danger"
-                  >
-                    <TrashIcon />
-                  </button>
-                </div>
-              </td>
+    <GlassPanel rounded="rounded-2xl" className="relative overflow-hidden">
+      <div
+        ref={scrollRef}
+        className="overflow-x-auto [-webkit-overflow-scrolling:touch] [scrollbar-width:thin] [scrollbar-color:var(--color-border-soft)_transparent] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[var(--color-border-soft)]"
+      >
+        <table className="w-full min-w-[920px]">
+          <thead>
+            <tr className="border-b border-white/10">
+              {COLUMNS.map((col) => (
+                <th
+                  key={col.label}
+                  onClick={col.key ? () => onSort(col.key!) : undefined}
+                  className={`px-4 py-3 text-left font-mono text-[10px] uppercase tracking-widest text-muted ${
+                    col.key ? 'cursor-pointer select-none hover:text-white' : ''
+                  }`}
+                >
+                  <span className="inline-flex items-center">
+                    {col.label}
+                    {col.key && (
+                      <SortIcon
+                        active={sortKey === col.key}
+                        dir={sortKey === col.key ? sortDir : 'desc'}
+                      />
+                    )}
+                  </span>
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {records.map((r) => (
+              <tr
+                key={r.id}
+                className="border-b border-white/5 transition-colors last:border-0 hover:bg-white/[0.02]"
+              >
+                <td className="px-4 py-3 text-sm text-white">{formatDate(r.serviceDate)}</td>
+                <td className="px-4 py-3 text-sm text-white">{r.type}</td>
+                <td className="px-4 py-3 text-sm text-muted">{r.shopName ?? '—'}</td>
+                <td className="px-4 py-3 font-mono text-sm text-white">{formatMileage(r.mileage)}</td>
+                <td className="px-4 py-3 font-mono text-sm text-white">{formatCost(r.cost)}</td>
+                <td className="px-4 py-3 text-sm text-muted">{formatDate(r.nextServiceDate)}</td>
+                <td className="px-4 py-3">
+                  <VerifiedBadge verified={r.verified} />
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => onEdit(r)}
+                      title={t('maintenance.editTitle')}
+                      className="flex h-7 w-7 items-center justify-center rounded-lg text-muted transition-colors hover:bg-white/5 hover:text-white"
+                    >
+                      <EditIcon />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onDelete(r)}
+                      title={t('maintenance.deleteTitle')}
+                      className="flex h-7 w-7 items-center justify-center rounded-lg text-muted transition-colors hover:bg-danger/10 hover:text-danger"
+                    >
+                      <TrashIcon />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-glass to-transparent transition-opacity duration-200 ${
+          canScrollRight ? 'opacity-100' : 'opacity-0'
+        }`}
+      />
     </GlassPanel>
   )
 }
