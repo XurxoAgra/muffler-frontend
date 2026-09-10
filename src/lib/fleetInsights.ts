@@ -6,7 +6,7 @@ export type ReviewStatus = 'vencida' | 'proxima' | 'programada'
 export interface UpcomingItem {
   vehicleId: string
   vehicleLabel: string
-  type: string
+  maintenanceRecordTypeId: string
   date: string
   status: ReviewStatus
 }
@@ -72,7 +72,7 @@ export function deriveUpcoming(
     items.push({
       vehicleId: vehicle.id,
       vehicleLabel: getVehicleLabel(vehicle),
-      type: latest.type,
+      maintenanceRecordTypeId: latest.maintenanceRecordTypeId,
       date: latest.nextServiceDate!,
       status: deriveReviewStatus(latest.nextServiceDate!, today),
     })

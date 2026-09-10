@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { getVehicleLabel } from '../../lib/fleetInsights'
 import { formatDate, formatCost } from '../maintenance/formatters'
+import { useMaintenanceRecordTypes } from '../../maintenance/useMaintenanceRecordTypes'
 import type { MaintenanceRecord, Vehicle } from '../../lib/types'
 
 interface VehicleDetailPanelProps {
@@ -13,6 +14,7 @@ interface VehicleDetailPanelProps {
 
 export function VehicleDetailPanel({ vehicle, records, currentMileage, tint, onClose }: VehicleDetailPanelProps) {
   const { t } = useTranslation()
+  const { labelOf } = useMaintenanceRecordTypes()
   const sortedRecords = [...records].sort((a, b) => new Date(b.serviceDate).getTime() - new Date(a.serviceDate).getTime())
 
   return (
@@ -55,7 +57,9 @@ export function VehicleDetailPanel({ vehicle, records, currentMileage, tint, onC
           {sortedRecords.map((r) => (
             <div key={r.id} className="rounded-[14px] bg-surface p-3.5">
               <div className="flex items-baseline justify-between">
-                <span className="text-[13px] font-bold text-text-primary">{r.type}</span>
+                <span className="text-[13px] font-bold text-text-primary">
+                  {labelOf(r.maintenanceRecordTypeId) ?? '—'}
+                </span>
                 <span className="text-[13px] font-extrabold text-success">{formatCost(r.cost)}</span>
               </div>
               <div className="mt-0.5 text-xs text-text-secondary">

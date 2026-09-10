@@ -140,12 +140,12 @@
       "notes": "Notas"
     },
     "placeholders": {
-      "type": "Ej: Cambio de aceite, Revisión ITV…",
       "km": "Ej: 45000",
       "cost": "Ej: 120.50",
       "shop": "Ej: Taller Pepe",
       "notes": "Observaciones adicionales…"
     },
+    "selectType": "Selecciona un tipo",
     "add": "Añadir registro",
     "addFirst": "Añadir el primero",
     "addModal": "Añadir registro.",
@@ -196,7 +196,8 @@
       "save": "No se pudo guardar el registro.",
       "delete": "No se pudo eliminar el registro.",
       "forbidden": "No tienes acceso a este vehículo.",
-      "notFound": "Vehículo no encontrado."
+      "notFound": "Vehículo no encontrado.",
+      "loadTypes": "No se pudieron cargar los tipos de mantenimiento."
     },
     "validation": {
       "serviceDateRequired": "La fecha de servicio es requerida.",
@@ -204,6 +205,17 @@
       "mileageFormat": "Debe ser un número entero positivo.",
       "costFormat": "Formato incorrecto (ej: 120.50)."
     }
+  },
+  "maintenanceRecordType": {
+    "oil_change": "Cambio de aceite",
+    "itv": "ITV",
+    "insurance": "Seguro",
+    "tire_change": "Cambio de neumáticos",
+    "brake_check": "Revisión de frenos",
+    "battery": "Batería",
+    "air_filter": "Filtro de aire",
+    "timing_belt": "Correa de distribución",
+    "other": "Otro"
   },
   "nav": {
     "profile": "Perfil",

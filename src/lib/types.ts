@@ -69,13 +69,22 @@ export interface VehicleInput {
   customModel?: string | null
 }
 
+export interface MaintenanceRecordType {
+  id: string
+  key: string
+  icon: string | null
+  defaultPeriodicityMonths: number | null
+  defaultPeriodicityKm: number | null
+  active: boolean
+}
+
 export interface MaintenanceRecord {
   id: string
   vehicleId: string
   invoiceId: string | null
   createdById: string
   serviceDate: string
-  type: string
+  maintenanceRecordTypeId: string
   mileage: number | null
   cost: string | null
   shopName: string | null
@@ -87,7 +96,7 @@ export interface MaintenanceRecord {
 
 export interface MaintenanceRecordInput {
   serviceDate: string
-  type: string
+  maintenanceRecordTypeId: string
   mileage?: number | null
   cost?: string | null
   shopName?: string | null
