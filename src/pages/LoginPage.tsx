@@ -139,7 +139,7 @@ export function LoginPage() {
       } else {
         await register({ email, password, first_name: firstName, last_name: lastName }, rememberMe)
       }
-      navigate('/mantenimiento')
+      navigate('/resumen')
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t('auth.errors.generic'))
     } finally {
