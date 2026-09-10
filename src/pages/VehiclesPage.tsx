@@ -10,6 +10,7 @@ import { MileageBubbles } from '../components/dashboard/MileageBubbles'
 import { MaintenanceIndexDots } from '../components/dashboard/MaintenanceIndexDots'
 import { MonthlySpendChart } from '../components/dashboard/MonthlySpendChart'
 import { useFleetData } from '../vehicles/FleetDataContext'
+import { useMaintenanceRecordTypes } from '../maintenance/useMaintenanceRecordTypes'
 import { apiFetch, ApiError } from '../lib/apiClient'
 import {
   computeAvgCost,
@@ -28,6 +29,7 @@ type ModalState = { mode: 'create' } | { mode: 'edit'; vehicle: Vehicle } | { mo
 export function VehiclesPage() {
   const { t } = useTranslation()
   const { vehicles, recordsByVehicle, loading, error, refetch } = useFleetData()
+  const { labelOf } = useMaintenanceRecordTypes()
 
   const [modal, setModal] = useState<ModalState>(null)
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null)
@@ -118,7 +120,7 @@ export function VehiclesPage() {
                 aside={
                   nextReview && (
                     <div className="max-w-[110px] text-right text-[11.5px] text-text-secondary">
-                      {nextReview.type}
+                      {labelOf(nextReview.maintenanceRecordTypeId) ?? '—'}
                       <br />
                       {nextReview.vehicleLabel}
                     </div>

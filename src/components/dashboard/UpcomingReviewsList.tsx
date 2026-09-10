@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { formatDate } from '../maintenance/formatters'
+import { useMaintenanceRecordTypes } from '../../maintenance/useMaintenanceRecordTypes'
 import type { UpcomingItem } from '../../lib/fleetInsights'
 
 const ROW_BG: Record<UpcomingItem['status'], string> = {
@@ -16,6 +17,7 @@ const BADGE_BG: Record<UpcomingItem['status'], string> = {
 
 export function UpcomingReviewsList({ items }: { items: UpcomingItem[] }) {
   const { t } = useTranslation()
+  const { labelOf } = useMaintenanceRecordTypes()
 
   return (
     <div className="rounded-[20px] bg-surface p-5 shadow-sm">
@@ -31,7 +33,9 @@ export function UpcomingReviewsList({ items }: { items: UpcomingItem[] }) {
                 <CalendarIcon />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="truncate text-[12.5px] font-bold text-text-primary">{item.type}</div>
+                <div className="truncate text-[12.5px] font-bold text-text-primary">
+                  {labelOf(item.maintenanceRecordTypeId) ?? '—'}
+                </div>
                 <div className="truncate text-[11.5px] text-text-secondary">
                   {item.vehicleLabel} · {formatDate(item.date)}
                 </div>

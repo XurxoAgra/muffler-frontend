@@ -3,9 +3,10 @@ import { useTranslation } from 'react-i18next'
 import { GlassPanel } from '../ui/GlassPanel'
 import { VerifiedBadge } from './VerifiedBadge'
 import { formatDate, formatMileage, formatCost } from './formatters'
+import { useMaintenanceRecordTypes } from '../../maintenance/useMaintenanceRecordTypes'
 import type { MaintenanceRecord } from '../../lib/types'
 
-export type SortKey = 'serviceDate' | 'type' | 'mileage' | 'cost' | 'nextServiceDate'
+export type SortKey = 'serviceDate' | 'maintenanceRecordType' | 'mileage' | 'cost' | 'nextServiceDate'
 
 interface MaintenanceTableProps {
   records: MaintenanceRecord[]
@@ -88,6 +89,7 @@ export function MaintenanceTable({
   onDelete,
 }: MaintenanceTableProps) {
   const { t } = useTranslation()
+  const { labelOf } = useMaintenanceRecordTypes()
   const scrollRef = useRef<HTMLDivElement>(null)
   const [canScrollRight, setCanScrollRight] = useState(false)
 
@@ -113,7 +115,7 @@ export function MaintenanceTable({
 
   const COLUMNS: Column[] = [
     { key: 'serviceDate', label: t('maintenance.table.date') },
-    { key: 'type', label: t('maintenance.table.type') },
+    { key: 'maintenanceRecordType', label: t('maintenance.table.type') },
     { key: null, label: t('maintenance.table.shop') },
     { key: 'mileage', label: t('maintenance.table.km') },
     { key: 'cost', label: t('maintenance.table.cost') },
@@ -159,7 +161,9 @@ export function MaintenanceTable({
                 className="border-b border-white/5 transition-colors last:border-0 hover:bg-white/[0.02]"
               >
                 <td className="px-4 py-3 text-sm text-white">{formatDate(r.serviceDate)}</td>
-                <td className="px-4 py-3 text-sm text-white">{r.type}</td>
+                <td className="px-4 py-3 text-sm text-white">
+                  {labelOf(r.maintenanceRecordTypeId) ?? '—'}
+                </td>
                 <td className="px-4 py-3 text-sm text-muted">{r.shopName ?? '—'}</td>
                 <td className="px-4 py-3 font-mono text-sm text-white">{formatMileage(r.mileage)}</td>
                 <td className="px-4 py-3 font-mono text-sm text-white">{formatCost(r.cost)}</td>

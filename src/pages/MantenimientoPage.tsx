@@ -9,6 +9,7 @@ import { MaintenanceFormDrawer } from '../components/maintenance/MaintenanceForm
 import { SpendByVehicleBars } from '../components/dashboard/SpendByVehicleBars'
 import { UpcomingReviewsList } from '../components/dashboard/UpcomingReviewsList'
 import { useFleetData } from '../vehicles/FleetDataContext'
+import { useMaintenanceRecordTypes } from '../maintenance/useMaintenanceRecordTypes'
 import { apiFetch, ApiError } from '../lib/apiClient'
 import { computeGlobalTotal, computeSpendByVehicle, deriveUpcoming, getVehicleLabel } from '../lib/fleetInsights'
 import { getVehicleTint } from '../constants/vehicleTints'
@@ -20,6 +21,7 @@ export function MantenimientoPage() {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const { vehicles, recordsByVehicle, loading, error, refetch } = useFleetData()
+  const { labelOf } = useMaintenanceRecordTypes()
 
   const [drawerState, setDrawerState] = useState<DrawerState>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<MaintenanceRecord | null>(null)
@@ -37,10 +39,18 @@ export function MantenimientoPage() {
     }
   }
 
+  // The TIPO column sorts by the translated label, not by the catalog id.
+  function sortValue(record: MaintenanceRecord): string | number {
+    if (sortKey === 'maintenanceRecordType') {
+      return labelOf(record.maintenanceRecordTypeId) ?? ''
+    }
+    return record[sortKey] ?? ''
+  }
+
   function sortRecords(records: MaintenanceRecord[]): MaintenanceRecord[] {
     return [...records].sort((a, b) => {
-      const aVal = a[sortKey] ?? ''
-      const bVal = b[sortKey] ?? ''
+      const aVal = sortValue(a)
+      const bVal = sortValue(b)
       const dir = sortDir === 'asc' ? 1 : -1
       if (aVal < bVal) return -dir
       if (aVal > bVal) return dir
@@ -188,7 +198,10 @@ export function MantenimientoPage() {
           }}
         >
           <p className="text-sm text-white">
-            {t('maintenance.deleteConfirm', { type: deleteConfirm.type, date: new Date(deleteConfirm.serviceDate).toLocaleDateString() })}
+            {t('maintenance.deleteConfirm', {
+              type: labelOf(deleteConfirm.maintenanceRecordTypeId) ?? '—',
+              date: new Date(deleteConfirm.serviceDate).toLocaleDateString(),
+            })}
           </p>
           {deleteError && <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{deleteError}</p>}
           <div className="mt-6 flex gap-3">

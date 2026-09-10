@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { GlassPanel } from '../ui/GlassPanel'
 import { VerifiedBadge } from './VerifiedBadge'
 import { formatDate, formatMileage, formatCost } from './formatters'
+import { useMaintenanceRecordTypes } from '../../maintenance/useMaintenanceRecordTypes'
 import type { MaintenanceRecord } from '../../lib/types'
 
 interface MaintenanceRecordCardProps {
@@ -50,12 +51,15 @@ function TrashIcon() {
 
 export function MaintenanceRecordCard({ record, onEdit, onDelete }: MaintenanceRecordCardProps) {
   const { t } = useTranslation()
+  const { labelOf } = useMaintenanceRecordTypes()
 
   return (
     <GlassPanel rounded="rounded-xl" className="p-4">
       <div className="mb-3">
         <div className="font-mono text-xs text-muted">{formatDate(record.serviceDate)}</div>
-        <div className="mt-0.5 font-display text-base font-medium text-white">{record.type}</div>
+        <div className="mt-0.5 font-display text-base font-medium text-white">
+          {labelOf(record.maintenanceRecordTypeId) ?? '—'}
+        </div>
       </div>
 
       <div className="mb-4 grid grid-cols-2 gap-3">
