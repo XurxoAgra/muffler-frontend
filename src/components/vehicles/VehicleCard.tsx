@@ -8,11 +8,9 @@ interface VehicleCardProps {
   tint: string
   mileage: number | null
   onOpen: (vehicle: Vehicle) => void
-  onEdit: (vehicle: Vehicle) => void
-  onDelete: (vehicle: Vehicle) => void
 }
 
-export function VehicleCard({ vehicle, tint, mileage, onOpen, onEdit, onDelete }: VehicleCardProps) {
+export function VehicleCard({ vehicle, tint, mileage, onOpen }: VehicleCardProps) {
   const { t } = useTranslation()
 
   return (
@@ -34,24 +32,16 @@ export function VehicleCard({ vehicle, tint, mileage, onOpen, onEdit, onDelete }
         {vehicle.year} · {formatMileage(mileage)}
       </div>
 
-      <div className="mt-4 flex gap-2 border-t border-border-soft pt-3.5" onClick={(e) => e.stopPropagation()}>
-        <button
-          type="button"
-          onClick={() => onEdit(vehicle)}
-          className="flex-1 rounded-lg border border-border-soft py-2 text-xs font-semibold text-text-secondary transition-colors hover:border-lime hover:text-lime"
-        >
-          {t('vehicle.editBtn')}
-        </button>
-        {vehicle.role === 'owner' && (
-          <button
-            type="button"
-            onClick={() => onDelete(vehicle)}
-            className="flex-1 rounded-lg bg-danger py-2 text-xs font-semibold text-white transition-opacity hover:opacity-90"
-          >
-            {t('vehicle.deleteBtn')}
-          </button>
-        )}
-      </div>
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation()
+          onOpen(vehicle)
+        }}
+        className="mt-4 w-full rounded-lg border border-border-soft py-2 text-xs font-semibold text-text-secondary transition-colors hover:border-lime hover:text-lime"
+      >
+        {t('vehicle.detail.viewMore')}
+      </button>
     </div>
   )
 }

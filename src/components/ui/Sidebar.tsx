@@ -24,6 +24,15 @@ function ProfileIcon() {
   )
 }
 
+function ChartIcon() {
+  return (
+    <svg {...ICON_PROPS}>
+      <path d="M3 3v16.5A1.5 1.5 0 0 0 4.5 21H21" />
+      <path d="M7 15l3.5-4 3 2.5L20 7" />
+    </svg>
+  )
+}
+
 function CarIcon() {
   return (
     <svg {...ICON_PROPS}>
@@ -76,11 +85,12 @@ export function Sidebar({ vehicleCount, overdueCount, onLogout, loggingOut }: Si
   const navigate = useNavigate()
 
   const navItems = [
+    { path: '/resumen', label: t('nav.summary'), icon: <ChartIcon />, exact: true },
     {
       path: '/vehicles',
       label: t('nav.vehicles'),
       icon: <CarIcon />,
-      exact: true,
+      exact: false,
       badge: vehicleCount !== undefined && vehicleCount > 0 ? vehicleCount : undefined,
     },
     {

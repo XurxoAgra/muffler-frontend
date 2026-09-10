@@ -86,10 +86,9 @@
     "deleting": "Deleting…",
     "editBtn": "Edit",
     "deleteBtn": "Delete",
-    "yourVehicles": "Your vehicles",
     "page": {
-      "title": "Vehicle overview.",
-      "subtitle": "Keep track of your fleet's status."
+      "title": "Your vehicles.",
+      "subtitle": "Add, edit and review your fleet's vehicles."
     },
     "stats": {
       "mileage": "Mileage per vehicle",
@@ -103,7 +102,18 @@
     },
     "detail": {
       "mileage": "Mileage",
-      "reviewHistory": "Review history"
+      "reviewHistory": "Review history",
+      "back": "Back to my vehicles",
+      "viewMore": "View more",
+      "totalSpent": "Total spent",
+      "nextReview": "Next review",
+      "recordCount": "Records",
+      "filterLabel": "Filter by type",
+      "allTypes": "All types",
+      "statusValid": "Up to date",
+      "statusUnknown": "No data",
+      "noFilterResults": "No records of this type.",
+      "notFound": "We could not find this vehicle."
     },
     "empty": {
       "title": "No vehicles yet.",
@@ -178,7 +188,7 @@
     "noVehicles": {
       "title": "No vehicles registered.",
       "description": "Add a vehicle first to see its maintenance history.",
-      "cta": "Go to My vehicles"
+      "cta": "Go to your vehicles"
     },
     "deleteConfirm": "Delete record \"{{type}}\" from {{date}}? This can't be undone.",
     "table": {
@@ -219,7 +229,7 @@
   },
   "nav": {
     "profile": "Profile",
-    "vehicles": "Vehicles",
+    "vehicles": "Your vehicles",
     "maintenance": "Reviews",
     "signOut": "Sign out",
     "signingOut": "Signing out…",
@@ -230,7 +240,8 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "collapseMenu": "Collapse menu",
-    "expandMenu": "Expand menu"
+    "expandMenu": "Expand menu",
+    "summary": "Summary"
   },
   "profile": {
     "title": "Account settings.",
@@ -244,6 +255,12 @@
     },
     "errors": {
       "load": "Could not load your profile."
+    }
+  },
+  "summary": {
+    "page": {
+      "title": "Vehicle overview.",
+      "subtitle": "Keep track of your fleet's status."
     }
   }
 }

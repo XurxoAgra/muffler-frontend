@@ -86,10 +86,9 @@
     "deleting": "Eliminando…",
     "editBtn": "Editar",
     "deleteBtn": "Eliminar",
-    "yourVehicles": "Tus vehículos",
     "page": {
-      "title": "Resumen de vehículos.",
-      "subtitle": "Controla el estado de tu flota."
+      "title": "Tus vehículos.",
+      "subtitle": "Añade, edita y consulta los vehículos de tu flota."
     },
     "stats": {
       "mileage": "Kilometraje por vehículo",
@@ -103,7 +102,18 @@
     },
     "detail": {
       "mileage": "Kilometraje",
-      "reviewHistory": "Historial de revisiones"
+      "reviewHistory": "Historial de revisiones",
+      "back": "Volver a mis vehículos",
+      "viewMore": "Ver más",
+      "totalSpent": "Total gastado",
+      "nextReview": "Próxima revisión",
+      "recordCount": "Registros",
+      "filterLabel": "Filtrar por tipo",
+      "allTypes": "Todos los tipos",
+      "statusValid": "Al día",
+      "statusUnknown": "Sin datos",
+      "noFilterResults": "Ningún registro de este tipo.",
+      "notFound": "No encontramos este vehículo."
     },
     "empty": {
       "title": "Sin vehículos aún.",
@@ -178,7 +188,7 @@
     "noVehicles": {
       "title": "Sin vehículos registrados.",
       "description": "Añade un vehículo primero para ver su historial de mantenimiento.",
-      "cta": "Ir a Mis vehículos"
+      "cta": "Ir a Tus vehículos"
     },
     "deleteConfirm": "¿Eliminar el registro \"{{type}}\" del {{date}}? Esta acción no se puede deshacer.",
     "table": {
@@ -219,7 +229,7 @@
   },
   "nav": {
     "profile": "Perfil",
-    "vehicles": "Vehículos",
+    "vehicles": "Tus vehículos",
     "maintenance": "Revisiones",
     "signOut": "Cerrar sesión",
     "signingOut": "Cerrando sesión…",
@@ -230,7 +240,8 @@
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú",
     "collapseMenu": "Contraer menú",
-    "expandMenu": "Expandir menú"
+    "expandMenu": "Expandir menú",
+    "summary": "Resumen"
   },
   "profile": {
     "title": "Ajustes de cuenta.",
@@ -244,6 +255,12 @@
     },
     "errors": {
       "load": "No se pudo cargar tu perfil."
+    }
+  },
+  "summary": {
+    "page": {
+      "title": "Resumen de vehículos.",
+      "subtitle": "Controla el estado de tu flota."
     }
   }
 }
