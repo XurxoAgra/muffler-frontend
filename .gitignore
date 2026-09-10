@@ -25,5 +25,5 @@ dist-ssr
 *.sw?
 
 # IA
-CLAUDE.md
+CLAUDE.local.md
 docs/superpowers
