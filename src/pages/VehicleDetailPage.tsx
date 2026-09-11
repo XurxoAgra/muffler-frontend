@@ -7,9 +7,12 @@ import { LabelMono } from '../components/ui/LabelMono'
 import { MaintenanceTable, type SortKey } from '../components/maintenance/MaintenanceTable'
 import { MaintenanceRecordCard } from '../components/maintenance/MaintenanceRecordCard'
 import { MaintenanceFormDrawer } from '../components/maintenance/MaintenanceFormDrawer'
+import { MaintenanceRecordDetailModal } from '../components/maintenance/MaintenanceRecordDetailModal'
 import { VehicleFormModal } from '../components/vehicles/VehicleFormModal'
 import { ReviewStatusBadge } from '../components/vehicles/ReviewStatusBadge'
+import { MileageHistorySection } from '../components/vehicles/MileageHistorySection'
 import { useFleetData } from '../vehicles/FleetDataContext'
+import { latestMileage, useMileageHistory } from '../vehicles/useMileageHistory'
 import { useMaintenanceRecordTypes } from '../maintenance/useMaintenanceRecordTypes'
 import { apiFetch, ApiError } from '../lib/apiClient'
 import {
@@ -35,9 +38,11 @@ export function VehicleDetailPage() {
   const language = i18n.language
   const { vehicles, recordsByVehicle, loading, error, refetch } = useFleetData()
   const { byId, labelOf } = useMaintenanceRecordTypes()
+  const mileageHistory = useMileageHistory(id)
 
   const [typeFilter, setTypeFilter] = useState('')
   const [editingVehicle, setEditingVehicle] = useState(false)
+  const [viewingRecord, setViewingRecord] = useState<MaintenanceRecord | null>(null)
   const [confirmVehicleDelete, setConfirmVehicleDelete] = useState(false)
   const [deletingVehicle, setDeletingVehicle] = useState(false)
   const [vehicleDeleteError, setVehicleDeleteError] = useState<string | null>(null)
@@ -53,7 +58,13 @@ export function VehicleDetailPage() {
   const records = useMemo(() => (id ? recordsByVehicle[id] ?? [] : []), [id, recordsByVehicle])
 
   const totalSpent = useMemo(() => getVehicleTotal(records), [records])
-  const mileage = useMemo(() => getCurrentMileage(records), [records])
+  // Mileage snapshots are the authoritative source (a maintenance record with a mileage also
+  // writes one), so prefer the newest snapshot and fall back to the maintenance-derived value
+  // while the history is still loading or failed.
+  const mileage = useMemo(() => {
+    const latest = latestMileage(mileageHistory.records)
+    return latest ? latest.mileage : getCurrentMileage(records)
+  }, [mileageHistory.records, records])
   const nextReview = useMemo(
     () => (vehicle ? deriveUpcoming([vehicle], { [vehicle.id]: records })[0] ?? null : null),
     [vehicle, records],
@@ -115,7 +126,8 @@ export function VehicleDetailPage() {
   async function handleSaved() {
     setDrawerState(null)
     setEditingVehicle(false)
-    await refetch()
+    // Saving a maintenance record with a mileage also writes a mileage snapshot server-side.
+    await Promise.all([refetch(), mileageHistory.refetch()])
   }
 
   async function handleDeleteVehicle() {
@@ -254,7 +266,7 @@ export function VehicleDetailPage() {
             </div>
           </div>
 
-          <div className="rounded-[20px] bg-surface p-5 shadow-sm">
+          <div className="mb-5 rounded-[20px] bg-surface p-5 shadow-sm">
             <div className="mb-3.5 flex flex-wrap items-center gap-3">
               <div className="font-display text-[14.5px] font-extrabold text-text-primary">
                 {t('vehicle.detail.reviewHistory')}
@@ -306,6 +318,7 @@ export function VehicleDetailPage() {
                     sortKey={sortKey}
                     sortDir={sortDir}
                     onSort={handleSort}
+                    onView={(record) => setViewingRecord(record)}
                     onEdit={(record) => setDrawerState({ mode: 'edit', record })}
                     onDelete={(record) => setDeleteConfirm(record)}
                   />
@@ -315,6 +328,7 @@ export function VehicleDetailPage() {
                     <MaintenanceRecordCard
                       key={record.id}
                       record={record}
+                      onView={(rec) => setViewingRecord(rec)}
                       onEdit={(rec) => setDrawerState({ mode: 'edit', record: rec })}
                       onDelete={(rec) => setDeleteConfirm(rec)}
                     />
@@ -323,6 +337,12 @@ export function VehicleDetailPage() {
               </>
             )}
           </div>
+
+          <MileageHistorySection records={records} />
+
+          {viewingRecord && (
+            <MaintenanceRecordDetailModal record={viewingRecord} onClose={() => setViewingRecord(null)} />
+          )}
 
           {editingVehicle && (
             <VehicleFormModal

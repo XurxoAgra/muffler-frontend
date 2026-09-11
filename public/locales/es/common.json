@@ -4,7 +4,8 @@
     "save": "Guardar",
     "cancel": "Cancelar",
     "delete": "Eliminar",
-    "edit": "Editar"
+    "edit": "Editar",
+    "close": "Cerrar"
   },
   "auth": {
     "signin": {
@@ -115,6 +116,27 @@
       "noFilterResults": "Ningún registro de este tipo.",
       "notFound": "No encontramos este vehículo."
     },
+    "mileageHistory": {
+      "title": "Historial de kilometraje",
+      "add": "Añadir kilometraje",
+      "addModal": "Añadir kilometraje.",
+      "mileage": "Kilometraje",
+      "recordedAtOptional": "Fecha (opcional)",
+      "chartLabel": "Evolución del kilometraje",
+      "chartNeedsMore": "Con un solo registro no hay evolución que dibujar todavía.",
+      "skipped_one": "{{count}} revisión sin km",
+      "skipped_other": "{{count}} revisiones sin km",
+      "empty": {
+        "title": "Sin kilometraje aún.",
+        "description": "Guarda una revisión con su kilometraje para ver aquí la evolución."
+      }
+    },
+    "mileageValidation": {
+      "required": "El kilometraje es requerido.",
+      "integer": "Debe ser un número entero.",
+      "negative": "El kilometraje no puede ser negativo.",
+      "belowLastWarning": "Es menor que el último registrado ({{last}}). El servidor puede rechazarlo."
+    },
     "empty": {
       "title": "Sin vehículos aún.",
       "description": "Añade tu primer vehículo para tener todos sus datos en un lugar."
@@ -125,7 +147,9 @@
       "loadModels": "No se pudieron cargar los modelos.",
       "save": "No se pudo guardar el vehículo.",
       "delete": "No se pudo eliminar el vehículo.",
-      "load": "No se pudieron cargar tus vehículos."
+      "load": "No se pudieron cargar tus vehículos.",
+      "loadMileage": "No se pudo cargar el historial de kilometraje.",
+      "saveMileage": "No se pudo guardar el kilometraje."
     },
     "validation": {
       "plateRequired": "La matrícula es requerida.",
@@ -165,6 +189,7 @@
     "cancel": "Cancelar",
     "deleting": "Eliminando…",
     "deleteBtn": "Eliminar",
+    "viewTitle": "Ver",
     "editTitle": "Editar",
     "deleteTitle": "Eliminar",
     "verified": "Verificado",
@@ -201,8 +226,14 @@
       "verified": "Verificado",
       "actions": "Acciones"
     },
+    "detail": {
+      "title": "Detalle del registro",
+      "createdAt": "Creado",
+      "invoice": "Factura"
+    },
     "errors": {
       "load": "No se pudo cargar el historial.",
+      "loadRecord": "No se pudo cargar el registro.",
       "save": "No se pudo guardar el registro.",
       "delete": "No se pudo eliminar el registro.",
       "forbidden": "No tienes acceso a este vehículo.",

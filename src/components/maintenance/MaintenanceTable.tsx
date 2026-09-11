@@ -13,6 +13,7 @@ interface MaintenanceTableProps {
   sortKey: SortKey
   sortDir: 'asc' | 'desc'
   onSort: (key: SortKey) => void
+  onView: (record: MaintenanceRecord) => void
   onEdit: (record: MaintenanceRecord) => void
   onDelete: (record: MaintenanceRecord) => void
 }
@@ -38,6 +39,24 @@ function SortIcon({ active, dir }: { active: boolean; dir: 'asc' | 'desc' }) {
       ) : (
         <polyline points="6 9 12 15 18 9" />
       )}
+    </svg>
+  )
+}
+
+function EyeIcon() {
+  return (
+    <svg
+      width={15}
+      height={15}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M1.5 12S5 5.5 12 5.5 22.5 12 22.5 12 19 18.5 12 18.5 1.5 12 1.5 12z" />
+      <circle cx="12" cy="12" r="3.2" />
     </svg>
   )
 }
@@ -85,6 +104,7 @@ export function MaintenanceTable({
   sortKey,
   sortDir,
   onSort,
+  onView,
   onEdit,
   onDelete,
 }: MaintenanceTableProps) {
@@ -173,6 +193,14 @@ export function MaintenanceTable({
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => onView(r)}
+                      title={t('maintenance.viewTitle')}
+                      className="flex h-7 w-7 items-center justify-center rounded-lg text-muted transition-colors hover:bg-white/5 hover:text-white"
+                    >
+                      <EyeIcon />
+                    </button>
                     <button
                       type="button"
                       onClick={() => onEdit(r)}

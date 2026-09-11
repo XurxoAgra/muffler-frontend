@@ -7,8 +7,27 @@ import type { MaintenanceRecord } from '../../lib/types'
 
 interface MaintenanceRecordCardProps {
   record: MaintenanceRecord
+  onView: (record: MaintenanceRecord) => void
   onEdit: (record: MaintenanceRecord) => void
   onDelete: (record: MaintenanceRecord) => void
+}
+
+function EyeIcon() {
+  return (
+    <svg
+      width={15}
+      height={15}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M1.5 12S5 5.5 12 5.5 22.5 12 22.5 12 19 18.5 12 18.5 1.5 12 1.5 12z" />
+      <circle cx="12" cy="12" r="3.2" />
+    </svg>
+  )
 }
 
 function EditIcon() {
@@ -49,7 +68,7 @@ function TrashIcon() {
   )
 }
 
-export function MaintenanceRecordCard({ record, onEdit, onDelete }: MaintenanceRecordCardProps) {
+export function MaintenanceRecordCard({ record, onView, onEdit, onDelete }: MaintenanceRecordCardProps) {
   const { t } = useTranslation()
   const { labelOf } = useMaintenanceRecordTypes()
 
@@ -104,6 +123,14 @@ export function MaintenanceRecordCard({ record, onEdit, onDelete }: MaintenanceR
       <div className="flex items-center justify-between border-t border-white/5 pt-3">
         <VerifiedBadge verified={record.verified} />
         <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => onView(record)}
+            title={t('maintenance.viewTitle')}
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-muted transition-colors hover:bg-white/5 hover:text-white"
+          >
+            <EyeIcon />
+          </button>
           <button
             type="button"
             onClick={() => onEdit(record)}

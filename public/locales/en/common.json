@@ -4,7 +4,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
-    "edit": "Edit"
+    "edit": "Edit",
+    "close": "Close"
   },
   "auth": {
     "signin": {
@@ -115,6 +116,27 @@
       "noFilterResults": "No records of this type.",
       "notFound": "We could not find this vehicle."
     },
+    "mileageHistory": {
+      "title": "Mileage history",
+      "add": "Add mileage",
+      "addModal": "Add mileage.",
+      "mileage": "Mileage",
+      "recordedAtOptional": "Date (optional)",
+      "chartLabel": "Mileage over time",
+      "chartNeedsMore": "A single record is not enough to draw a trend yet.",
+      "skipped_one": "{{count}} service without km",
+      "skipped_other": "{{count}} services without km",
+      "empty": {
+        "title": "No mileage yet.",
+        "description": "Save a service with its mileage to see the trend here."
+      }
+    },
+    "mileageValidation": {
+      "required": "Mileage is required.",
+      "integer": "Must be a whole number.",
+      "negative": "Mileage cannot be negative.",
+      "belowLastWarning": "Lower than the last recorded value ({{last}}). The server may reject it."
+    },
     "empty": {
       "title": "No vehicles yet.",
       "description": "Add your first vehicle to keep its details in one place."
@@ -125,7 +147,9 @@
       "loadModels": "Could not load vehicle models.",
       "save": "Could not save the vehicle.",
       "delete": "Could not delete the vehicle.",
-      "load": "Could not load your vehicles."
+      "load": "Could not load your vehicles.",
+      "loadMileage": "Could not load the mileage history.",
+      "saveMileage": "Could not save the mileage record."
     },
     "validation": {
       "plateRequired": "Plate is required.",
@@ -165,6 +189,7 @@
     "cancel": "Cancel",
     "deleting": "Deleting…",
     "deleteBtn": "Delete",
+    "viewTitle": "View",
     "editTitle": "Edit",
     "deleteTitle": "Delete",
     "verified": "Verified",
@@ -201,8 +226,14 @@
       "verified": "Verified",
       "actions": "Actions"
     },
+    "detail": {
+      "title": "Record detail",
+      "createdAt": "Created",
+      "invoice": "Invoice"
+    },
     "errors": {
       "load": "Could not load maintenance history.",
+      "loadRecord": "Could not load the record.",
       "save": "Could not save the record.",
       "delete": "Could not delete the record.",
       "forbidden": "You don't have access to this vehicle.",

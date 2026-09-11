@@ -17,6 +17,8 @@
   /* Dashboard shell + card system (Shell, Sidebar, Vehiculos/Revisiones/Perfil) */
   --color-shell: #14150f;
   --color-shell-fg: #f5f6ef;
+  /* Sidebar hover: stays #fff in both themes (the sidebar itself never goes light). */
+  --color-shell-fg-hover: #fff;
   --color-page: #0b0c08;
   --color-main: #1b1c16;
   --color-surface: #24251d;

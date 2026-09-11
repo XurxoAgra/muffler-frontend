@@ -6,6 +6,7 @@ import { ButtonGlass } from '../components/ui/ButtonGlass'
 import { MaintenanceTable, type SortKey } from '../components/maintenance/MaintenanceTable'
 import { MaintenanceRecordCard } from '../components/maintenance/MaintenanceRecordCard'
 import { MaintenanceFormDrawer } from '../components/maintenance/MaintenanceFormDrawer'
+import { MaintenanceRecordDetailModal } from '../components/maintenance/MaintenanceRecordDetailModal'
 import { SpendByVehicleBars } from '../components/dashboard/SpendByVehicleBars'
 import { UpcomingReviewsList } from '../components/dashboard/UpcomingReviewsList'
 import { useFleetData } from '../vehicles/FleetDataContext'
@@ -24,6 +25,7 @@ export function MantenimientoPage() {
   const { labelOf } = useMaintenanceRecordTypes()
 
   const [drawerState, setDrawerState] = useState<DrawerState>(null)
+  const [viewingRecord, setViewingRecord] = useState<MaintenanceRecord | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<MaintenanceRecord | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
@@ -154,6 +156,7 @@ export function MantenimientoPage() {
                           sortKey={sortKey}
                           sortDir={sortDir}
                           onSort={handleSort}
+                          onView={(r) => setViewingRecord(r)}
                           onEdit={(r) => setDrawerState({ vehicleId: vehicle.id, mode: 'edit', record: r })}
                           onDelete={(r) => setDeleteConfirm(r)}
                         />
@@ -163,6 +166,7 @@ export function MantenimientoPage() {
                           <MaintenanceRecordCard
                             key={r.id}
                             record={r}
+                            onView={(rec) => setViewingRecord(rec)}
                             onEdit={(rec) => setDrawerState({ vehicleId: vehicle.id, mode: 'edit', record: rec })}
                             onDelete={(rec) => setDeleteConfirm(rec)}
                           />
@@ -188,6 +192,10 @@ export function MantenimientoPage() {
           onClose={() => setDrawerState(null)}
           onSaved={handleSaved}
         />
+      )}
+
+      {viewingRecord && (
+        <MaintenanceRecordDetailModal record={viewingRecord} onClose={() => setViewingRecord(null)} />
       )}
 
       {deleteConfirm && (

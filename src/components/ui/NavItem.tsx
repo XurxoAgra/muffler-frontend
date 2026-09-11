@@ -34,7 +34,7 @@ export function NavItem({
           ? 'bg-lime-10 font-semibold text-lime'
           : disabled
             ? 'cursor-default text-subtle'
-            : 'text-muted hover:bg-white/5 hover:text-white'
+            : 'text-muted hover:text-shell-fg-hover'
       }`}
     >
       {active && (

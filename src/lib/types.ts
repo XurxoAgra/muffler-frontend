@@ -69,6 +69,23 @@ export interface VehicleInput {
   customModel?: string | null
 }
 
+/** Mirrors App\Vehicle\Domain\MileageSource on the backend. */
+export type MileageSource = 'manual' | 'maintenance_record'
+
+export interface MileageRecord {
+  id: string
+  vehicleId: string
+  mileage: number
+  recordedAt: string
+  source: MileageSource
+}
+
+export interface MileageRecordInput {
+  mileage: number
+  /** ISO-8601 with an explicit offset (DATE_ATOM). Omitted entirely, the backend stamps "now". */
+  recordedAt?: string
+}
+
 export interface MaintenanceRecordType {
   id: string
   key: string
