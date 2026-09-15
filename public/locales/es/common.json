@@ -137,6 +137,33 @@
       "negative": "El kilometraje no puede ser negativo.",
       "belowLastWarning": "Es menor que el último registrado ({{last}}). El servidor puede rechazarlo."
     },
+    "users": {
+      "title": "Usuarios con acceso",
+      "roleOwner": "Propietario",
+      "roleShared": "Compartido",
+      "invite": "+ Invitar usuario",
+      "inviteModalTitle": "Invitar usuario.",
+      "inviteEmailLabel": "Email",
+      "inviteEmailPlaceholder": "usuario@email.com",
+      "inviteSubmit": "Invitar",
+      "inviting": "Invitando…",
+      "revoke": "Revocar acceso",
+      "revoking": "Revocando…",
+      "revokeConfirm": "¿Revocar el acceso de {{email}}?",
+      "leave": "Abandonar vehículo",
+      "leaveConfirm": "¿Abandonar este vehículo? Perderás el acceso.",
+      "validation": {
+        "emailRequired": "El email es obligatorio.",
+        "emailInvalid": "Introduce un email válido."
+      },
+      "errors": {
+        "load": "No se pudieron cargar los usuarios.",
+        "invite": "No se pudo invitar al usuario.",
+        "revoke": "No se pudo revocar el acceso.",
+        "userNotFound": "No existe ningún usuario registrado con ese email.",
+        "alreadyHasAccess": "Ese usuario ya tiene acceso a este vehículo."
+      }
+    },
     "empty": {
       "title": "Sin vehículos aún.",
       "description": "Añade tu primer vehículo para tener todos sus datos en un lugar."

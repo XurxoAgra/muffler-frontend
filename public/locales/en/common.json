@@ -137,6 +137,33 @@
       "negative": "Mileage cannot be negative.",
       "belowLastWarning": "Lower than the last recorded value ({{last}}). The server may reject it."
     },
+    "users": {
+      "title": "Users with access",
+      "roleOwner": "Owner",
+      "roleShared": "Shared",
+      "invite": "+ Invite user",
+      "inviteModalTitle": "Invite user.",
+      "inviteEmailLabel": "Email",
+      "inviteEmailPlaceholder": "user@email.com",
+      "inviteSubmit": "Invite",
+      "inviting": "Inviting…",
+      "revoke": "Revoke access",
+      "revoking": "Revoking…",
+      "revokeConfirm": "Revoke access for {{email}}?",
+      "leave": "Leave vehicle",
+      "leaveConfirm": "Leave this vehicle? You will lose access.",
+      "validation": {
+        "emailRequired": "Email is required.",
+        "emailInvalid": "Enter a valid email."
+      },
+      "errors": {
+        "load": "Could not load the users.",
+        "invite": "Could not invite the user.",
+        "revoke": "Could not revoke access.",
+        "userNotFound": "No registered user was found for that email.",
+        "alreadyHasAccess": "That user already has access to this vehicle."
+      }
+    },
     "empty": {
       "title": "No vehicles yet.",
       "description": "Add your first vehicle to keep its details in one place."

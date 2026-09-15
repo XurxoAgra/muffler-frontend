@@ -11,7 +11,9 @@ import { MaintenanceRecordDetailModal } from '../components/maintenance/Maintena
 import { VehicleFormModal } from '../components/vehicles/VehicleFormModal'
 import { ReviewStatusBadge } from '../components/vehicles/ReviewStatusBadge'
 import { MileageHistorySection } from '../components/vehicles/MileageHistorySection'
+import { VehicleUsersSection } from '../components/vehicles/VehicleUsersSection'
 import { useFleetData } from '../vehicles/FleetDataContext'
+import { useProfile } from '../profile/ProfileContext'
 import { latestMileage, useMileageHistory } from '../vehicles/useMileageHistory'
 import { useMaintenanceRecordTypes } from '../maintenance/useMaintenanceRecordTypes'
 import { apiFetch, ApiError } from '../lib/apiClient'
@@ -37,6 +39,7 @@ export function VehicleDetailPage() {
   const { t, i18n } = useTranslation()
   const language = i18n.language
   const { vehicles, recordsByVehicle, loading, error, refetch } = useFleetData()
+  const { profile } = useProfile()
   const { byId, labelOf } = useMaintenanceRecordTypes()
   const mileageHistory = useMileageHistory(id)
 
@@ -143,6 +146,11 @@ export function VehicleDetailPage() {
     } finally {
       setDeletingVehicle(false)
     }
+  }
+
+  async function handleLeftVehicle() {
+    await refetch()
+    navigate('/vehicles')
   }
 
   async function handleDelete(record: MaintenanceRecord) {
@@ -265,6 +273,8 @@ export function VehicleDetailPage() {
               <div className="mt-1.5 font-display text-xl font-extrabold text-text-primary">{records.length}</div>
             </div>
           </div>
+
+          <VehicleUsersSection vehicle={vehicle} currentUserId={profile?.id} onLeft={handleLeftVehicle} />
 
           <div className="mb-5 rounded-[20px] bg-surface p-5 shadow-sm">
             <div className="mb-3.5 flex flex-wrap items-center gap-3">

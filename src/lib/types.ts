@@ -120,3 +120,12 @@ export interface MaintenanceRecordInput {
   nextServiceDate?: string | null
   notes?: string | null
 }
+
+export interface VehicleUser {
+  id: string
+  userId: string
+  email: string
+  firstName: string
+  lastName: string
+  role: 'owner' | 'shared'
+}
