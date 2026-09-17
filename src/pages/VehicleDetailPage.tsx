@@ -16,6 +16,7 @@ import { useFleetData } from '../vehicles/FleetDataContext'
 import { useProfile } from '../profile/ProfileContext'
 import { latestMileage, useMileageHistory } from '../vehicles/useMileageHistory'
 import { useMaintenanceRecordTypes } from '../maintenance/useMaintenanceRecordTypes'
+import { useVehicleExport, type ExportFormat } from '../vehicles/useVehicleExport'
 import { apiFetch, ApiError } from '../lib/apiClient'
 import {
   deriveReviewStatus,
@@ -32,6 +33,8 @@ type DrawerState = { mode: 'create' } | { mode: 'edit'; record: MaintenanceRecor
 
 /** Reviews with a legal deadline, shown as traffic-light badges in the header. */
 const LEGAL_REVIEW_KEYS = ['itv', 'insurance'] as const
+
+const EXPORT_FORMATS: ExportFormat[] = ['pdf', 'csv']
 
 export function VehicleDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -58,6 +61,7 @@ export function VehicleDetailPage() {
 
   const vehicle = vehicles?.find((v) => v.id === id) ?? null
   const vehicleIndex = vehicles?.findIndex((v) => v.id === id) ?? -1
+  const { exporting, error: exportError, exportRecords } = useVehicleExport(vehicle)
   const records = useMemo(() => (id ? recordsByVehicle[id] ?? [] : []), [id, recordsByVehicle])
 
   const totalSpent = useMemo(() => getVehicleTotal(records), [records])
@@ -197,6 +201,19 @@ export function VehicleDetailPage() {
               </div>
 
               <div className="min-w-0">
+                {/* Export is a VIEW permission on the backend, so owners and shared users both get it. */}
+                <div className="mb-2 flex gap-1.5">
+                  {EXPORT_FORMATS.map((format) => (
+                    <ExportButton
+                      key={format}
+                      format={format}
+                      busy={exporting === format}
+                      disabled={exporting !== null}
+                      onClick={() => void exportRecords(format)}
+                    />
+                  ))}
+                </div>
+
                 <div className="flex flex-wrap items-center gap-2.5">
                   <h1 className="font-display text-2xl font-extrabold leading-tight tracking-tight text-text-primary">
                     {getVehicleLabel(vehicle)}
@@ -243,6 +260,12 @@ export function VehicleDetailPage() {
               )}
             </div>
           </div>
+
+          {exportError && (
+            <p role="alert" className="mb-5 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+              {exportError}
+            </p>
+          )}
 
           <div className="mb-5 grid gap-4 sm:grid-cols-3">
             <div className="rounded-[20px] bg-surface p-5 shadow-sm">
@@ -479,6 +502,50 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
         <PlusIcon /> {t('maintenance.addFirst')}
       </button>
     </div>
+  )
+}
+
+interface ExportButtonProps {
+  format: ExportFormat
+  busy: boolean
+  disabled: boolean
+  onClick: () => void
+}
+
+function ExportButton({ format, busy, disabled, onClick }: ExportButtonProps) {
+  const { t } = useTranslation()
+  const label = format === 'pdf' ? t('vehicle.export.pdf') : t('vehicle.export.csv')
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-busy={busy}
+      aria-label={label}
+      title={busy ? t('vehicle.export.exporting') : label}
+      className={`inline-flex items-center gap-1 rounded-lg border border-border-soft px-2.5 py-1 font-display text-[11px] font-bold tracking-wide text-text-secondary transition-colors enabled:hover:border-lime enabled:hover:text-lime ${busy ? 'cursor-wait' : 'disabled:cursor-not-allowed disabled:opacity-50'}`}
+    >
+      {/* Spinner takes the icon's slot so the button keeps its width while busy. */}
+      {busy ? <SpinnerIcon /> : <DownloadIcon />}
+      {/* The acronym reads the same in every locale; the full action lives in aria-label/title. */}
+      {format.toUpperCase()}
+    </button>
+  )
+}
+
+function DownloadIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
+    </svg>
+  )
+}
+
+function SpinnerIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="animate-spin">
+      <path d="M21 12a9 9 0 1 1-6.2-8.56" />
+    </svg>
   )
 }
 

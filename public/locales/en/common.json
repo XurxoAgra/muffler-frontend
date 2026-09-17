@@ -164,6 +164,16 @@
         "alreadyHasAccess": "That user already has access to this vehicle."
       }
     },
+    "export": {
+      "pdf": "Export PDF",
+      "csv": "Export CSV",
+      "exporting": "Exporting…",
+      "filenameSuffix": "history",
+      "errors": {
+        "validation": "Could not export: a maintenance type translation is not valid.",
+        "generic": "Could not export the history. Please try again."
+      }
+    },
     "empty": {
       "title": "No vehicles yet.",
       "description": "Add your first vehicle to keep its details in one place."

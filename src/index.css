@@ -33,6 +33,14 @@
   --color-row-overdue: rgba(194, 76, 66, 0.16);
   --color-row-upcoming: rgba(199, 154, 46, 0.16);
   --color-row-default: #2c2d24;
+  /* Analytics card (Resumen > MonthlySpendChart): dark card in dark theme, regular surface card in light. */
+  --color-analytics-card: #14150f;
+  --color-analytics-shadow: transparent;
+  --color-analytics-fg: #f5f6ef;
+  --color-analytics-accent: #d7f24c;
+  --color-analytics-chip: color-mix(in oklab, #fff 6%, transparent);
+  --color-analytics-bar: rgba(255, 255, 255, 0.35);
+  --color-analytics-bar-empty: rgba(255, 255, 255, 0.1);
 
   --font-display: "Roboto", sans-serif;
   --font-body: "Roboto", sans-serif;
@@ -79,6 +87,13 @@ body {
   --color-row-overdue: #fbeae8;
   --color-row-upcoming: #fbf3e0;
   --color-row-default: #f4f3ed;
+  --color-analytics-card: #ffffff;
+  --color-analytics-shadow: rgb(0 0 0 / 0.1);
+  --color-analytics-fg: #14150f;
+  --color-analytics-accent: #2d7a00;
+  --color-analytics-chip: #f4f3ed;
+  --color-analytics-bar: rgba(20, 26, 15, 0.35);
+  --color-analytics-bar-empty: rgba(20, 26, 15, 0.1);
 }
 
 .theme-light .border-white\/5 {

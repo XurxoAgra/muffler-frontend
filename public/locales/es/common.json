@@ -164,6 +164,16 @@
         "alreadyHasAccess": "Ese usuario ya tiene acceso a este vehículo."
       }
     },
+    "export": {
+      "pdf": "Exportar PDF",
+      "csv": "Exportar CSV",
+      "exporting": "Exportando…",
+      "filenameSuffix": "historial",
+      "errors": {
+        "validation": "No se pudo exportar: alguna traducción de tipo de mantenimiento no es válida.",
+        "generic": "No se pudo exportar el historial. Inténtalo de nuevo."
+      }
+    },
     "empty": {
       "title": "Sin vehículos aún.",
       "description": "Añade tu primer vehículo para tener todos sus datos en un lugar."
