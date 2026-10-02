@@ -54,6 +54,21 @@
       "statVehicles": "Vehículos activos",
       "statUpToDate": "Al día",
       "footer": "© {{year}} muffler"
+    },
+    "verification": {
+      "sentTitle": "Revisa tu correo",
+      "sentMessage": "Te hemos enviado un enlace a {{email}} para activar tu cuenta.",
+      "notVerified": "Tu cuenta aún no está activada. Revisa tu correo.",
+      "resend": "Reenviar enlace de activación",
+      "resent": "Enlace reenviado. Revisa tu correo.",
+      "verifyingTitle": "Activando tu cuenta…",
+      "successTitle": "Cuenta activada",
+      "successMessage": "Ya puedes iniciar sesión.",
+      "expiredTitle": "El enlace ha caducado",
+      "expiredMessage": "Introduce tu email y te enviaremos uno nuevo.",
+      "invalidTitle": "Enlace no válido",
+      "invalidMessage": "El enlace de activación no es correcto. Solicita uno nuevo desde el inicio de sesión.",
+      "backToSignin": "Ir a iniciar sesión"
     }
   },
   "vehicle": {

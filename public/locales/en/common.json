@@ -54,6 +54,21 @@
       "statVehicles": "Active vehicles",
       "statUpToDate": "Up to date",
       "footer": "© {{year}} muffler"
+    },
+    "verification": {
+      "sentTitle": "Check your email",
+      "sentMessage": "We've sent a link to {{email}} to activate your account.",
+      "notVerified": "Your account isn't activated yet. Check your email.",
+      "resend": "Resend activation link",
+      "resent": "Link resent. Check your email.",
+      "verifyingTitle": "Activating your account…",
+      "successTitle": "Account activated",
+      "successMessage": "You can now sign in.",
+      "expiredTitle": "The link has expired",
+      "expiredMessage": "Enter your email and we'll send you a new one.",
+      "invalidTitle": "Invalid link",
+      "invalidMessage": "The activation link isn't valid. Request a new one from the sign-in page.",
+      "backToSignin": "Go to sign in"
     }
   },
   "vehicle": {
