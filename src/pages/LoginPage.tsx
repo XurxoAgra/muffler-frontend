@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
 import { ApiError } from '../lib/apiClient'
+import { EMAIL_NOT_VERIFIED, resendVerification } from '../auth/emailVerification'
 
 type Mode = 'signin' | 'register' | 'forgot'
+type ResendStatus = 'idle' | 'sending' | 'sent'
 
 interface FieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string
@@ -121,27 +123,53 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [verificationSentTo, setVerificationSentTo] = useState<string | null>(null)
+  const [unverified, setUnverified] = useState(false)
+  const [resendStatus, setResendStatus] = useState<ResendStatus>('idle')
 
   function switchMode(next: Mode) {
     setMode(next)
     setResetSent(false)
     setError(null)
+    setVerificationSentTo(null)
+    setUnverified(false)
+    setResendStatus('idle')
+  }
+
+  async function handleResend(target: string) {
+    setResendStatus('sending')
+    try {
+      await resendVerification(target)
+      setResendStatus('sent')
+    } catch (err) {
+      setResendStatus('idle')
+      setError(err instanceof ApiError ? err.message : t('auth.errors.generic'))
+    }
   }
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError(null)
+    setUnverified(false)
+    setResendStatus('idle')
     setLoading(true)
 
     try {
       if (mode === 'signin') {
         await login({ email, password }, rememberMe)
+        navigate('/resumen')
       } else {
-        await register({ email, password, first_name: firstName, last_name: lastName }, rememberMe)
+        const registered = await register({ email, password, first_name: firstName, last_name: lastName })
+        setVerificationSentTo(registered.email)
+        setPassword('')
       }
-      navigate('/resumen')
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : t('auth.errors.generic'))
+      if (err instanceof ApiError && err.code === EMAIL_NOT_VERIFIED) {
+        setUnverified(true)
+        setError(t('auth.verification.notVerified'))
+      } else {
+        setError(err instanceof ApiError ? err.message : t('auth.errors.generic'))
+      }
     } finally {
       setLoading(false)
     }
@@ -154,7 +182,23 @@ export function LoginPage() {
 
   const heading = resetSent
     ? { title: t('auth.resetSent.title'), subtitle: '' }
-    : { title: t(`auth.${mode}.title`), subtitle: t(`auth.${mode}.subtitle`) }
+    : verificationSentTo
+      ? { title: t('auth.verification.sentTitle'), subtitle: '' }
+      : { title: t(`auth.${mode}.title`), subtitle: t(`auth.${mode}.subtitle`) }
+
+  const resendButton = (target: string) =>
+    resendStatus === 'sent' ? (
+      <p className="text-center text-[13px] text-text-secondary">{t('auth.verification.resent')}</p>
+    ) : (
+      <button
+        type="button"
+        disabled={resendStatus === 'sending'}
+        onClick={() => handleResend(target)}
+        className="text-center text-[13px] font-bold text-text-primary underline underline-offset-2 disabled:opacity-60"
+      >
+        {resendStatus === 'sending' ? t('auth.loading') : t('auth.verification.resend')}
+      </button>
+    )
 
   return (
     <div className="flex min-h-svh w-full items-center justify-center bg-page p-2.5 md:p-6">
@@ -255,6 +299,7 @@ export function LoginPage() {
                 </div>
 
                 {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
+                {unverified && resendButton(email)}
 
                 <button
                   type="submit"
@@ -273,7 +318,27 @@ export function LoginPage() {
               </form>
             )}
 
-            {mode === 'register' && (
+            {mode === 'register' && verificationSentTo && (
+              <div className="flex flex-col items-center gap-3.5 py-5 text-center">
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-tag-bg text-[#5c8f4e]">
+                  <MailIcon />
+                </div>
+                <p className="max-w-[280px] text-[13px] text-text-secondary">
+                  {t('auth.verification.sentMessage', { email: verificationSentTo })}
+                </p>
+                {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
+                {resendButton(verificationSentTo)}
+                <button
+                  type="button"
+                  onClick={() => switchMode('signin')}
+                  className="mt-1.5 rounded-[14px] bg-tag-fg px-6 py-3 font-display text-[13.5px] font-bold text-black transition-opacity hover:opacity-90"
+                >
+                  {t('auth.verification.backToSignin')}
+                </button>
+              </div>
+            )}
+
+            {mode === 'register' && !verificationSentTo && (
               <form className="flex flex-col gap-3.5" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-2 gap-3.5">
                   <Field

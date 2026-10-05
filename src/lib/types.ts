@@ -15,6 +15,20 @@ export interface RegisterRequest {
   last_name: string
 }
 
+export interface RegisterResponse {
+  id: string
+  email: string
+  verification_required: boolean
+}
+
+export interface VerifyEmailRequest {
+  token: string
+}
+
+export interface ResendVerificationRequest {
+  email: string
+}
+
 export interface RefreshRequest {
   refresh_token: string
 }

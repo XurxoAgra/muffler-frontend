@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { apiFetch, setAccessToken, setUnauthorizedHandler } from '../lib/apiClient'
-import type { AuthTokens, LoginRequest, LogoutRequest, RegisterRequest } from '../lib/types'
+import type { AuthTokens, LoginRequest, LogoutRequest, RegisterRequest, RegisterResponse } from '../lib/types'
 
 // Riesgo: guardar el JWT en localStorage/memoria lo expone a robo vía XSS
 // (a diferencia de una cookie httpOnly). Se acepta porque no hay backend propio
@@ -16,7 +16,7 @@ interface AuthContextValue {
   isAuthenticated: boolean
   isInitializing: boolean
   login: (data: LoginRequest, rememberMe: boolean) => Promise<void>
-  register: (data: RegisterRequest, rememberMe: boolean) => Promise<void>
+  register: (data: RegisterRequest) => Promise<RegisterResponse>
   logout: () => Promise<void>
 }
 
@@ -77,9 +77,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     persistSession(tokens, rememberMe)
   }
 
-  async function register(data: RegisterRequest, rememberMe: boolean) {
-    const tokens = await apiFetch<AuthTokens>('/api/auth/register', { method: 'POST', body: data })
-    persistSession(tokens, rememberMe)
+  // No session yet: the account must be activated from the emailed link first.
+  async function register(data: RegisterRequest) {
+    return apiFetch<RegisterResponse>('/api/auth/register', { method: 'POST', body: data })
   }
 
   async function logout() {
