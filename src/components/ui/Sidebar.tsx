@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { NavItem } from './NavItem'
+import { MobileMenu, type MenuItem } from './MobileMenu'
 import { SignalMark } from '../SignalMark'
 
 const ICON_PROPS = {
@@ -84,7 +85,7 @@ export function Sidebar({ vehicleCount, overdueCount, onLogout, loggingOut }: Si
   const location = useLocation()
   const navigate = useNavigate()
 
-  const navItems = [
+  const navDefs = [
     { path: '/resumen', label: t('nav.summary'), icon: <ChartIcon />, exact: true },
     {
       path: '/vehicles',
@@ -103,70 +104,77 @@ export function Sidebar({ vehicleCount, overdueCount, onLogout, loggingOut }: Si
     },
     { path: '/profile', label: t('nav.profile'), icon: <ProfileIcon />, exact: true },
   ]
+  const navItems: MenuItem[] = navDefs.map(({ exact, ...item }) => ({
+    ...item,
+    active: exact ? location.pathname === item.path : location.pathname.startsWith(item.path),
+  }))
 
   return (
-    <aside
-      className={`flex flex-shrink-0 flex-row items-center gap-2 rounded-2xl bg-shell px-2 py-2 text-shell-fg md:relative md:flex-col md:items-stretch md:gap-6 md:rounded-none md:bg-transparent md:px-2 md:py-3 ${
-        collapsed ? 'md:w-16' : 'md:w-52'
-      }`}
-    >
-      <button
-        type="button"
-        onClick={() => setCollapsed((c) => !c)}
-        title={collapsed ? t('nav.expandMenu') : t('nav.collapseMenu')}
-        className={`absolute right-[-14px] top-4 z-30 hidden h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-shell text-muted shadow-lg transition-transform hover:border-lime hover:text-lime md:flex ${
-          collapsed ? 'rotate-180' : ''
+    <>
+      <MobileMenu items={navItems} onNavigate={(path) => navigate(path)} onLogout={onLogout} loggingOut={loggingOut} />
+      <aside
+        className={`relative hidden flex-shrink-0 flex-col items-stretch gap-6 px-2 py-3 text-shell-fg lg:flex ${
+          collapsed ? 'md:w-16' : 'md:w-52'
         }`}
       >
-        <ChevronIcon />
-      </button>
+        <button
+          type="button"
+          onClick={() => setCollapsed((c) => !c)}
+          title={collapsed ? t('nav.expandMenu') : t('nav.collapseMenu')}
+          className={`absolute right-[-14px] top-4 z-30 hidden h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-shell text-muted shadow-lg transition-transform hover:border-lime hover:text-lime md:flex ${
+            collapsed ? 'rotate-180' : ''
+          }`}
+        >
+          <ChevronIcon />
+        </button>
 
-      <div className={`flex flex-shrink-0 items-center gap-2.5 md:mb-1 ${collapsed ? 'md:justify-center md:px-0' : 'md:px-1'}`}>
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[10px] bg-lime text-black">
-          <SignalMark />
+        <div className={`flex flex-shrink-0 items-center gap-2.5 md:mb-1 ${collapsed ? 'md:justify-center md:px-0' : 'md:px-1'}`}>
+          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[10px] bg-lime text-black">
+            <SignalMark />
+          </div>
+          <span
+            className={`hidden overflow-hidden whitespace-nowrap font-display text-base font-bold text-shell-fg transition-all md:inline-block ${
+              collapsed ? 'md:max-w-0 md:opacity-0' : 'md:max-w-[120px] md:opacity-100'
+            }`}
+          >
+            muffler
+          </span>
         </div>
-        <span
-          className={`hidden overflow-hidden whitespace-nowrap font-display text-base font-bold text-shell-fg transition-all md:inline-block ${
-            collapsed ? 'md:max-w-0 md:opacity-0' : 'md:max-w-[120px] md:opacity-100'
+
+        <nav className="flex flex-1 flex-row items-center gap-1 overflow-x-auto md:flex-col md:items-stretch md:gap-1 md:overflow-visible">
+          {navItems.map((item) => (
+            <NavItem
+              key={item.path}
+              icon={item.icon}
+              label={item.label}
+              badge={item.badge}
+              badgeTone={item.badgeTone}
+              active={item.active}
+              collapsed={collapsed}
+              onClick={() => navigate(item.path)}
+            />
+          ))}
+        </nav>
+
+        <button
+          type="button"
+          onClick={onLogout}
+          disabled={loggingOut}
+          title={t('nav.signOut')}
+          className={`flex flex-shrink-0 items-center rounded-lg text-danger transition-colors hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-60 ${
+            collapsed ? 'justify-center px-2 py-2.5 md:px-0' : 'justify-center gap-2.5 px-2.5 py-2.5 md:justify-start md:px-3.5'
           }`}
         >
-          muffler
-        </span>
-      </div>
-
-      <nav className="flex flex-1 flex-row items-center gap-1 overflow-x-auto md:flex-col md:items-stretch md:gap-1 md:overflow-visible">
-        {navItems.map((item) => (
-          <NavItem
-            key={item.path}
-            icon={item.icon}
-            label={item.label}
-            badge={item.badge}
-            badgeTone={item.badgeTone}
-            active={item.exact ? location.pathname === item.path : location.pathname.startsWith(item.path)}
-            collapsed={collapsed}
-            onClick={() => navigate(item.path)}
-          />
-        ))}
-      </nav>
-
-      <button
-        type="button"
-        onClick={onLogout}
-        disabled={loggingOut}
-        title={t('nav.signOut')}
-        className={`flex flex-shrink-0 items-center rounded-lg text-danger transition-colors hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-60 ${
-          collapsed ? 'justify-center px-2 py-2.5 md:px-0' : 'justify-center gap-2.5 px-2.5 py-2.5 md:justify-start md:px-3.5'
-        }`}
-      >
-        <SignOutIcon />
-        <span
-          className={`hidden overflow-hidden whitespace-nowrap text-sm transition-all md:inline-block ${
-            collapsed ? 'md:max-w-0 md:opacity-0' : 'md:max-w-[200px] md:opacity-100'
-          }`}
-        >
-          {loggingOut ? t('nav.signingOut') : t('nav.signOut')}
-        </span>
-      </button>
-    </aside>
+          <SignOutIcon />
+          <span
+            className={`hidden overflow-hidden whitespace-nowrap text-sm transition-all md:inline-block ${
+              collapsed ? 'md:max-w-0 md:opacity-0' : 'md:max-w-[200px] md:opacity-100'
+            }`}
+          >
+            {loggingOut ? t('nav.signingOut') : t('nav.signOut')}
+          </span>
+        </button>
+      </aside>
+    </>
   )
 }

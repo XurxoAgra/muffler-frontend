@@ -322,6 +322,7 @@
     "switchToDark": "Switch to dark mode",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
+    "menu": "Navigation menu",
     "collapseMenu": "Collapse menu",
     "expandMenu": "Expand menu",
     "summary": "Summary"
