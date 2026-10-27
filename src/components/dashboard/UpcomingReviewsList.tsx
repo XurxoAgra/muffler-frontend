@@ -33,11 +33,11 @@ export function UpcomingReviewsList({ items }: { items: UpcomingItem[] }) {
                 <CalendarIcon />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="truncate text-[12.5px] font-bold text-text-primary">
+                <div className="break-words text-[12.5px] font-bold text-text-primary">
                   {labelOf(item.maintenanceRecordTypeId) ?? '—'}
                 </div>
-                <div className="truncate text-[11.5px] text-text-secondary">
-                  {item.vehicleLabel} · {formatDate(item.date)}
+                <div className="break-words text-[11.5px] leading-snug text-text-secondary">
+                  {item.vehicleLabel} · <span className="whitespace-nowrap">{formatDate(item.date)}</span>
                 </div>
               </div>
             </div>

@@ -23,7 +23,7 @@ function ShellChrome() {
 
   return (
     <div className="flex min-h-svh w-full justify-center bg-page p-2.5 md:p-6">
-      <div className="flex w-full flex-col gap-2.5 rounded-3xl bg-shell p-2.5 shadow-2xl md:flex-row md:gap-4 md:p-4">
+      <div className="flex w-full flex-col gap-2.5 rounded-3xl bg-shell p-2.5 shadow-2xl lg:flex-row md:gap-4 md:p-4">
         <Sidebar vehicleCount={vehicles?.length} overdueCount={overdueCount} onLogout={handleLogout} loggingOut={loggingOut} />
 
         <main className="min-w-0 flex-1 rounded-[22px] bg-main p-4 sm:p-7 md:rounded-[26px] md:p-8">

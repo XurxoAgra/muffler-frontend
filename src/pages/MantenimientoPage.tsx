@@ -14,6 +14,7 @@ import { useMaintenanceRecordTypes } from '../maintenance/useMaintenanceRecordTy
 import { apiFetch, ApiError } from '../lib/apiClient'
 import { computeGlobalTotal, computeSpendByVehicle, deriveUpcoming, getVehicleLabel } from '../lib/fleetInsights'
 import { getVehicleTint } from '../constants/vehicleTints'
+import { formatCost } from '../components/maintenance/formatters'
 import type { MaintenanceRecord } from '../lib/types'
 
 type DrawerState = { vehicleId: string; mode: 'create' } | { vehicleId: string; mode: 'edit'; record: MaintenanceRecord } | null
@@ -124,22 +125,27 @@ export function MantenimientoPage() {
 
               return (
                 <div key={vehicle.id} className="rounded-[20px] bg-surface p-5 shadow-sm">
-                  <div className="mb-3.5 flex items-center gap-2.5">
-                    <div
-                      className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[10px]"
-                      style={{ background: getVehicleTint(index) }}
-                    >
-                      <CarIcon />
+                  <div className="mb-3.5 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-2.5">
+                    <div className="flex min-w-0 items-center gap-2.5">
+                      <div
+                        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[10px]"
+                        style={{ background: getVehicleTint(index) }}
+                      >
+                        <CarIcon />
+                      </div>
+                      <div className="min-w-0 break-words font-display text-[14.5px] font-extrabold leading-snug text-text-primary">
+                        {getVehicleLabel(vehicle)}
+                      </div>
                     </div>
-                    <div className="font-display text-[14.5px] font-extrabold text-text-primary">{getVehicleLabel(vehicle)}</div>
-                    <div className="ml-auto flex items-center gap-3">
+                    <div className="flex items-center justify-between gap-3 sm:ml-auto sm:flex-shrink-0 sm:justify-start">
                       <div className="text-[11.5px] text-text-secondary">
-                        {t('maintenance.stats.total')}: <span className="font-extrabold text-text-primary">{total.toFixed(2)} €</span>
+                        {t('maintenance.stats.total')}:{' '}
+                        <span className="whitespace-nowrap font-extrabold text-text-primary">{formatCost(String(total))}</span>
                       </div>
                       <button
                         type="button"
                         onClick={() => setDrawerState({ vehicleId: vehicle.id, mode: 'create' })}
-                        className="inline-flex items-center gap-1.5 rounded-lg bg-lime px-3 py-1.5 font-display text-xs font-bold text-black transition-opacity hover:opacity-90"
+                        className="inline-flex min-h-10 items-center gap-1.5 rounded-lg bg-lime px-4 py-2 font-display text-xs font-bold text-black transition-opacity hover:opacity-90 sm:min-h-0 sm:px-3 sm:py-1.5"
                       >
                         <PlusIcon /> {t('maintenance.add')}
                       </button>

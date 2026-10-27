@@ -14,10 +14,11 @@ export function formatMileage(n: number | null): string {
   return `${n.toLocaleString(locale())} km`
 }
 
+// Non-breaking space so the amount never wraps away from its € sign.
 export function formatCost(c: string | null): string {
   if (!c) return '—'
   return `${parseFloat(c).toLocaleString(locale(), {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  })} €`
+  })}\u00a0€`
 }
