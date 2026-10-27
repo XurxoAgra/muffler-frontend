@@ -11,7 +11,8 @@
     "signin": {
       "title": "Bienvenido de nuevo",
       "subtitle": "Accede para gestionar tus vehículos y revisiones",
-      "cta": "Iniciar sesión"
+      "cta": "Iniciar sesión",
+      "loading": "Accediendo…"
     },
     "register": {
       "title": "Crea tu cuenta",
@@ -51,8 +52,6 @@
     "brand": {
       "heading": "Controla el mantenimiento de tu flota en un solo sitio",
       "subheading": "Historial de revisiones, gastos y alertas de tus vehículos, siempre a mano.",
-      "statVehicles": "Vehículos activos",
-      "statUpToDate": "Al día",
       "footer": "© {{year}} muffler"
     },
     "verification": {

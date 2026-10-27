@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import type { MonthlyTotal } from '../../lib/fleetInsights'
+import DirectionsCarOutlined from '@mui/icons-material/DirectionsCarOutlined'
 
 export function MonthlySpendChart({ totals }: { totals: MonthlyTotal[] }) {
   const { t, i18n } = useTranslation()
@@ -28,7 +29,7 @@ export function MonthlySpendChart({ totals }: { totals: MonthlyTotal[] }) {
           return (
             <div key={month} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-2">
               <div
-                className={`w-full max-w-[22px] rounded-[6px] ${isCurrent ? 'bg-analytics-accent' : total > 0 ? 'bg-analytics-bar' : 'bg-analytics-bar-empty'}`}
+                className={`w-full max-w-[22px] origin-bottom animate-grow-y rounded-[6px] ${isCurrent ? 'bg-analytics-accent' : total > 0 ? 'bg-analytics-bar' : 'bg-analytics-bar-empty'}`}
                 style={{ height: `${heightPct}%`, minHeight: 4 }}
               />
               <span className={`text-[10.5px] font-bold ${isCurrent ? 'text-lime' : 'text-muted'}`}>
@@ -46,12 +47,5 @@ export function MonthlySpendChart({ totals }: { totals: MonthlyTotal[] }) {
 }
 
 function CarIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-analytics-accent">
-      <path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13" />
-      <rect x="2" y="13" width="20" height="6" rx="2" />
-      <circle cx="7" cy="19" r="1.6" />
-      <circle cx="17" cy="19" r="1.6" />
-    </svg>
-  )
+  return <DirectionsCarOutlined className="text-analytics-accent" sx={{ fontSize: 16 }} />
 }

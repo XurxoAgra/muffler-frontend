@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { StatCard } from '../components/dashboard/StatCard'
+import { PageSkeleton } from '../components/ui/Skeleton'
 import { MileageBubbles } from '../components/dashboard/MileageBubbles'
 import { MaintenanceIndexDots } from '../components/dashboard/MaintenanceIndexDots'
 import { MonthlySpendChart } from '../components/dashboard/MonthlySpendChart'
@@ -15,6 +16,9 @@ import {
   deriveUpcoming,
 } from '../lib/fleetInsights'
 import { formatCost, formatDate } from '../components/maintenance/formatters'
+import { useCountUp } from '../lib/useCountUp'
+import BuildOutlined from '@mui/icons-material/BuildOutlined'
+import EventOutlined from '@mui/icons-material/EventOutlined'
 
 export function SummaryPage() {
   const navigate = useNavigate()
@@ -28,6 +32,7 @@ export function SummaryPage() {
   const { avg: avgCost, count: reviewCount } = useMemo(() => computeAvgCost(recordsByVehicle), [recordsByVehicle])
   const maintIndexPct = useMemo(() => (vehicles ? computeMaintenanceIndexPct(vehicles, upcoming) : 100), [vehicles, upcoming])
   const nextReview = useMemo(() => upcoming.find((u) => u.status !== 'vencida') ?? upcoming[0] ?? null, [upcoming])
+  const shownAvgCost = useCountUp(avgCost)
 
   return (
     <div>
@@ -36,7 +41,7 @@ export function SummaryPage() {
       </h1>
       <p className="mb-6 text-sm text-text-secondary">{t('summary.page.subtitle')}</p>
 
-      {loading && <p className="text-sm text-text-secondary">{t('common.loading')}</p>}
+      {loading && <PageSkeleton />}
       {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
 
       {!loading && !error && vehicles && vehicles.length === 0 && (
@@ -49,7 +54,7 @@ export function SummaryPage() {
             <button
               type="button"
               onClick={() => navigate('/vehicles')}
-              className="inline-flex items-center gap-2 rounded-2xl bg-lime px-6 py-3 font-display text-sm font-bold text-black transition-opacity hover:opacity-90"
+              className="inline-flex items-center gap-2 rounded-2xl bg-lime px-6 py-3 font-display text-sm font-bold text-black pressable"
             >
               {t('maintenance.noVehicles.cta')}
             </button>
@@ -58,7 +63,7 @@ export function SummaryPage() {
       )}
 
       {!loading && !error && vehicles && vehicles.length > 0 && (
-        <>
+        <div className="stagger">
           <div className="mb-4 grid gap-4 lg:grid-cols-[1.1fr_1fr]">
             {mileageBubbles.length > 0 && <MileageBubbles bubbles={mileageBubbles} />}
             <div className="flex flex-col gap-4">
@@ -79,7 +84,7 @@ export function SummaryPage() {
               <StatCard
                 icon={<WrenchIcon />}
                 title={t('vehicle.stats.avgCost')}
-                value={formatCost(String(avgCost))}
+                value={formatCost(shownAvgCost.toFixed(2))}
                 aside={
                   <span className="rounded-lg bg-tag-bg px-2.5 py-1 text-[11px] font-extrabold text-tag-fg">
                     {t('vehicle.stats.reviewCount', { count: reviewCount })}
@@ -94,25 +99,16 @@ export function SummaryPage() {
           </div>
 
           <MonthlySpendChart totals={monthlyTotals} />
-        </>
+        </div>
       )}
     </div>
   )
 }
 
 function CalendarIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary">
-      <rect x="3" y="5" width="18" height="16" rx="2" />
-      <path d="M3 9h18M8 3v4M16 3v4" />
-    </svg>
-  )
+  return <EventOutlined className="text-text-secondary" sx={{ fontSize: 15 }} />
 }
 
 function WrenchIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary">
-      <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6z" />
-    </svg>
-  )
+  return <BuildOutlined className="text-text-secondary" sx={{ fontSize: 15 }} />
 }

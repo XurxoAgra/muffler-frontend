@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { Sidebar } from '../ui/Sidebar'
 import { Header } from './Header'
@@ -9,6 +9,7 @@ import { deriveUpcoming, countOverdue } from '../../lib/fleetInsights'
 
 function ShellChrome() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { logout } = useAuth()
   const { vehicles, recordsByVehicle } = useFleetData()
   const [loggingOut, setLoggingOut] = useState(false)
@@ -28,7 +29,10 @@ function ShellChrome() {
 
         <main className="min-w-0 flex-1 rounded-[22px] bg-main p-4 sm:p-7 md:rounded-[26px] md:p-8">
           <Header />
-          <Outlet />
+          {/* Keyed by path so each view replays its entry; the sidebar and header stay put. */}
+          <div key={location.pathname} className="animate-page">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

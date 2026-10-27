@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Modal } from '../ui/Modal'
+import { Presence } from '../ui/Presence'
 import { ButtonGlass } from '../ui/ButtonGlass'
 import { VehicleInviteUserModal } from './VehicleInviteUserModal'
 import { useVehicleUsers } from '../../vehicles/useVehicleUsers'
 import { ApiError } from '../../lib/apiClient'
 import type { Vehicle, VehicleUser } from '../../lib/types'
+import AddOutlined from '@mui/icons-material/AddOutlined'
 
 interface VehicleUsersSectionProps {
   vehicle: Vehicle
@@ -63,7 +65,7 @@ export function VehicleUsersSection({ vehicle, currentUserId, onLeft }: VehicleU
           <button
             type="button"
             onClick={() => setInviting(true)}
-            className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-lime px-3 py-1.5 font-display text-xs font-bold text-black transition-opacity hover:opacity-90"
+            className="ml-auto inline-flex items-center gap-1.5 rounded-lg bg-lime px-3 py-1.5 font-display text-xs font-bold text-black pressable"
           >
             <PlusIcon /> {t('vehicle.users.invite')}
           </button>
@@ -74,7 +76,7 @@ export function VehicleUsersSection({ vehicle, currentUserId, onLeft }: VehicleU
       {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
 
       {!loading && !error && (
-        <div className="flex flex-col gap-2">
+        <div className="stagger flex flex-col gap-2">
           {users.map((user) => {
             const isSelf = currentUserId !== undefined && user.userId === currentUserId
             return (
@@ -118,44 +120,48 @@ export function VehicleUsersSection({ vehicle, currentUserId, onLeft }: VehicleU
         </div>
       )}
 
-      {inviting && (
-        <VehicleInviteUserModal
-          onSubmit={inviteVehicleUser}
-          onClose={() => setInviting(false)}
-          onInvited={async () => {
-            setInviting(false)
-            await refetch()
-          }}
-        />
-      )}
+      <Presence>
+        {inviting && (
+          <VehicleInviteUserModal
+            onSubmit={inviteVehicleUser}
+            onClose={() => setInviting(false)}
+            onInvited={async () => {
+              setInviting(false)
+              await refetch()
+            }}
+          />
+        )}
+      </Presence>
 
-      {confirm && (
-        <Modal onClose={closeConfirm}>
-          <p className="text-sm text-white">
-            {confirm.kind === 'revoke'
-              ? t('vehicle.users.revokeConfirm', { email: confirm.user.email })
-              : t('vehicle.users.leaveConfirm')}
-          </p>
-          {actionError && <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{actionError}</p>}
-          <div className="mt-6 flex gap-3">
-            <ButtonGlass type="button" className="flex-1" onClick={closeConfirm}>
-              {t('common.cancel')}
-            </ButtonGlass>
-            <button
-              type="button"
-              disabled={acting}
-              onClick={handleConfirm}
-              className="flex-1 rounded-full bg-danger px-6 py-3 font-display font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {acting
-                ? t('vehicle.users.revoking')
-                : confirm.kind === 'revoke'
-                  ? t('vehicle.users.revoke')
-                  : t('vehicle.users.leave')}
-            </button>
-          </div>
-        </Modal>
-      )}
+      <Presence>
+        {confirm && (
+          <Modal onClose={closeConfirm}>
+            <p className="text-sm text-white">
+              {confirm.kind === 'revoke'
+                ? t('vehicle.users.revokeConfirm', { email: confirm.user.email })
+                : t('vehicle.users.leaveConfirm')}
+            </p>
+            {actionError && <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{actionError}</p>}
+            <div className="mt-6 flex gap-3">
+              <ButtonGlass type="button" className="flex-1" onClick={closeConfirm}>
+                {t('common.cancel')}
+              </ButtonGlass>
+              <button
+                type="button"
+                disabled={acting}
+                onClick={handleConfirm}
+                className="flex-1 rounded-full bg-danger px-6 py-3 font-display font-semibold text-white pressable disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {acting
+                  ? t('vehicle.users.revoking')
+                  : confirm.kind === 'revoke'
+                    ? t('vehicle.users.revoke')
+                    : t('vehicle.users.leave')}
+              </button>
+            </div>
+          </Modal>
+        )}
+      </Presence>
     </div>
   )
 }
@@ -174,10 +180,5 @@ function RoleBadge({ role }: { role: VehicleUser['role'] }) {
 }
 
 function PlusIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
-      <line x1="12" y1="5" x2="12" y2="19" />
-      <line x1="5" y1="12" x2="19" y2="12" />
-    </svg>
-  )
+  return <AddOutlined sx={{ fontSize: 12 }} />
 }

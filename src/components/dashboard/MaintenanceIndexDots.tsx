@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import CheckOutlined from '@mui/icons-material/CheckOutlined'
 
 export function MaintenanceIndexDots({ pct }: { pct: number }) {
   const { t } = useTranslation()
@@ -24,9 +25,5 @@ export function MaintenanceIndexDots({ pct }: { pct: number }) {
 }
 
 function CheckIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary">
-      <path d="M20 6L9 17l-5-5" />
-    </svg>
-  )
+  return <CheckOutlined className="text-text-secondary" sx={{ fontSize: 16 }} />
 }

@@ -72,7 +72,7 @@ export function VerifyEmailPage() {
               <button
                 type="submit"
                 disabled={resending}
-                className="rounded-[14px] bg-tag-fg py-3.5 font-display text-sm font-bold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-[14px] bg-tag-fg py-3.5 font-display text-sm font-bold text-black pressable disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {resending ? t('auth.loading') : t('auth.verification.resend')}
               </button>
@@ -84,7 +84,7 @@ export function VerifyEmailPage() {
           {status !== 'verifying' && (
             <Link
               to="/login"
-              className="mt-1.5 rounded-[14px] bg-tag-fg px-6 py-3 font-display text-[13.5px] font-bold text-black transition-opacity hover:opacity-90"
+              className="mt-1.5 rounded-[14px] bg-tag-fg px-6 py-3 font-display text-[13.5px] font-bold text-black pressable"
             >
               {t('auth.verification.backToSignin')}
             </Link>
