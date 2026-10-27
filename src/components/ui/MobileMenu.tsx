@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState, type MouseEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SignalMark } from '../SignalMark'
+import { MufflerIcon } from '../MufflerLogo'
 import { HeaderActions } from '../layout/HeaderActions'
 
 export interface MenuItem {
@@ -22,7 +22,7 @@ interface MobileMenuProps {
 // Tailwind's `lg` breakpoint: from here up the desktop sidebar takes over.
 const DESKTOP_QUERY = '(min-width: 64rem)'
 
-const MOTION = 'duration-300 ease-in-out motion-reduce:transition-none'
+const MOTION = 'duration-(--motion-slow) ease-in-out-soft'
 
 function MenuToggleIcon({ open }: { open: boolean }) {
   const line = `absolute left-0 h-0.5 w-5 rounded-full bg-current transition-[translate,rotate,opacity] ${MOTION}`
@@ -99,9 +99,7 @@ export function MobileMenu({ items, onNavigate, onLogout, loggingOut }: MobileMe
           <MenuToggleIcon open={open} />
         </button>
         <div className="flex items-center gap-2.5 pr-1">
-          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[10px] bg-lime text-black">
-            <SignalMark />
-          </div>
+          <MufflerIcon size={32} title="" />
           <span className="font-display text-base font-bold">muffler</span>
         </div>
       </div>

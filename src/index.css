@@ -45,6 +45,95 @@
   --font-display: "Roboto", sans-serif;
   --font-body: "Roboto", sans-serif;
   --font-mono: "Roboto Mono", monospace;
+
+  /* Motion tokens: the single source for durations and easings. src/lib/motion.ts mirrors the ms values. */
+  --motion-fast: 150ms;
+  --motion-base: 220ms;
+  --motion-slow: 320ms;
+  --motion-stagger: 50ms;
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  /* Every bare `transition-*` utility in the app picks these up. */
+  --default-transition-duration: var(--motion-base);
+  --default-transition-timing-function: var(--ease-out-soft);
+
+  --animate-enter: enter var(--motion-slow) var(--ease-out-soft) backwards;
+  --animate-enter-sm: enter-sm var(--motion-base) var(--ease-out-soft) backwards;
+  --animate-page: page var(--motion-slow) var(--ease-out-soft) backwards;
+  --animate-fade-in: fade-in var(--motion-base) var(--ease-out-soft) backwards;
+  --animate-fade-out: fade-out var(--motion-base) var(--ease-in-out-soft) forwards;
+  --animate-modal-in: modal-in var(--motion-base) var(--ease-out-soft) backwards;
+  --animate-modal-out: modal-out var(--motion-base) var(--ease-in-out-soft) forwards;
+  --animate-grow-x: grow-x var(--motion-slow) var(--ease-out-soft) backwards;
+  --animate-grow-y: grow-y var(--motion-slow) var(--ease-out-soft) backwards;
+  --animate-glow: glow 10s var(--ease-in-out-soft) infinite alternate;
+
+  /* Entry keyframes only define `from`, so the resting state is always the element's own style. */
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 12px, 0);
+    }
+  }
+  @keyframes enter-sm {
+    from {
+      opacity: 0;
+      transform: translate3d(0, -4px, 0);
+    }
+  }
+  @keyframes page {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 8px, 0);
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes modal-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 10px, 0) scale(0.97);
+    }
+  }
+  @keyframes modal-out {
+    to {
+      opacity: 0;
+      transform: translate3d(0, 6px, 0) scale(0.98);
+    }
+  }
+  @keyframes grow-x {
+    from {
+      transform: scaleX(0);
+    }
+  }
+  @keyframes grow-y {
+    from {
+      transform: scaleY(0);
+    }
+  }
+  @keyframes glow {
+    from {
+      opacity: 0.7;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(-14px, 12px, 0) scale(1.1);
+    }
+  }
+  @keyframes shimmer {
+    to {
+      transform: translateX(100%);
+    }
+  }
 }
 
 html,
@@ -150,4 +239,64 @@ body {
 
 .theme-light .bg-lime.text-black {
   color: #fff;
+}
+
+/* Shared hover/press for buttons and clickable cards: lift + brighten on hover, 0.98 on press. */
+@utility pressable {
+  transition-property: color, background-color, border-color, box-shadow, opacity, filter, transform;
+  transition-duration: var(--motion-base);
+  transition-timing-function: var(--ease-out-soft);
+
+  &:not(:disabled):hover {
+    transform: translateY(-1px);
+    filter: brightness(1.08);
+  }
+
+  &:not(:disabled):active {
+    transform: scale(0.98);
+    transition-duration: var(--motion-fast);
+  }
+}
+
+/* Staggered entry for a container's children; the delay caps at 8 steps so long lists don't wait. */
+@utility stagger {
+  & > * {
+    animation: var(--animate-enter);
+  }
+  & > :nth-child(2) { animation-delay: calc(var(--motion-stagger) * 1); }
+  & > :nth-child(3) { animation-delay: calc(var(--motion-stagger) * 2); }
+  & > :nth-child(4) { animation-delay: calc(var(--motion-stagger) * 3); }
+  & > :nth-child(5) { animation-delay: calc(var(--motion-stagger) * 4); }
+  & > :nth-child(6) { animation-delay: calc(var(--motion-stagger) * 5); }
+  & > :nth-child(7) { animation-delay: calc(var(--motion-stagger) * 6); }
+  & > :nth-child(8) { animation-delay: calc(var(--motion-stagger) * 7); }
+  & > :nth-child(n + 9) { animation-delay: calc(var(--motion-stagger) * 8); }
+}
+
+@utility skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-surface);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--color-text-primary) 5%, transparent), transparent);
+    animation: shimmer 1.4s var(--ease-in-out-soft) infinite;
+  }
+}
+
+/* Reduced motion: every animation and transition jumps to its end state. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
 }

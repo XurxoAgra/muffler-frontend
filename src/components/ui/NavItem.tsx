@@ -11,6 +11,23 @@ interface NavItemProps {
   onClick?: () => void
 }
 
+/**
+ * Sidebar row text. It stays laid out while collapsed (the sidebar clips it) and only fades,
+ * so the icons never shift sideways during the width transition. On expand it waits a beat
+ * for the sidebar to open up before fading in.
+ */
+export function NavLabel({ collapsed, className = '', children }: { collapsed: boolean; className?: string; children: ReactNode }) {
+  return (
+    <span
+      className={`whitespace-nowrap transition-[opacity,translate] ${
+        collapsed ? '-translate-x-1 opacity-0 duration-(--motion-fast)' : 'translate-x-0 opacity-100 delay-[80ms]'
+      } ${className}`}
+    >
+      {children}
+    </span>
+  )
+}
+
 export function NavItem({
   icon,
   label,
@@ -27,38 +44,41 @@ export function NavItem({
       disabled={disabled}
       onClick={onClick}
       title={collapsed ? label : undefined}
-      className={`relative flex w-full items-center rounded-lg transition-colors ${
-        collapsed ? 'justify-center px-0 py-3' : 'justify-start gap-3 px-3.5 py-2.5'
-      } ${
+      aria-current={active ? 'page' : undefined}
+      className={`relative flex w-full items-center gap-3 rounded-lg py-2.5 pl-[15px] pr-3.5 transition-colors ${
         active
           ? 'bg-lime-10 font-semibold text-lime'
           : disabled
             ? 'cursor-default text-subtle'
-            : 'text-muted hover:text-shell-fg-hover'
+            : 'cursor-pointer text-muted hover:bg-shell-fg/5 hover:text-shell-fg-hover'
       }`}
     >
-      {active && (
-        <span className="absolute bottom-1/4 left-0 top-1/4 w-0.5 rounded bg-lime shadow-[0_0_8px_var(--color-lime)]" />
-      )}
-      <span className="flex-shrink-0">{icon}</span>
       <span
-        className={`overflow-hidden whitespace-nowrap text-sm transition-all ${
-          collapsed ? 'max-w-0 opacity-0' : 'max-w-[200px] opacity-100'
+        className={`absolute bottom-1/4 left-0 top-1/4 w-0.5 rounded bg-lime shadow-[0_0_8px_var(--color-lime)] transition-[opacity,scale] ${
+          active ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0'
         }`}
-      >
+      />
+      <span className="flex-shrink-0">{icon}</span>
+      <NavLabel collapsed={collapsed} className="text-sm">
         {label}
-      </span>
-      {badge !== undefined && !collapsed && (
-        <span
+      </NavLabel>
+      {badge !== undefined && (
+        <NavLabel
+          collapsed={collapsed}
           className={`ml-auto flex-shrink-0 rounded-lg px-1.5 py-0.5 font-mono text-[10px] font-bold ${
             badgeTone === 'danger' ? 'bg-danger text-white' : 'bg-lime text-black'
           }`}
         >
           {badge}
-        </span>
+        </NavLabel>
       )}
-      {active && !collapsed && badge === undefined && (
-        <span className="ml-auto h-1.5 w-1.5 flex-shrink-0 rounded-full bg-lime shadow-[0_0_8px_var(--color-lime)]" />
+      {active && badge === undefined && (
+        <NavLabel
+          collapsed={collapsed}
+          className="ml-auto h-1.5 w-1.5 flex-shrink-0 rounded-full bg-lime shadow-[0_0_8px_var(--color-lime)]"
+        >
+          {null}
+        </NavLabel>
       )}
     </button>
   )

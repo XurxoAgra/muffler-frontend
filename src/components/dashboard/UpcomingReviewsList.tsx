@@ -2,6 +2,8 @@ import { useTranslation } from 'react-i18next'
 import { formatDate } from '../maintenance/formatters'
 import { useMaintenanceRecordTypes } from '../../maintenance/useMaintenanceRecordTypes'
 import type { UpcomingItem } from '../../lib/fleetInsights'
+import EventOutlined from '@mui/icons-material/EventOutlined'
+import WarningAmberOutlined from '@mui/icons-material/WarningAmberOutlined'
 
 const ROW_BG: Record<UpcomingItem['status'], string> = {
   vencida: 'bg-row-overdue',
@@ -22,7 +24,7 @@ export function UpcomingReviewsList({ items }: { items: UpcomingItem[] }) {
   return (
     <div className="rounded-[20px] bg-surface p-5 shadow-sm">
       <div className="mb-3 font-display text-sm font-bold text-text-primary">{t('maintenance.stats.upcoming')}</div>
-      <div className="flex flex-col gap-2.5">
+      <div className="stagger flex flex-col gap-2.5">
         {items.map((item) => (
           <div key={item.vehicleId} className={`flex flex-col gap-1.5 rounded-[13px] p-2.5 ${ROW_BG[item.status]}`}>
             <div className="flex min-w-0 items-center gap-2.5">
@@ -58,19 +60,9 @@ export function UpcomingReviewsList({ items }: { items: UpcomingItem[] }) {
 }
 
 function CalendarIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="5" width="18" height="16" rx="2" />
-      <path d="M3 9h18M8 3v4M16 3v4" />
-    </svg>
-  )
+  return <EventOutlined sx={{ fontSize: 16, color: '#fff' }} />
 }
 
 function AlertIcon({ color }: { color: string }) {
-  return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 3l10 18H2z" />
-      <path d="M12 9v5M12 17h.01" />
-    </svg>
-  )
+  return <WarningAmberOutlined sx={{ fontSize: 11, color }} />
 }

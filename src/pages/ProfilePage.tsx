@@ -4,6 +4,10 @@ import { useTranslation } from 'react-i18next'
 import { ButtonPrimary } from '../components/ui/ButtonPrimary'
 import { LanguageSwitcher } from '../components/LanguageSwitcher'
 import { useAuth } from '../auth/AuthContext'
+import LanguageOutlined from '@mui/icons-material/LanguageOutlined'
+import LockOutlined from '@mui/icons-material/LockOutlined'
+import LogoutOutlined from '@mui/icons-material/LogoutOutlined'
+import NotificationsOutlined from '@mui/icons-material/NotificationsOutlined'
 
 export function ProfilePage() {
   const navigate = useNavigate()
@@ -88,7 +92,7 @@ export function ProfilePage() {
         type="button"
         onClick={handleLogout}
         disabled={loggingOut}
-        className="inline-flex w-fit items-center gap-2.5 rounded-2xl bg-surface px-5 py-3.5 font-display text-[13.5px] font-bold text-danger shadow-sm transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+        className="inline-flex w-fit items-center gap-2.5 rounded-2xl bg-surface px-5 py-3.5 font-display text-[13.5px] font-bold text-danger shadow-sm pressable disabled:cursor-not-allowed disabled:opacity-60"
       >
         <SignOutIcon />
         {loggingOut ? t('nav.signingOut') : t('nav.signOut')}
@@ -98,38 +102,17 @@ export function ProfilePage() {
 }
 
 function BellIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary">
-      <path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6" />
-      <path d="M10 20a2 2 0 0 0 4 0" />
-    </svg>
-  )
+  return <NotificationsOutlined className="text-text-secondary" sx={{ fontSize: 18 }} />
 }
 
 function GlobeIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M3 12h18M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z" />
-    </svg>
-  )
+  return <LanguageOutlined className="text-text-secondary" sx={{ fontSize: 18 }} />
 }
 
 function LockIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary">
-      <rect x="5" y="11" width="14" height="9" rx="2" />
-      <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-    </svg>
-  )
+  return <LockOutlined className="text-text-secondary" sx={{ fontSize: 18 }} />
 }
 
 function SignOutIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-      <polyline points="16 17 21 12 16 7" />
-      <line x1="21" y1="12" x2="9" y2="12" />
-    </svg>
-  )
+  return <LogoutOutlined sx={{ fontSize: 18 }} />
 }

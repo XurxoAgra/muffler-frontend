@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Modal } from '../components/ui/Modal'
+import { Presence } from '../components/ui/Presence'
+import { PageSkeleton } from '../components/ui/Skeleton'
 import { ButtonGlass } from '../components/ui/ButtonGlass'
 import { LabelMono } from '../components/ui/LabelMono'
 import { MaintenanceTable, type SortKey } from '../components/maintenance/MaintenanceTable'
@@ -27,7 +29,13 @@ import {
 } from '../lib/fleetInsights'
 import { getVehicleTint } from '../constants/vehicleTints'
 import { formatCost, formatDate, formatMileage } from '../components/maintenance/formatters'
+import { useCountUp } from '../lib/useCountUp'
 import type { MaintenanceRecord } from '../lib/types'
+import AddOutlined from '@mui/icons-material/AddOutlined'
+import ArrowBackOutlined from '@mui/icons-material/ArrowBackOutlined'
+import Build from '@mui/icons-material/Build'
+import DirectionsCarOutlined from '@mui/icons-material/DirectionsCarOutlined'
+import FileDownloadOutlined from '@mui/icons-material/FileDownloadOutlined'
 
 type DrawerState = { mode: 'create' } | { mode: 'edit'; record: MaintenanceRecord } | null
 
@@ -65,6 +73,7 @@ export function VehicleDetailPage() {
   const records = useMemo(() => (id ? recordsByVehicle[id] ?? [] : []), [id, recordsByVehicle])
 
   const totalSpent = useMemo(() => getVehicleTotal(records), [records])
+  const shownTotalSpent = useCountUp(totalSpent)
   // Mileage snapshots are the authoritative source (a maintenance record with a mileage also
   // writes one), so prefer the newest snapshot and fall back to the maintenance-derived value
   // while the history is still loading or failed.
@@ -180,7 +189,7 @@ export function VehicleDetailPage() {
         <BackIcon /> {t('vehicle.detail.back')}
       </Link>
 
-      {loading && <p className="text-sm text-text-secondary">{t('common.loading')}</p>}
+      {loading && <PageSkeleton />}
       {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
 
       {!loading && !error && !vehicle && (
@@ -253,7 +262,7 @@ export function VehicleDetailPage() {
                 <button
                   type="button"
                   onClick={() => setConfirmVehicleDelete(true)}
-                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl bg-danger px-5 py-2.5 font-display text-sm font-bold text-white transition-opacity hover:opacity-90"
+                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl bg-danger px-5 py-2.5 font-display text-sm font-bold text-white pressable"
                 >
                   {t('vehicle.deleteBtn')}
                 </button>
@@ -267,11 +276,11 @@ export function VehicleDetailPage() {
             </p>
           )}
 
-          <div className="mb-5 grid gap-4 sm:grid-cols-3">
+          <div className="stagger mb-5 grid gap-4 sm:grid-cols-3">
             <div className="rounded-[20px] bg-surface p-5 shadow-sm">
               <LabelMono>{t('vehicle.detail.totalSpent')}</LabelMono>
-              <div className="mt-1.5 font-display text-xl font-extrabold text-text-primary">
-                {formatCost(String(totalSpent))}
+              <div className="mt-1.5 font-display text-xl font-extrabold tabular-nums text-text-primary">
+                {formatCost(shownTotalSpent.toFixed(2))}
               </div>
             </div>
 
@@ -332,7 +341,7 @@ export function VehicleDetailPage() {
                 <button
                   type="button"
                   onClick={() => setDrawerState({ mode: 'create' })}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-lime px-3 py-1.5 font-display text-xs font-bold text-black transition-opacity hover:opacity-90"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-lime px-3 py-1.5 font-display text-xs font-bold text-black pressable"
                 >
                   <PlusIcon /> {t('maintenance.add')}
                 </button>
@@ -356,7 +365,7 @@ export function VehicleDetailPage() {
                     onDelete={(record) => setDeleteConfirm(record)}
                   />
                 </div>
-                <div className="flex flex-col gap-3 md:hidden">
+                <div className="stagger flex flex-col gap-3 md:hidden">
                   {visibleRecords.map((record) => (
                     <MaintenanceRecordCard
                       key={record.id}
@@ -373,107 +382,119 @@ export function VehicleDetailPage() {
 
           <MileageHistorySection records={records} />
 
-          {viewingRecord && (
-            <MaintenanceRecordDetailModal record={viewingRecord} onClose={() => setViewingRecord(null)} />
-          )}
+          <Presence>
+            {viewingRecord && (
+              <MaintenanceRecordDetailModal record={viewingRecord} onClose={() => setViewingRecord(null)} />
+            )}
+          </Presence>
 
-          {editingVehicle && (
-            <VehicleFormModal
-              mode="edit"
-              vehicle={vehicle}
-              onClose={() => setEditingVehicle(false)}
-              onSaved={handleSaved}
-            />
-          )}
+          <Presence>
+            {editingVehicle && (
+              <VehicleFormModal
+                mode="edit"
+                vehicle={vehicle}
+                onClose={() => setEditingVehicle(false)}
+                onSaved={handleSaved}
+              />
+            )}
+          </Presence>
 
-          {drawerState?.mode === 'create' && (
-            <MaintenanceFormDrawer
-              vehicleId={vehicle.id}
-              mode="create"
-              onClose={() => setDrawerState(null)}
-              onSaved={handleSaved}
-            />
-          )}
-          {drawerState?.mode === 'edit' && (
-            <MaintenanceFormDrawer
-              vehicleId={vehicle.id}
-              mode="edit"
-              record={drawerState.record}
-              onClose={() => setDrawerState(null)}
-              onSaved={handleSaved}
-            />
-          )}
+          <Presence>
+            {drawerState?.mode === 'create' && (
+              <MaintenanceFormDrawer
+                vehicleId={vehicle.id}
+                mode="create"
+                onClose={() => setDrawerState(null)}
+                onSaved={handleSaved}
+              />
+            )}
+          </Presence>
+          <Presence>
+            {drawerState?.mode === 'edit' && (
+              <MaintenanceFormDrawer
+                vehicleId={vehicle.id}
+                mode="edit"
+                record={drawerState.record}
+                onClose={() => setDrawerState(null)}
+                onSaved={handleSaved}
+              />
+            )}
+          </Presence>
 
-          {confirmVehicleDelete && (
-            <Modal
-              onClose={() => {
-                setConfirmVehicleDelete(false)
-                setVehicleDeleteError(null)
-              }}
-            >
-              <p className="text-sm text-white">{t('vehicle.deleteConfirm', { plate: vehicle.plate })}</p>
-              {vehicleDeleteError && (
-                <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{vehicleDeleteError}</p>
-              )}
-              <div className="mt-6 flex gap-3">
-                <ButtonGlass
-                  type="button"
-                  className="flex-1"
-                  onClick={() => {
-                    setConfirmVehicleDelete(false)
-                    setVehicleDeleteError(null)
-                  }}
-                >
-                  {t('common.cancel')}
-                </ButtonGlass>
-                <button
-                  type="button"
-                  disabled={deletingVehicle}
-                  onClick={handleDeleteVehicle}
-                  className="flex-1 rounded-full bg-danger px-6 py-3 font-display font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {deletingVehicle ? t('vehicle.deleting') : t('common.delete')}
-                </button>
-              </div>
-            </Modal>
-          )}
+          <Presence>
+            {confirmVehicleDelete && (
+              <Modal
+                onClose={() => {
+                  setConfirmVehicleDelete(false)
+                  setVehicleDeleteError(null)
+                }}
+              >
+                <p className="text-sm text-white">{t('vehicle.deleteConfirm', { plate: vehicle.plate })}</p>
+                {vehicleDeleteError && (
+                  <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{vehicleDeleteError}</p>
+                )}
+                <div className="mt-6 flex gap-3">
+                  <ButtonGlass
+                    type="button"
+                    className="flex-1"
+                    onClick={() => {
+                      setConfirmVehicleDelete(false)
+                      setVehicleDeleteError(null)
+                    }}
+                  >
+                    {t('common.cancel')}
+                  </ButtonGlass>
+                  <button
+                    type="button"
+                    disabled={deletingVehicle}
+                    onClick={handleDeleteVehicle}
+                    className="flex-1 rounded-full bg-danger px-6 py-3 font-display font-semibold text-white pressable disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {deletingVehicle ? t('vehicle.deleting') : t('common.delete')}
+                  </button>
+                </div>
+              </Modal>
+            )}
+          </Presence>
 
-          {deleteConfirm && (
-            <Modal
-              onClose={() => {
-                setDeleteConfirm(null)
-                setDeleteError(null)
-              }}
-            >
-              <p className="text-sm text-white">
-                {t('maintenance.deleteConfirm', {
-                  type: labelOf(deleteConfirm.maintenanceRecordTypeId) ?? '—',
-                  date: formatDate(deleteConfirm.serviceDate),
-                })}
-              </p>
-              {deleteError && <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{deleteError}</p>}
-              <div className="mt-6 flex gap-3">
-                <ButtonGlass
-                  type="button"
-                  className="flex-1"
-                  onClick={() => {
-                    setDeleteConfirm(null)
-                    setDeleteError(null)
-                  }}
-                >
-                  {t('common.cancel')}
-                </ButtonGlass>
-                <button
-                  type="button"
-                  disabled={deleting}
-                  onClick={() => handleDelete(deleteConfirm)}
-                  className="flex-1 rounded-full bg-danger px-6 py-3 font-display font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {deleting ? t('maintenance.deleting') : t('maintenance.deleteBtn')}
-                </button>
-              </div>
-            </Modal>
-          )}
+          <Presence>
+            {deleteConfirm && (
+              <Modal
+                onClose={() => {
+                  setDeleteConfirm(null)
+                  setDeleteError(null)
+                }}
+              >
+                <p className="text-sm text-white">
+                  {t('maintenance.deleteConfirm', {
+                    type: labelOf(deleteConfirm.maintenanceRecordTypeId) ?? '—',
+                    date: formatDate(deleteConfirm.serviceDate),
+                  })}
+                </p>
+                {deleteError && <p className="mt-3 rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{deleteError}</p>}
+                <div className="mt-6 flex gap-3">
+                  <ButtonGlass
+                    type="button"
+                    className="flex-1"
+                    onClick={() => {
+                      setDeleteConfirm(null)
+                      setDeleteError(null)
+                    }}
+                  >
+                    {t('common.cancel')}
+                  </ButtonGlass>
+                  <button
+                    type="button"
+                    disabled={deleting}
+                    onClick={() => handleDelete(deleteConfirm)}
+                    className="flex-1 rounded-full bg-danger px-6 py-3 font-display font-semibold text-white pressable disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {deleting ? t('maintenance.deleting') : t('maintenance.deleteBtn')}
+                  </button>
+                </div>
+              </Modal>
+            )}
+          </Presence>
         </>
       )}
     </div>
@@ -484,10 +505,7 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
   const { t } = useTranslation()
   return (
     <div className="flex flex-col items-center gap-4 px-6 py-12 text-center">
-      <svg width="72" height="72" viewBox="0 0 24 24" fill="none" className="text-lime" strokeWidth="1.2" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="11" opacity="0.2" />
-        <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6z" opacity="0.7" />
-      </svg>
+      <Build className="text-lime" sx={{ fontSize: 72 }} />
       <div>
         <h3 className="font-display text-base font-bold text-text-primary">{t('maintenance.empty.title')}</h3>
         <p className="mt-1.5 max-w-[280px] text-sm leading-relaxed text-text-secondary">
@@ -497,7 +515,7 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
       <button
         type="button"
         onClick={onAdd}
-        className="inline-flex items-center gap-2 rounded-full bg-lime px-5 py-2.5 font-display text-sm font-semibold text-black transition-opacity hover:opacity-90"
+        className="inline-flex items-center gap-2 rounded-full bg-lime px-5 py-2.5 font-display text-sm font-semibold text-black pressable"
       >
         <PlusIcon /> {t('maintenance.addFirst')}
       </button>
@@ -534,11 +552,7 @@ function ExportButton({ format, busy, disabled, onClick }: ExportButtonProps) {
 }
 
 function DownloadIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
-    </svg>
-  )
+  return <FileDownloadOutlined sx={{ fontSize: 12 }} />
 }
 
 function SpinnerIcon() {
@@ -550,29 +564,13 @@ function SpinnerIcon() {
 }
 
 function BackIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 12H5M11 18l-6-6 6-6" />
-    </svg>
-  )
+  return <ArrowBackOutlined sx={{ fontSize: 14 }} />
 }
 
 function PlusIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
-      <line x1="12" y1="5" x2="12" y2="19" />
-      <line x1="5" y1="12" x2="19" y2="12" />
-    </svg>
-  )
+  return <AddOutlined sx={{ fontSize: 12 }} />
 }
 
 function CarIcon() {
-  return (
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#14150F" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13" />
-      <rect x="2" y="13" width="20" height="6" rx="2" />
-      <circle cx="7" cy="19" r="1.6" />
-      <circle cx="17" cy="19" r="1.6" />
-    </svg>
-  )
+  return <DirectionsCarOutlined sx={{ fontSize: 30, color: '#14150F' }} />
 }

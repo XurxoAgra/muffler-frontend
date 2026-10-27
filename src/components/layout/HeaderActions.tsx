@@ -3,31 +3,20 @@ import { useTheme } from '../../theme/ThemeContext'
 import { useFleetData } from '../../vehicles/FleetDataContext'
 import { deriveUpcoming, countOverdue } from '../../lib/fleetInsights'
 import { LanguageSwitcher } from '../LanguageSwitcher'
+import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined'
+import LightModeOutlined from '@mui/icons-material/LightModeOutlined'
+import NotificationsOutlined from '@mui/icons-material/NotificationsOutlined'
 
 function BellIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6" />
-      <path d="M10 20a2 2 0 0 0 4 0" />
-    </svg>
-  )
+  return <NotificationsOutlined sx={{ fontSize: 18 }} />
 }
 
 function SunIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="4.5" />
-      <path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8L6 18M18 6l1.8-1.8" />
-    </svg>
-  )
+  return <LightModeOutlined sx={{ fontSize: 18 }} />
 }
 
 function MoonIcon() {
-  return (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" />
-    </svg>
-  )
+  return <DarkModeOutlined sx={{ fontSize: 17 }} />
 }
 
 // Notifications, language and theme. Rendered in the Header from `lg` up and inside the MobileMenu overlay below it.
@@ -57,7 +46,7 @@ export function HeaderActions({ className = '' }: { className?: string }) {
         type="button"
         onClick={toggleTheme}
         title={theme === 'dark' ? t('nav.switchToLight') : t('nav.switchToDark')}
-        className="flex h-[42px] w-[42px] flex-shrink-0 items-center justify-center rounded-[13px] bg-surface text-text-primary shadow-sm transition-opacity hover:opacity-80"
+        className="flex h-[42px] w-[42px] flex-shrink-0 items-center justify-center rounded-[13px] bg-surface text-text-primary shadow-sm pressable"
       >
         {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
       </button>

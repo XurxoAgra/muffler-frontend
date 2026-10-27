@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import type { MileageBubble } from '../../lib/fleetInsights'
+import DirectionsCarOutlined from '@mui/icons-material/DirectionsCarOutlined'
 
 export function MileageBubbles({ bubbles }: { bubbles: MileageBubble[] }) {
   const { t } = useTranslation()
@@ -39,12 +40,5 @@ export function MileageBubbles({ bubbles }: { bubbles: MileageBubble[] }) {
 }
 
 function CarIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary">
-      <path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13" />
-      <rect x="2" y="13" width="20" height="6" rx="2" />
-      <circle cx="7" cy="19" r="1.6" />
-      <circle cx="17" cy="19" r="1.6" />
-    </svg>
-  )
+  return <DirectionsCarOutlined className="text-text-secondary" sx={{ fontSize: 16 }} />
 }

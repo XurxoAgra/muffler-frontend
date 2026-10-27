@@ -4,9 +4,40 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../auth/AuthContext'
 import { ApiError } from '../lib/apiClient'
 import { EMAIL_NOT_VERIFIED, resendVerification } from '../auth/emailVerification'
+import { STAGGER_MS } from '../lib/motion'
+import { MufflerIcon } from '../components/MufflerLogo'
+import ArrowBackOutlined from '@mui/icons-material/ArrowBackOutlined'
+import CheckOutlined from '@mui/icons-material/CheckOutlined'
+import LockOutlined from '@mui/icons-material/LockOutlined'
+import MailOutlined from '@mui/icons-material/MailOutlined'
+import PersonOutlined from '@mui/icons-material/PersonOutlined'
+import VisibilityOffOutlined from '@mui/icons-material/VisibilityOffOutlined'
+import VisibilityOutlined from '@mui/icons-material/VisibilityOutlined'
 
 type Mode = 'signin' | 'register' | 'forgot'
 type ResendStatus = 'idle' | 'sending' | 'sent'
+
+const PRESSABLE = 'cursor-pointer pressable enabled:hover:shadow-lg enabled:hover:shadow-tag-fg/20'
+
+function stagger(step: number) {
+  return { animationDelay: `${step * STAGGER_MS}ms` }
+}
+
+function Enter({ step, children }: { step: number; children: ReactNode }) {
+  return (
+    <div className="animate-enter" style={stagger(step)}>
+      {children}
+    </div>
+  )
+}
+
+function ErrorMessage({ children }: { children: ReactNode }) {
+  return (
+    <p role="alert" className="animate-enter-sm rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+      {children}
+    </p>
+  )
+}
 
 interface FieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string
@@ -27,8 +58,10 @@ function Field({ label, icon, trailing, labelAside, id, className = '', ...props
         </label>
         {labelAside}
       </div>
-      <div className="flex items-center gap-2.5 rounded-[14px] border border-border-soft bg-surface px-4 py-3.5">
-        <span className="flex-shrink-0 text-text-secondary">{icon}</span>
+      <div className="group flex items-center gap-2.5 rounded-[14px] border border-border-soft bg-surface px-4 py-3.5 transition-[border-color,box-shadow] duration-200 ease-out focus-within:border-tag-fg/50 focus-within:ring-[3px] focus-within:ring-tag-fg/10">
+        <span className="flex flex-shrink-0 text-text-secondary transition-[color,transform] duration-200 ease-out group-focus-within:scale-110 group-focus-within:text-tag-fg">
+          {icon}
+        </span>
         <input
           id={inputId}
           className={`w-full min-w-0 border-0 bg-transparent text-[13.5px] text-text-primary outline-none placeholder:text-text-secondary ${className}`}
@@ -40,72 +73,62 @@ function Field({ label, icon, trailing, labelAside, id, className = '', ...props
   )
 }
 
-function CarIcon() {
-  return (
-    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#14150F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13" />
-      <rect x="2" y="13" width="20" height="6" rx="2" />
-      <circle cx="7" cy="19" r="1.6" />
-      <circle cx="17" cy="19" r="1.6" />
-    </svg>
-  )
-}
-
 function MailIcon() {
-  return (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="5" width="18" height="14" rx="2" />
-      <path d="M3 7l9 6 9-6" />
-    </svg>
-  )
+  return <MailOutlined sx={{ fontSize: 17 }} />
 }
 
 function LockIcon() {
-  return (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="5" y="11" width="14" height="9" rx="2" />
-      <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-    </svg>
-  )
+  return <LockOutlined sx={{ fontSize: 17 }} />
 }
 
 function PersonIcon() {
-  return (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="8" r="3.5" />
-      <path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6" />
-    </svg>
-  )
+  return <PersonOutlined sx={{ fontSize: 17 }} />
 }
 
 function EyeIcon({ open }: { open: boolean }) {
-  return open ? (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  ) : (
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M2 12s3.5-7 10-7c1.9 0 3.5.5 4.9 1.3M22 12s-1 2-3 3.7M9.9 9.9a3 3 0 0 0 4.2 4.2" />
-      <path d="M1 1l22 22" />
+  return open ? <VisibilityOutlined sx={{ fontSize: 17 }} /> : <VisibilityOffOutlined sx={{ fontSize: 17 }} />
+}
+
+function CheckIcon() {
+  return <CheckOutlined sx={{ fontSize: 13, color: '#14150F' }} />
+}
+
+function SpinnerIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="animate-spin motion-reduce:hidden">
+      <path d="M21 12a9 9 0 1 1-6.2-8.56" />
     </svg>
   )
 }
 
-function CheckIcon() {
+function SubmitButton({
+  loading = false,
+  label,
+  loadingLabel,
+  className = 'mt-2.5',
+}: {
+  loading?: boolean
+  label: string
+  loadingLabel?: string
+  className?: string
+}) {
   return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#14150F" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 6L9 17l-5-5" />
-    </svg>
+    <button
+      type="submit"
+      disabled={loading}
+      aria-busy={loading}
+      className={`${className} w-full rounded-[14px] bg-tag-fg py-3.5 text-center font-display text-sm font-bold text-black disabled:cursor-not-allowed disabled:opacity-60 ${PRESSABLE}`}
+    >
+      <span key={loading ? 'loading' : 'idle'} className="animate-enter-sm inline-flex items-center justify-center gap-2">
+        {loading && <SpinnerIcon />}
+        {loading ? loadingLabel : label}
+      </span>
+    </button>
   )
 }
 
 function ArrowLeftIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 12H5M12 19l-7-7 7-7" />
-    </svg>
-  )
+  return <ArrowBackOutlined sx={{ fontSize: 15 }} />
 }
 
 export function LoginPage() {
@@ -126,8 +149,14 @@ export function LoginPage() {
   const [verificationSentTo, setVerificationSentTo] = useState<string | null>(null)
   const [unverified, setUnverified] = useState(false)
   const [resendStatus, setResendStatus] = useState<ResendStatus>('idle')
+  const [introPlayed, setIntroPlayed] = useState(false)
+
+  // After the first mode switch, content enters without waiting for the page intro.
+  const headingStep = introPlayed ? 0 : 1
+  const formStep = (index: number) => (introPlayed ? 1 : 3) + index
 
   function switchMode(next: Mode) {
+    setIntroPlayed(true)
     setMode(next)
     setResetSent(false)
     setError(null)
@@ -194,7 +223,7 @@ export function LoginPage() {
         type="button"
         disabled={resendStatus === 'sending'}
         onClick={() => handleResend(target)}
-        className="text-center text-[13px] font-bold text-text-primary underline underline-offset-2 disabled:opacity-60"
+        className="cursor-pointer text-center text-[13px] font-bold text-text-primary underline underline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {resendStatus === 'sending' ? t('auth.loading') : t('auth.verification.resend')}
       </button>
@@ -204,134 +233,159 @@ export function LoginPage() {
     <div className="flex min-h-svh w-full items-center justify-center bg-page p-2.5 md:p-6">
       <div className="flex w-full max-w-[960px] flex-col gap-2.5 rounded-[32px] bg-shell p-2.5 shadow-2xl md:flex-row md:gap-4 md:p-4">
         <div className="relative hidden min-h-[520px] flex-1 flex-col justify-between overflow-hidden px-8 py-9 md:flex">
-          <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(215,242,76,0.25),rgba(215,242,76,0)_70%)]" />
-          <div className="pointer-events-none absolute -bottom-20 -left-10 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(201,184,245,0.18),rgba(201,184,245,0)_70%)]" />
+          <div className="animate-glow pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(215,242,76,0.25),rgba(215,242,76,0)_70%)]" />
+          <div
+            className="animate-glow pointer-events-none absolute -bottom-20 -left-10 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(201,184,245,0.18),rgba(201,184,245,0)_70%)]"
+            style={{ animationDuration: '12s', animationDirection: 'alternate-reverse' }}
+          />
 
-          <div className="relative flex items-center gap-2.5">
-            <div className="flex h-[34px] w-[34px] flex-shrink-0 items-center justify-center rounded-[10px] bg-tag-fg">
-              <CarIcon />
-            </div>
+          <div className="animate-enter relative flex items-center gap-2.5">
+            <MufflerIcon size={34} title="" />
             <span className="font-display text-[17px] font-extrabold text-shell-fg">muffler</span>
           </div>
 
           <div className="relative">
-            <h2 className="mb-3.5 font-display text-[28px] font-extrabold leading-[1.25] text-shell-fg">
+            <h2 className="animate-enter mb-3.5 font-display text-[28px] font-extrabold leading-[1.25] text-shell-fg" style={stagger(1)}>
               {t('auth.brand.heading')}
             </h2>
-            <p className="max-w-[340px] text-sm leading-relaxed text-[#B8BAAD]">{t('auth.brand.subheading')}</p>
-
-            <div className="mt-7 flex gap-3">
-              <div className="flex-1 rounded-2xl bg-white/[0.06] px-4 py-3.5">
-                <div className="font-display text-[19px] font-extrabold text-tag-fg">2</div>
-                <div className="mt-0.5 text-[11.5px] text-[#B8BAAD]">{t('auth.brand.statVehicles')}</div>
-              </div>
-              <div className="flex-1 rounded-2xl bg-white/[0.06] px-4 py-3.5">
-                <div className="font-display text-[19px] font-extrabold text-tag-fg">100%</div>
-                <div className="mt-0.5 text-[11.5px] text-[#B8BAAD]">{t('auth.brand.statUpToDate')}</div>
-              </div>
-            </div>
+            <p className="animate-enter max-w-[340px] text-sm leading-relaxed text-[#B8BAAD]" style={stagger(2)}>
+              {t('auth.brand.subheading')}
+            </p>
           </div>
 
-          <div className="relative text-[11.5px] text-[#6C6E63]">{t('auth.brand.footer', { year: new Date().getFullYear() })}</div>
+          <div className="animate-enter relative text-[11.5px] text-[#6C6E63]" style={stagger(3)}>{t('auth.brand.footer', { year: new Date().getFullYear() })}</div>
         </div>
 
         <div className="flex flex-1 flex-col justify-center rounded-[26px] bg-main px-6 py-8 sm:px-11 sm:py-12">
           <div className="mx-auto w-full max-w-[360px]">
-            <h1 className="mb-1.5 font-display text-[23px] font-extrabold text-text-primary">{heading.title}</h1>
-            {heading.subtitle && <p className="mb-7 text-[13.5px] text-text-secondary">{heading.subtitle}</p>}
+            <h1
+              key={heading.title}
+              className="animate-enter mb-1.5 font-display text-[23px] font-extrabold text-text-primary"
+              style={stagger(headingStep)}
+            >
+              {heading.title}
+            </h1>
+            {heading.subtitle && (
+              <p key={heading.subtitle} className="animate-enter mb-7 text-[13.5px] text-text-secondary" style={stagger(headingStep + 1)}>
+                {heading.subtitle}
+              </p>
+            )}
 
             {mode === 'signin' && !resetSent && (
               <form className="flex flex-col gap-3.5" onSubmit={handleSubmit}>
-                <Field
-                  label={t('auth.fields.email')}
-                  icon={<MailIcon />}
-                  type="email"
-                  placeholder="ada@muffler.app"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+                <Enter step={formStep(0)}>
+                  <Field
+                    label={t('auth.fields.email')}
+                    icon={<MailIcon />}
+                    type="email"
+                    placeholder="ada@muffler.app"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </Enter>
 
-                <Field
-                  label={t('auth.fields.password')}
-                  icon={<LockIcon />}
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  minLength={8}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  labelAside={
+                <Enter step={formStep(1)}>
+                  <Field
+                    label={t('auth.fields.password')}
+                    icon={<LockIcon />}
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    minLength={8}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    labelAside={
+                      <button
+                        type="button"
+                        onClick={() => switchMode('forgot')}
+                        className="cursor-pointer text-xs font-semibold text-text-secondary underline underline-offset-2"
+                      >
+                        {t('auth.forgotPassword')}
+                      </button>
+                    }
+                    trailing={
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((v) => !v)}
+                        className="grid flex-shrink-0 cursor-pointer text-text-secondary"
+                        title={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
+                      >
+                        <span
+                          className={`col-start-1 row-start-1 flex transition-[opacity,transform] duration-200 ease-out ${
+                            showPassword ? 'rotate-0 scale-100 opacity-100' : '-rotate-12 scale-75 opacity-0'
+                          }`}
+                        >
+                          <EyeIcon open />
+                        </span>
+                        <span
+                          className={`col-start-1 row-start-1 flex transition-[opacity,transform] duration-200 ease-out ${
+                            showPassword ? 'rotate-12 scale-75 opacity-0' : 'rotate-0 scale-100 opacity-100'
+                          }`}
+                        >
+                          <EyeIcon open={false} />
+                        </span>
+                      </button>
+                    }
+                  />
+                </Enter>
+
+                <Enter step={formStep(2)}>
+                  <div className="mt-0.5 flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => switchMode('forgot')}
-                      className="text-xs font-semibold text-text-secondary underline underline-offset-2"
+                      role="switch"
+                      aria-checked={rememberMe}
+                      onClick={() => setRememberMe((v) => !v)}
+                      className={`flex h-[18px] w-[18px] flex-shrink-0 cursor-pointer items-center justify-center rounded-[6px] border transition-colors duration-200 ${
+                        rememberMe ? 'border-tag-fg bg-tag-fg' : 'border-border-soft bg-surface'
+                      }`}
                     >
-                      {t('auth.forgotPassword')}
+                      <span
+                        className={`flex transition-[opacity,transform] duration-200 ease-out ${
+                          rememberMe ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
+                        }`}
+                      >
+                        <CheckIcon />
+                      </span>
                     </button>
-                  }
-                  trailing={
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((v) => !v)}
-                      className="flex-shrink-0 text-text-secondary"
-                      title={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
-                    >
-                      <EyeIcon open={showPassword} />
+                    <button type="button" onClick={() => setRememberMe((v) => !v)} className="cursor-pointer text-[12.5px] text-text-secondary">
+                      {t('auth.staySignedIn')}
                     </button>
-                  }
-                />
+                  </div>
+                </Enter>
 
-                <div className="mt-0.5 flex items-center gap-2">
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={rememberMe}
-                    onClick={() => setRememberMe((v) => !v)}
-                    className={`flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-[6px] border transition-colors ${
-                      rememberMe ? 'border-tag-fg bg-tag-fg' : 'border-border-soft bg-surface'
-                    }`}
-                  >
-                    {rememberMe && <CheckIcon />}
-                  </button>
-                  <button type="button" onClick={() => setRememberMe((v) => !v)} className="text-[12.5px] text-text-secondary">
-                    {t('auth.staySignedIn')}
-                  </button>
-                </div>
-
-                {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
+                {error && <ErrorMessage>{error}</ErrorMessage>}
                 {unverified && resendButton(email)}
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="mt-2.5 rounded-[14px] bg-tag-fg py-3.5 text-center font-display text-sm font-bold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {loading ? t('auth.loading') : t('auth.signin.cta')}
-                </button>
+                <Enter step={formStep(3)}>
+                  <SubmitButton loading={loading} label={t('auth.signin.cta')} loadingLabel={t('auth.signin.loading')} />
+                </Enter>
 
-                <p className="mt-2 text-center text-[13px] text-text-secondary">
-                  {t('auth.noAccount')}{' '}
-                  <button type="button" onClick={() => switchMode('register')} className="font-bold text-text-primary underline underline-offset-2">
-                    {t('auth.registerLink')}
-                  </button>
-                </p>
+                <Enter step={formStep(4)}>
+                  <p className="mt-2 text-center text-[13px] text-text-secondary">
+                    {t('auth.noAccount')}{' '}
+                    <button type="button" onClick={() => switchMode('register')} className="cursor-pointer font-bold text-text-primary underline underline-offset-2">
+                      {t('auth.registerLink')}
+                    </button>
+                  </p>
+                </Enter>
               </form>
             )}
 
             {mode === 'register' && verificationSentTo && (
-              <div className="flex flex-col items-center gap-3.5 py-5 text-center">
+              <div className="animate-enter flex flex-col items-center gap-3.5 py-5 text-center" style={stagger(formStep(0))}>
                 <div className="flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-tag-bg text-[#5c8f4e]">
                   <MailIcon />
                 </div>
                 <p className="max-w-[280px] text-[13px] text-text-secondary">
                   {t('auth.verification.sentMessage', { email: verificationSentTo })}
                 </p>
-                {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
+                {error && <ErrorMessage>{error}</ErrorMessage>}
                 {resendButton(verificationSentTo)}
                 <button
                   type="button"
                   onClick={() => switchMode('signin')}
-                  className="mt-1.5 rounded-[14px] bg-tag-fg px-6 py-3 font-display text-[13.5px] font-bold text-black transition-opacity hover:opacity-90"
+                  className={`mt-1.5 rounded-[14px] bg-tag-fg px-6 py-3 font-display text-[13.5px] font-bold text-black ${PRESSABLE}`}
                 >
                   {t('auth.verification.backToSignin')}
                 </button>
@@ -340,106 +394,109 @@ export function LoginPage() {
 
             {mode === 'register' && !verificationSentTo && (
               <form className="flex flex-col gap-3.5" onSubmit={handleSubmit}>
-                <div className="grid grid-cols-2 gap-3.5">
+                <Enter step={formStep(0)}>
+                  <div className="grid grid-cols-2 gap-3.5">
+                    <Field
+                      label={t('auth.fields.firstName')}
+                      icon={<PersonIcon />}
+                      type="text"
+                      required
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                    />
+                    <Field
+                      label={t('auth.fields.lastName')}
+                      icon={<PersonIcon />}
+                      type="text"
+                      required
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                    />
+                  </div>
+                </Enter>
+
+                <Enter step={formStep(1)}>
                   <Field
-                    label={t('auth.fields.firstName')}
-                    icon={<PersonIcon />}
-                    type="text"
+                    label={t('auth.fields.email')}
+                    icon={<MailIcon />}
+                    type="email"
+                    placeholder="ada@muffler.app"
                     required
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
+                </Enter>
+
+                <Enter step={formStep(2)}>
                   <Field
-                    label={t('auth.fields.lastName')}
-                    icon={<PersonIcon />}
-                    type="text"
+                    label={t('auth.fields.password')}
+                    icon={<LockIcon />}
+                    type="password"
+                    placeholder={t('auth.fields.passwordPlaceholder')}
                     required
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
+                    minLength={8}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
-                </div>
+                </Enter>
 
-                <Field
-                  label={t('auth.fields.email')}
-                  icon={<MailIcon />}
-                  type="email"
-                  placeholder="ada@muffler.app"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+                {error && <ErrorMessage>{error}</ErrorMessage>}
 
-                <Field
-                  label={t('auth.fields.password')}
-                  icon={<LockIcon />}
-                  type="password"
-                  placeholder={t('auth.fields.passwordPlaceholder')}
-                  required
-                  minLength={8}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <Enter step={formStep(3)}>
+                  <SubmitButton loading={loading} label={t('auth.register.cta')} loadingLabel={t('auth.loading')} />
+                </Enter>
 
-                {error && <p className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="mt-2.5 rounded-[14px] bg-tag-fg py-3.5 text-center font-display text-sm font-bold text-black transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {loading ? t('auth.loading') : t('auth.register.cta')}
-                </button>
-
-                <p className="mt-2 text-center text-[13px] text-text-secondary">
-                  {t('auth.alreadyHave')}{' '}
-                  <button type="button" onClick={() => switchMode('signin')} className="font-bold text-text-primary underline underline-offset-2">
-                    {t('auth.signinLink')}
-                  </button>
-                </p>
+                <Enter step={formStep(4)}>
+                  <p className="mt-2 text-center text-[13px] text-text-secondary">
+                    {t('auth.alreadyHave')}{' '}
+                    <button type="button" onClick={() => switchMode('signin')} className="cursor-pointer font-bold text-text-primary underline underline-offset-2">
+                      {t('auth.signinLink')}
+                    </button>
+                  </p>
+                </Enter>
               </form>
             )}
 
             {mode === 'forgot' && !resetSent && (
               <form className="flex flex-col gap-3.5" onSubmit={handleForgotSubmit}>
-                <Field
-                  label={t('auth.fields.email')}
-                  icon={<MailIcon />}
-                  type="email"
-                  placeholder="ada@muffler.app"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+                <Enter step={formStep(0)}>
+                  <Field
+                    label={t('auth.fields.email')}
+                    icon={<MailIcon />}
+                    type="email"
+                    placeholder="ada@muffler.app"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </Enter>
 
-                <button
-                  type="submit"
-                  className="mt-1.5 rounded-[14px] bg-tag-fg py-3.5 text-center font-display text-sm font-bold text-black transition-opacity hover:opacity-90"
-                >
-                  {t('auth.forgot.cta')}
-                </button>
+                <Enter step={formStep(1)}>
+                  <SubmitButton label={t('auth.forgot.cta')} className="mt-1.5" />
+                </Enter>
 
-                <button
-                  type="button"
-                  onClick={() => switchMode('signin')}
-                  className="mt-1 flex items-center justify-center gap-1.5 text-[13px] text-text-secondary"
-                >
-                  <ArrowLeftIcon /> {t('auth.forgot.back')}
-                </button>
+                <Enter step={formStep(2)}>
+                  <button
+                    type="button"
+                    onClick={() => switchMode('signin')}
+                    className="mt-1 flex w-full cursor-pointer items-center justify-center gap-1.5 text-[13px] text-text-secondary"
+                  >
+                    <ArrowLeftIcon /> {t('auth.forgot.back')}
+                  </button>
+                </Enter>
               </form>
             )}
 
             {mode === 'forgot' && resetSent && (
-              <div className="flex flex-col items-center gap-3.5 py-5 text-center">
+              <div className="animate-enter flex flex-col items-center gap-3.5 py-5 text-center">
                 <div className="flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-tag-bg">
-                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#5c8f4e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20 6L9 17l-5-5" />
-                  </svg>
+                  <CheckOutlined sx={{ fontSize: 26, color: '#5c8f4e' }} />
                 </div>
                 <p className="max-w-[280px] text-[13px] text-text-secondary">{t('auth.resetSent.message')}</p>
                 <button
                   type="button"
                   onClick={() => switchMode('signin')}
-                  className="mt-1.5 rounded-[14px] bg-tag-fg px-6 py-3 font-display text-[13.5px] font-bold text-black transition-opacity hover:opacity-90"
+                  className={`mt-1.5 rounded-[14px] bg-tag-fg px-6 py-3 font-display text-[13.5px] font-bold text-black ${PRESSABLE}`}
                 >
                   {t('auth.resetSent.cta')}
                 </button>
