@@ -3,9 +3,16 @@ import { useTranslation } from 'react-i18next'
 import { apiFetchFile, ApiError } from '../lib/apiClient'
 import { saveBlob } from '../lib/download'
 import { fetchMaintenanceRecordTypes } from '../maintenance/maintenanceRecordTypes'
+import { todayIso } from '../lib/fleetInsights'
 import type { Vehicle } from '../lib/types'
 
 export type ExportFormat = 'pdf' | 'csv'
+
+/** Keys of `vehicle.export.document.*`, sent as `texts[key]` to translate the generated file. */
+const DOCUMENT_TEXT_KEYS = [
+  'title', 'plate', 'make', 'model', 'makeModel', 'year', 'vin', 'serviceDate', 'type', 'mileage', 'cost', 'shop',
+  'nextServiceDate', 'notes', 'total', 'empty', 'footer', 'filenamePrefix', 'decimalSeparator',
+] as const
 
 export interface UseVehicleExportResult {
   /** Format currently being generated, or null when idle. */
@@ -42,12 +49,16 @@ export function useVehicleExport(vehicle: Vehicle | null): UseVehicleExportResul
           const label = t(key).trim()
           if (label) params.append(`labels[${type.key}]`, label)
         }
+        // Headers, filename prefix and decimal separator follow the same rule; missing ones fall back to English.
+        for (const key of DOCUMENT_TEXT_KEYS) {
+          params.append(`texts[${key}]`, t(`vehicle.export.document.${key}`))
+        }
 
         const file = await apiFetchFile(
           `/api/vehicles/${vehicle.id}/maintenance-records/export?${params.toString()}`,
           { authenticated: true },
         )
-        saveBlob(file.blob, file.filename ?? fallbackFilename(vehicle.plate, t('vehicle.export.filenameSuffix'), format))
+        saveBlob(file.blob, file.filename ?? fallbackFilename(t('vehicle.export.document.filenamePrefix'), vehicle.plate, format))
       } catch (err) {
         setError(
           err instanceof ApiError && err.status === 422
@@ -65,8 +76,8 @@ export function useVehicleExport(vehicle: Vehicle | null): UseVehicleExportResul
   return { exporting, error, exportRecords }
 }
 
-/** Used when Content-Disposition can't be read; slugs the plate the same way the backend does. */
-function fallbackFilename(plate: string, suffix: string, format: ExportFormat): string {
-  const slug = plate.replace(/[^A-Za-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
-  return `${[slug, suffix].filter(Boolean).join('-')}.${format}`
+/** Used when Content-Disposition can't be read; mirrors the backend's prefix-PLATE-YYYY-MM-DD naming. */
+function fallbackFilename(prefix: string, plate: string, format: ExportFormat): string {
+  const slug = (value: string) => value.replace(/[^A-Za-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+  return `${[slug(prefix), slug(plate), todayIso()].filter(Boolean).join('-')}.${format}`
 }

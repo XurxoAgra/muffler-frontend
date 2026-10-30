@@ -130,6 +130,15 @@
       "noFilterResults": "Ningún registro de este tipo.",
       "notFound": "No encontramos este vehículo."
     },
+    "card": {
+      "revisions_one": "{{count}} revisión",
+      "revisions_other": "{{count}} revisiones",
+      "noRevisions": "Sin revisiones",
+      "nextRevision": "Próxima: {{date}}",
+      "noNextRevision": "Sin próxima revisión",
+      "overdue": "Vencida · {{date}}",
+      "noRecordsToExport": "No hay revisiones para exportar"
+    },
     "mileageHistory": {
       "title": "Historial de kilometraje",
       "add": "Añadir kilometraje",
@@ -182,10 +191,30 @@
       "pdf": "Exportar PDF",
       "csv": "Exportar CSV",
       "exporting": "Exportando…",
-      "filenameSuffix": "historial",
       "errors": {
-        "validation": "No se pudo exportar: alguna traducción de tipo de mantenimiento no es válida.",
+        "validation": "No se pudo exportar: alguna traducción no es válida.",
         "generic": "No se pudo exportar el historial. Inténtalo de nuevo."
+      },
+      "document": {
+        "title": "Historial de revisiones",
+        "plate": "Matrícula",
+        "make": "Marca",
+        "model": "Modelo",
+        "makeModel": "Marca / modelo",
+        "year": "Año",
+        "vin": "Bastidor (VIN)",
+        "serviceDate": "Fecha",
+        "type": "Tipo",
+        "mileage": "Kilometraje (km)",
+        "cost": "Precio (€)",
+        "shop": "Taller",
+        "nextServiceDate": "Próxima revisión",
+        "notes": "Notas",
+        "total": "Total",
+        "empty": "No hay revisiones registradas.",
+        "footer": "Generado el {date} · Página {PAGE_NUM} de {PAGE_COUNT}",
+        "filenamePrefix": "revisiones",
+        "decimalSeparator": ","
       }
     },
     "empty": {
@@ -274,7 +303,6 @@
       "km": "Km",
       "cost": "Coste",
       "nextService": "Próxima revisión",
-      "verified": "Verificado",
       "actions": "Acciones"
     },
     "detail": {

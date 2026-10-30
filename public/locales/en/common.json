@@ -130,6 +130,15 @@
       "noFilterResults": "No records of this type.",
       "notFound": "We could not find this vehicle."
     },
+    "card": {
+      "revisions_one": "{{count}} service",
+      "revisions_other": "{{count}} services",
+      "noRevisions": "No services",
+      "nextRevision": "Next: {{date}}",
+      "noNextRevision": "No upcoming service",
+      "overdue": "Overdue · {{date}}",
+      "noRecordsToExport": "No services to export"
+    },
     "mileageHistory": {
       "title": "Mileage history",
       "add": "Add mileage",
@@ -182,10 +191,30 @@
       "pdf": "Export PDF",
       "csv": "Export CSV",
       "exporting": "Exporting…",
-      "filenameSuffix": "history",
       "errors": {
-        "validation": "Could not export: a maintenance type translation is not valid.",
+        "validation": "Couldn't export: some translation is invalid.",
         "generic": "Could not export the history. Please try again."
+      },
+      "document": {
+        "title": "Service history",
+        "plate": "Plate",
+        "make": "Make",
+        "model": "Model",
+        "makeModel": "Make / model",
+        "year": "Year",
+        "vin": "VIN",
+        "serviceDate": "Date",
+        "type": "Type",
+        "mileage": "Mileage (km)",
+        "cost": "Price (€)",
+        "shop": "Shop",
+        "nextServiceDate": "Next service",
+        "notes": "Notes",
+        "total": "Total",
+        "empty": "No services recorded.",
+        "footer": "Generated on {date} · Page {PAGE_NUM} of {PAGE_COUNT}",
+        "filenamePrefix": "services",
+        "decimalSeparator": "."
       }
     },
     "empty": {
@@ -274,7 +303,6 @@
       "km": "Km",
       "cost": "Cost",
       "nextService": "Next service",
-      "verified": "Verified",
       "actions": "Actions"
     },
     "detail": {

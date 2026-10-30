@@ -12,6 +12,7 @@ import { MaintenanceFormDrawer } from '../components/maintenance/MaintenanceForm
 import { MaintenanceRecordDetailModal } from '../components/maintenance/MaintenanceRecordDetailModal'
 import { VehicleFormModal } from '../components/vehicles/VehicleFormModal'
 import { ReviewStatusBadge } from '../components/vehicles/ReviewStatusBadge'
+import { ExportButton } from '../components/vehicles/ExportButton'
 import { MileageHistorySection } from '../components/vehicles/MileageHistorySection'
 import { VehicleUsersSection } from '../components/vehicles/VehicleUsersSection'
 import { useFleetData } from '../vehicles/FleetDataContext'
@@ -35,7 +36,6 @@ import AddOutlined from '@mui/icons-material/AddOutlined'
 import ArrowBackOutlined from '@mui/icons-material/ArrowBackOutlined'
 import Build from '@mui/icons-material/Build'
 import DirectionsCarOutlined from '@mui/icons-material/DirectionsCarOutlined'
-import FileDownloadOutlined from '@mui/icons-material/FileDownloadOutlined'
 
 type DrawerState = { mode: 'create' } | { mode: 'edit'; record: MaintenanceRecord } | null
 
@@ -520,46 +520,6 @@ function EmptyState({ onAdd }: { onAdd: () => void }) {
         <PlusIcon /> {t('maintenance.addFirst')}
       </button>
     </div>
-  )
-}
-
-interface ExportButtonProps {
-  format: ExportFormat
-  busy: boolean
-  disabled: boolean
-  onClick: () => void
-}
-
-function ExportButton({ format, busy, disabled, onClick }: ExportButtonProps) {
-  const { t } = useTranslation()
-  const label = format === 'pdf' ? t('vehicle.export.pdf') : t('vehicle.export.csv')
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      aria-busy={busy}
-      aria-label={label}
-      title={busy ? t('vehicle.export.exporting') : label}
-      className={`inline-flex items-center gap-1 rounded-lg border border-border-soft px-2.5 py-1 font-display text-[11px] font-bold tracking-wide text-text-secondary transition-colors enabled:hover:border-lime enabled:hover:text-lime ${busy ? 'cursor-wait' : 'disabled:cursor-not-allowed disabled:opacity-50'}`}
-    >
-      {/* Spinner takes the icon's slot so the button keeps its width while busy. */}
-      {busy ? <SpinnerIcon /> : <DownloadIcon />}
-      {/* The acronym reads the same in every locale; the full action lives in aria-label/title. */}
-      {format.toUpperCase()}
-    </button>
-  )
-}
-
-function DownloadIcon() {
-  return <FileDownloadOutlined sx={{ fontSize: 12 }} />
-}
-
-function SpinnerIcon() {
-  return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="animate-spin">
-      <path d="M21 12a9 9 0 1 1-6.2-8.56" />
-    </svg>
   )
 }
 

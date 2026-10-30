@@ -41,16 +41,35 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
   const [formError, setFormError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
+  /** Adds or clears one field's error, leaving the others untouched. */
+  function setFieldError(field: string, message: string | undefined) {
+    setFieldErrors((prev) => {
+      const next = { ...prev }
+      if (message) next[field] = message
+      else delete next[field]
+      return next
+    })
+  }
+
+  function vinError(value: string): string | undefined {
+    const trimmed = value.trim()
+    return trimmed && !VIN_PATTERN.test(trimmed) ? t('vehicle.validation.vinFormat') : undefined
+  }
+
   useEffect(() => {
     apiFetch<VehicleCatalogRef[]>('/api/vehicle-makes', { authenticated: true })
       .then(setMakes)
       .catch(() => setFormError(t('vehicle.errors.loadMakes')))
   }, [t])
 
-  const visibleModels = tab === 'catalog' && makeId ? models : []
+  // The make/model catalog only lists cars; any other type (or none yet) goes straight to custom fields.
+  const catalogAvailable = type === 'car'
+  const activeTab: CatalogTab = catalogAvailable ? tab : 'custom'
+
+  const visibleModels = activeTab === 'catalog' && makeId ? models : []
 
   useEffect(() => {
-    if (tab !== 'catalog' || !makeId) {
+    if (activeTab !== 'catalog' || !makeId) {
       return
     }
     let cancelled = false
@@ -64,7 +83,7 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
     return () => {
       cancelled = true
     }
-  }, [tab, makeId, t])
+  }, [activeTab, makeId, t])
 
   function validate(): Partial<Record<string, string>> {
     const errors: Partial<Record<string, string>> = {}
@@ -90,9 +109,10 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
     }
 
     if (!type) errors.type = t('vehicle.validation.typeRequired')
-    if (vin.trim() && !VIN_PATTERN.test(vin.trim())) errors.vin = t('vehicle.validation.vinFormat')
-    if (tab === 'catalog' && !makeId) errors.makeId = t('vehicle.validation.makeRequired')
-    if (tab === 'custom' && !customMake.trim()) errors.customMake = t('vehicle.validation.customMakeRequired')
+    const vinMessage = vinError(vin)
+    if (vinMessage) errors.vin = vinMessage
+    if (activeTab === 'catalog' && !makeId) errors.makeId = t('vehicle.validation.makeRequired')
+    if (activeTab === 'custom' && !customMake.trim()) errors.customMake = t('vehicle.validation.customMakeRequired')
     return errors
   }
 
@@ -109,10 +129,10 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
       year: Number(year),
       type: type.trim(),
       vin: vin.trim() || null,
-      makeId: tab === 'catalog' ? makeId : null,
-      modelId: tab === 'catalog' && modelId ? modelId : null,
-      customMake: tab === 'custom' ? customMake.trim() : null,
-      customModel: tab === 'custom' ? customModel.trim() || null : null,
+      makeId: activeTab === 'catalog' ? makeId : null,
+      modelId: activeTab === 'catalog' && modelId ? modelId : null,
+      customMake: activeTab === 'custom' ? customMake.trim() : null,
+      customModel: activeTab === 'custom' ? customModel.trim() || null : null,
     }
 
     setSubmitting(true)
@@ -158,12 +178,7 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
                 : trimmed.length < 6
                   ? t('vehicle.validation.plateMinLength')
                   : undefined
-              setFieldErrors((prev) => {
-                const next = { ...prev }
-                if (err) next.plate = err
-                else delete next.plate
-                return next
-              })
+              setFieldError('plate', err)
             }
           }}
           error={fieldErrors.plate}
@@ -189,12 +204,7 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
                     : yearNum > currentYear
                       ? t('vehicle.validation.yearMax')
                       : undefined
-                setFieldErrors((prev) => {
-                  const next = { ...prev }
-                  if (err) next.year = err
-                  else delete next.year
-                  return next
-                })
+                setFieldError('year', err)
               }
             }}
             error={fieldErrors.year}
@@ -206,7 +216,10 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
             </label>
             <select
               value={type}
-              onChange={(e) => setType(e.target.value as VehicleTypeValue)}
+              onChange={(e) => {
+                setType(e.target.value as VehicleTypeValue)
+                setFieldError('type', undefined)
+              }}
               required
               className="w-full border-0 border-b border-white/12 bg-transparent py-2 text-white outline-none focus:border-lime"
             >
@@ -225,20 +238,30 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
           label={t('vehicle.fields.vin')}
           placeholder={t('vehicle.vinPlaceholder')}
           value={vin}
-          onChange={(e) => setVin(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value
+            setVin(value)
+            if (fieldErrors.vin !== undefined) setFieldError('vin', vinError(value))
+          }}
           error={fieldErrors.vin}
         />
 
-        <PillTabs
-          value={tab}
-          onChange={setTab}
-          options={[
-            { value: 'catalog', label: t('vehicle.tabs.catalog') },
-            { value: 'custom', label: t('vehicle.tabs.custom') },
-          ]}
-        />
+        {catalogAvailable && (
+          <PillTabs
+            value={tab}
+            onChange={(next) => {
+              setTab(next)
+              setFieldError('makeId', undefined)
+              setFieldError('customMake', undefined)
+            }}
+            options={[
+              { value: 'catalog', label: t('vehicle.tabs.catalog') },
+              { value: 'custom', label: t('vehicle.tabs.custom') },
+            ]}
+          />
+        )}
 
-        {tab === 'catalog' ? (
+        {activeTab === 'catalog' ? (
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
               <label className="font-mono text-xs uppercase tracking-widest text-muted">
@@ -250,6 +273,7 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
                   setMakeId(e.target.value)
                   setModelId('')
                   setModels([])
+                  setFieldError('makeId', undefined)
                 }}
                 className="w-full border-0 border-b border-white/12 bg-transparent py-2 text-white outline-none focus:border-lime"
               >
@@ -287,7 +311,10 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
             <UnderlineInput
               label={t('vehicle.fields.make')}
               value={customMake}
-              onChange={(e) => setCustomMake(e.target.value)}
+              onChange={(e) => {
+                setCustomMake(e.target.value)
+                setFieldError('customMake', undefined)
+              }}
               error={fieldErrors.customMake}
               required
             />
@@ -305,7 +332,7 @@ export function VehicleFormModal({ mode, vehicle, onClose, onSaved }: VehicleFor
           <ButtonGlass type="button" className="flex-1" onClick={onClose}>
             {t('common.cancel')}
           </ButtonGlass>
-          <ButtonPrimary type="submit" className="flex-1" disabled={submitting || Object.keys(fieldErrors).length > 0}>
+          <ButtonPrimary type="submit" className="flex-1" disabled={submitting}>
             {submitting ? t('vehicle.saving') : mode === 'create' ? t('vehicle.add') : t('vehicle.saveChanges')}
           </ButtonPrimary>
         </div>

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GlassPanel } from '../ui/GlassPanel'
-import { VerifiedBadge } from './VerifiedBadge'
 import { formatDate, formatMileage, formatCost } from './formatters'
 import { useMaintenanceRecordTypes } from '../../maintenance/useMaintenanceRecordTypes'
 import type { MaintenanceRecord } from '../../lib/types'
@@ -83,7 +82,6 @@ export function MaintenanceTable({
     { key: 'mileage', label: t('maintenance.table.km') },
     { key: 'cost', label: t('maintenance.table.cost') },
     { key: 'nextServiceDate', label: t('maintenance.table.nextService') },
-    { key: null, label: t('maintenance.table.verified') },
     { key: null, label: t('maintenance.table.actions') },
   ]
 
@@ -93,7 +91,7 @@ export function MaintenanceTable({
         ref={scrollRef}
         className="overflow-x-auto [-webkit-overflow-scrolling:touch] [scrollbar-width:thin] [scrollbar-color:var(--color-border-soft)_transparent] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[var(--color-border-soft)]"
       >
-        <table className="w-full min-w-[920px]">
+        <table className="w-full min-w-[820px]">
           <thead>
             <tr className="border-b border-white/10">
               {COLUMNS.map((col) => (
@@ -131,9 +129,6 @@ export function MaintenanceTable({
                 <td className="px-4 py-3 font-mono text-sm text-white">{formatMileage(r.mileage)}</td>
                 <td className="px-4 py-3 font-mono text-sm text-white">{formatCost(r.cost)}</td>
                 <td className="px-4 py-3 text-sm text-muted">{formatDate(r.nextServiceDate)}</td>
-                <td className="px-4 py-3">
-                  <VerifiedBadge verified={r.verified} />
-                </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-1">
                     <button

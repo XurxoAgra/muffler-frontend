@@ -1,10 +1,10 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { apiFetch, ApiError } from '../lib/apiClient'
-import type { MaintenanceRecord, Vehicle } from '../lib/types'
+import type { MaintenanceRecord, VehicleListItem } from '../lib/types'
 
 interface FleetDataContextValue {
-  vehicles: Vehicle[] | null
+  vehicles: VehicleListItem[] | null
   recordsByVehicle: Record<string, MaintenanceRecord[]>
   loading: boolean
   error: string | null
@@ -15,7 +15,7 @@ const FleetDataContext = createContext<FleetDataContextValue | null>(null)
 
 export function FleetDataProvider({ children }: { children: ReactNode }) {
   const { t } = useTranslation()
-  const [vehicles, setVehicles] = useState<Vehicle[] | null>(null)
+  const [vehicles, setVehicles] = useState<VehicleListItem[] | null>(null)
   const [recordsByVehicle, setRecordsByVehicle] = useState<Record<string, MaintenanceRecord[]>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -24,7 +24,7 @@ export function FleetDataProvider({ children }: { children: ReactNode }) {
     setLoading(true)
     setError(null)
     try {
-      const vehicleList = await apiFetch<Vehicle[]>('/api/vehicles', { authenticated: true })
+      const vehicleList = await apiFetch<VehicleListItem[]>('/api/vehicles', { authenticated: true })
       setVehicles(vehicleList)
 
       const entries = await Promise.all(

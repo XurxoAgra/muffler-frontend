@@ -72,6 +72,14 @@ export interface Vehicle {
   role: 'owner' | 'shared'
 }
 
+/** Shape returned by GET /api/vehicles only; the other vehicle endpoints omit the maintenance summary. */
+export interface VehicleListItem extends Vehicle {
+  /** Maintenance records excluding insurance, which is not a service. */
+  revisionsCount: number
+  /** YYYY-MM-DD, earliest upcoming nextServiceDate (today or later, insurance excluded), or null when none is pending. */
+  nextRevisionDate: string | null
+}
+
 export interface VehicleInput {
   plate: string
   year: number

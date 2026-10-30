@@ -51,6 +51,12 @@ export function getCurrentMileage(records: MaintenanceRecord[]): number | null {
   return Math.max(...withMileage.map((r) => r.mileage))
 }
 
+/** Local calendar date as YYYY-MM-DD, comparable as a string with the API's date-only fields. */
+export function todayIso(today: Date = new Date()): string {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`
+}
+
 export function deriveReviewStatus(dateIso: string, today: Date): ReviewStatus {
   const days = Math.round((new Date(dateIso).getTime() - today.getTime()) / DAY_MS)
   if (days < 0) return 'vencida'
